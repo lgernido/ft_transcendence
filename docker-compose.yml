@@ -7,9 +7,7 @@ services:
       context: ./db
       dockerfile: Dockerfile
     environment:
-      POSTGRES_DB: superpongdb
-      POSTGRES_USER: superpong
-      POSTGRES_PASSWORD: gnoprepus
+      .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
