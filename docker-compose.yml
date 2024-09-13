@@ -2,10 +2,15 @@ version: '3.8'
 
 services:
   db:
+    image: postgres:13.4
     container_name: db
     build:
       context: ./db
       dockerfile: Dockerfile
+    environment:
+      - POSTGRES_DB=superpongdb
+      - POSTGRES_USER=superpong
+      - POSTGRES_PASSWORD=gnoprepus
     env_file: .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -48,7 +53,6 @@ services:
 volumes:
   postgres_data:
 
-
 networks:
-  app-network:
+  default:
     driver: bridge
