@@ -1,13 +1,17 @@
-FROM python:3
+FROM python:3.12
 
 WORKDIR /backend
 
+COPY . /backend/
+
 COPY requirements.txt . 
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-COPY . . 
+COPY wait-for-it.sh /wait-for-it.sh
+
+RUN chmod +x /wait-for-it.sh
 
 EXPOSE 8000
 
-CMD CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/wait-for-it.sh", "db:5432", "--", "sh", "-c", "python manage.py runserver 0.0.0.0:8000"]
