@@ -1,0 +1,35 @@
+body {
+	background-color: burlywood;
+}
+
+.btn-primary {
+	background-color: lightsalmon;
+	border-color: black;
+	border-width: 2px;
+	color: black;
+	transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+	background-color:lightsteelblue;
+	border-color: black;
+}
+
+.btn-primary:focus {
+	background-color: black;
+	color: white;
+	border-color: white;
+}
+
+.chat-box {
+	background-color: plum;
+}
+
+.btn-header {
+	min-width: 150px;
+	font-family: Garamond;
+}
+
+.btn-lobby {
+	background-color: rgb(103, 184, 204);
+}
