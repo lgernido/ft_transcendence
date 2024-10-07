@@ -1,0 +1,53 @@
+.card-lobby {
+	background-color: #990037;
+	border: solid 2px white;
+	border-radius: 10px;
+	margin-right: 50px;
+	min-height: 350px;
+	padding: 5px;
+	width: 12rem;
+}
+
+.card-lobby-wait {
+	background-color: #990037;
+	border: solid 2px white;
+	border-radius: 10px;
+	margin-right: 50px;
+	padding: 5px;
+	width: auto;
+	height: auto;
+}
+
+.card-lobby-img-top {
+	width: 100%;
+	border: solid 2px black;
+	border-radius: 8px;
+}
+
+.card-lobby-body {
+	color: #dedede;
+	margin-top: 15%;
+}
+
+.card-lobby-text-name {
+	font-weight: bold;
+	font-size: xx-large;
+	border-bottom: solid 2px;
+}
+
+.card-lobby-text-rank {
+	font-weight: bold;
+	font-size: large;
+	color: gold;
+}
+
+.card-lobby-text-ratio {
+	font-weight: bold;
+	font-size: large;
+}
+
+.dropdown-player-tournament
+{
+	width: 400px;
+}
+

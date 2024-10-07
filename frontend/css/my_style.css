@@ -1,9 +1,23 @@
 body {
-	background-color: burlywood;
+	background: rgb(0,32,134);
+	background: linear-gradient(190deg, #006e99 0%, black 50%, #006e99 100%);
+	min-width: 600px;
+}
+
+.site-title {
+	color: cadetblue;
+}
+
+h2 {
+	color: #dedede;
+}
+
+.text {
+	color: #dedede;
 }
 
 .btn-primary {
-	background-color: lightsalmon;
+	background-color: #990037;
 	border-color: black;
 	border-width: 2px;
 	color: black;
@@ -11,25 +25,32 @@ body {
 }
 
 .btn-primary:hover {
-	background-color:lightsteelblue;
+	background-color:#006e99;
 	border-color: black;
 }
 
 .btn-primary:focus {
 	background-color: black;
-	color: white;
-	border-color: white;
-}
-
-.chat-box {
-	background-color: plum;
-}
-
-.btn-header {
-	min-width: 150px;
-	font-family: Garamond;
+	color: #dedede;
+	border-color: #dedede;
 }
 
 .btn-lobby {
-	background-color: rgb(103, 184, 204);
+	overflow: hidden;
+	background-color: #006e99;
+	min-height: 50px;
+	font-size: 2vw;
+}
+
+.btn-exit {
+	background-color: rgb(223, 35, 35);
+}
+
+.btn-add {
+	color: #dedede;
+	background-color: #990037;
+}
+
+.form-floating {
+	color: #7f7f7f;
 }

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+		
+		<link href="css/my_style.css" rel="stylesheet">
+		<link href="css/header.css" rel="stylesheet">
+		<link href="css/camenbert.css" rel="stylesheet">
+		<link href="css/chat.css" rel="stylesheet">
+		<link href="css/stat.css" rel="stylesheet">
+		<title>Pong Ping</title>
+	</head>
+
+	<body>
+		<div class="min-vh-100 overflow-auto">
+			<div id="header-placeholder"></div>
+			<div class="d-flex" style="height: calc(100vh - 80px);">
+				<div class="border border-dark rounded m-2 w-75 px-3 flex-grow-1 d-flex flex-column align-items-center overflow-auto">
+					<div class="d-flex justify-content-between w-100">
+						<div class="d-flex flex-column align-items-center my-3 me-2 card-custom">
+							<img src="img/bob.jpg" class="rounded-circle img-profil-100" alt="img-profil">
+							<h2>Bob</h2>
+							<p class="result">Win</p>
+						</div>
+						<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
+							<img src="img/bob.jpg" class="rounded-circle img-profil-100" alt="img-profil">
+							<h2>Carlos</h2>
+							<p class="result">Lose</p>
+						</div>
+						<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
+							<img src="img/bob.jpg" class="rounded-circle img-profil-100" alt="img-profil">
+							<h2>Jacob</h2>
+							<p class="result">Win</p>
+						</div>
+						<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
+							<img src="img/bob.jpg" class="rounded-circle img-profil-100" alt="img-profil">
+							<h2>Carlos</h2>
+							<p class="result">Draw</p>
+						</div>
+						<!-- <div class="d-flex flex-column align-items-center my-3 ms-2 card-custom">
+							<img src="img/bob.jpg" class="rounded-circle img-profil-100" alt="img-profil">
+							<h2>Carlos</h2>
+							<p class="result">Lose</p>
+						</div> -->
+					</div>
+					<div class="border border-dark rounded w-100 my-5 stat-container">
+						<h3 class="m-4 fw-bold">Statistiques Player</h3>
+						<section id="camembert">
+							<svg id="drawgraph" width="210" height="210" xmlns="http://www.w3.org/2000/svg">
+								<circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="5" />
+							</svg>
+							<ul>
+								<li id="liVert" class="d-flex"><span id="vert"></span> Win :<p id="nb-win" class="ms-2"></p></li>
+								<li id="liRouge" class="d-flex"><span id="rouge"></span> Loss :<p id="nb-loss" class="ms-2"></p></li>
+								<li id="liOrange" class="d-flex"><span id="orange"></span> Draw :<p id="nb-draw" class="ms-2"></p></li>
+							</ul>
+						</section>
+						<div class="m-4 align-items-center d-flex justify-content-between">
+							<li class="d-flex fw-bold" style="list-style-type: none;">Total Partie :<p id="nb-game" class="mx-2"></p></li>
+							<p class="fw-bold">Classement global : #3</p>
+							<p class="fw-bold">Classement amis : #3</p>
+							<p class="fw-bold">Nb tournoi gagne : 0</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Chat section -->
+				<div class="chat-container mx-2 w-25 d-flex flex-column" style="height: calc(100vh - 80px);">
+					<div class="chat-box my-2 flex-grow-1" id="chatBox" style="min-height: 200px;">
+						<div class="d-flex justify-content-between align-items-center overflow-auto header-chat">
+							<a class="btn ms-1 btn-header-chat" style="font-size: 1.5vw;">Global</a>
+							<a class="btn btn-header-chat" style="font-size: 1.5vw;">Lobby</a>
+							<a class="btn me-1 btn-header-chat" style="font-size: 1.5vw;">
+								<i class="bi bi-plus icon"></i>
+							</a>
+						</div>
+						<p class="mx-1 my-1 chat-txt">Robert: Yo</p>
+						<p class="mx-1 my-1 chat-txt">Jack: hi</p>
+					</div>
+
+					<div class="chat-input d-flex align-items-center">
+						<textarea id="chatMessageInput" class="form-control me-2" placeholder="Type your message..."></textarea>
+						<button class="btn btn-primary send-btn h-100" type="button">Send</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+		<script src="js/script.js"></script>
+		<script src="js/camenbert.js"></script>
+	</body>
+</html>

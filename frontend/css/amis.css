@@ -1,0 +1,38 @@
+.hover-container {
+	position: relative;
+	display: inline-block;
+}
+
+.hover-text {
+	visibility: hidden;
+	position: absolute;
+	background-color: black;
+	color: #dedede;
+	padding: 5px;
+	border-radius: 5px;
+	border-color: red;
+	top: 110%;
+	left: 50%;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	opacity: 70%;
+}
+
+.hover-container:hover .hover-text {
+	visibility: visible;
+}
+
+.img-profil-60-rounded {
+	width: 60px;
+	height: 60px;
+	border: solid #990037;
+	border-radius: 50%;
+	background-color: #dedede;
+}
+
+.img-profil-60 {
+	width: 60px;
+	height: 60px;
+	border: solid #990037;
+	background-color: #dedede;
+}
