@@ -1,5 +1,7 @@
+@import url('variable.css');
+
 .card-custom {
-    border: 2px solid #dedede;
+    border: 2px solid var(--color-white);
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -20,9 +22,9 @@
 .img-profil-100 {
 	width: 100px;
 	height: 100px;
-	border: solid brown;
+	border: solid var(--color-brown);
 	border-radius: 50%;
-	background-color: #dedede;
+	background-color: var(--color-white);
 }
 
 .result {
@@ -44,7 +46,9 @@
 }
 
 .stat-container {
+	border: solid 2px black;
+	border-radius: 5px;
 	background: transparent;
-	color: white;
+	color: var(--color-white);
 	box-shadow: 2px 2px 2px red;
 }

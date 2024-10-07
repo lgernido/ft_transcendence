@@ -24,12 +24,12 @@ function generateCards(count) {
 		
 		card.innerHTML = `
 			<div class="d-flex flex-column align-items-center">
-				<div class="spinner-border mt-3" role="status" style="color: #dedede;">
+				<div class="spinner-border spinner-color mt-3" role="status">
 					<span class="visually-hidden">Loading...</span>
 				</div>
 			</div>
 			<div class="card-lobby-body d-flex align-items-center justify-content-center">
-				<p class="card-lobby-text" style="color: #dedede;">Waiting for player...</p>
+				<p class="card-lobby-text">Waiting for player...</p>
 			</div>
 		`;
 		cardContainer.appendChild(card);

@@ -1,25 +1,27 @@
+@import url('variable.css');
+
 .header-chat {
-	color: #dedede;
-	border-bottom: solid 3px #dedede;
+	color: var(--color-white);
+	border-bottom: solid 3px var(--color-white);
 }
 
 .btn-header-chat {
-	color: #dedede;
+	color: var(--color-white);
 	font-weight: bold;
 }
 
 .chat-box {
-	border: solid #dedede 2px;
+	border: solid var(--color-white) 2px;
 	border-radius: 10px;
 	background-color: black;
 }
 
 .chat-txt {
-	color: #dedede;
+	color: var(--color-white);
 	font-weight: bold;
 }
 
 .send-btn {
-	color: #dedede;
+	color: var(--color-white);
 	background-color: black;
 }

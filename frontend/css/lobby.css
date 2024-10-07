@@ -1,6 +1,8 @@
+@import url('variable.css');
+
 .card-lobby {
-	background-color: #990037;
-	border: solid 2px white;
+	background-color: var(--color-brown);
+	border: solid 2px var(--color-white);
 	border-radius: 10px;
 	margin-right: 50px;
 	min-height: 350px;
@@ -9,8 +11,8 @@
 }
 
 .card-lobby-wait {
-	background-color: #990037;
-	border: solid 2px white;
+	background-color: var(--color-brown);
+	border: solid 2px var(--color-white);
 	border-radius: 10px;
 	margin-right: 50px;
 	padding: 5px;
@@ -25,7 +27,7 @@
 }
 
 .card-lobby-body {
-	color: #dedede;
+	color: var(--color-white);
 	margin-top: 15%;
 }
 
@@ -33,6 +35,10 @@
 	font-weight: bold;
 	font-size: xx-large;
 	border-bottom: solid 2px;
+}
+
+.card-lobby-text {
+	color: var(--color-white);
 }
 
 .card-lobby-text-rank {
@@ -49,5 +55,9 @@
 .dropdown-player-tournament
 {
 	width: 400px;
+}
+
+.spinner-color {
+	color: var(--color-white);
 }
 

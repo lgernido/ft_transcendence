@@ -1,3 +1,5 @@
+@import url('variable.css');
+
 .hover-container {
 	position: relative;
 	display: inline-block;
@@ -7,7 +9,7 @@
 	visibility: hidden;
 	position: absolute;
 	background-color: black;
-	color: #dedede;
+	color: var(--color-white);
 	padding: 5px;
 	border-radius: 5px;
 	border-color: red;
@@ -25,14 +27,14 @@
 .img-profil-60-rounded {
 	width: 60px;
 	height: 60px;
-	border: solid #990037;
+	border: solid var(--color-brown);
 	border-radius: 50%;
-	background-color: #dedede;
+	background-color: var(--color-white);
 }
 
 .img-profil-60 {
 	width: 60px;
 	height: 60px;
-	border: solid #990037;
-	background-color: #dedede;
+	border: solid var(--color-brown);
+	background-color: var(--color-white);
 }
