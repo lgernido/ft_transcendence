@@ -17,7 +17,7 @@
 }
  
 #camembert path:hover {
-    fill: #006e99;
+    fill: var(--color-back);
     cursor: pointer;
 }
  

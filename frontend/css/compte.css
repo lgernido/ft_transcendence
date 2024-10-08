@@ -17,7 +17,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 5rem;
-	color: rgba(255, 255, 255, 0.8);
+	color: var(--color-white);
+	opacity: 0.8;
     display: none;
 	pointer-events: none;
 }

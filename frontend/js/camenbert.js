@@ -6,10 +6,10 @@ const data = {
 
 // Fonction pour injecter les valeurs dans les éléments HTML
 function updateLegend() {
-    document.getElementById("nb-win").textContent = ` ${data.victoires}`;
-    document.getElementById("nb-loss").textContent = ` ${data.defaites}`;
-    document.getElementById("nb-draw").textContent = ` ${data.draw}`;
-    document.getElementById("nb-game").textContent = ` ${data.draw + data.defaites + data.victoires}`;
+    document.getElementById("nb-win").textContent = data.victoires;
+    document.getElementById("nb-loss").textContent = data.defaites;
+    document.getElementById("nb-draw").textContent = data.draw;
+    document.getElementById("nb-game").textContent = data.draw + data.defaites + data.victoires;
 }
 
 updateLegend();

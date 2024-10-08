@@ -6,12 +6,11 @@
 }
 
 .btn-header.active {
-	background-color: black;
+	background-color: var(--color-black);
 	color: var(--color-white);
-	border-color: var(--color-brown);
+	border-color: var(--color-border-active);
 }
 
-/* Animation */
 .icon-with-text {
 	display: flex;
 	align-items: center;

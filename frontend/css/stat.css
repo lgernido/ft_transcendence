@@ -13,16 +13,15 @@
 
 .card-custom:hover {
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	transition: 0.6s;
 	background-color: black;
-	box-shadow: 2px 2px 2px red;
+	box-shadow: 2px 2px 2px var(--color-btn);
 }
 
 .img-profil-100 {
 	width: 100px;
 	height: 100px;
-	border: solid var(--color-brown);
+	border: solid var(--color-btn);
 	border-radius: 50%;
 	background-color: var(--color-white);
 }
@@ -46,9 +45,9 @@
 }
 
 .stat-container {
-	border: solid 2px black;
+	border: solid 2px var(--color-black);
 	border-radius: 5px;
 	background: transparent;
 	color: var(--color-white);
-	box-shadow: 2px 2px 2px red;
+	box-shadow: 2px 2px 2px var(--color-btn);
 }

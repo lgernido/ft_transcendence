@@ -1,7 +1,7 @@
 @import url('variable.css');
 
 .card-lobby {
-	background-color: var(--color-brown);
+	background-color: var(--color-btn);
 	border: solid 2px var(--color-white);
 	border-radius: 10px;
 	margin-right: 50px;
@@ -11,7 +11,7 @@
 }
 
 .card-lobby-wait {
-	background-color: var(--color-brown);
+	background-color: var(--color-btn);
 	border: solid 2px var(--color-white);
 	border-radius: 10px;
 	margin-right: 50px;
@@ -22,7 +22,7 @@
 
 .card-lobby-img-top {
 	width: 100%;
-	border: solid 2px black;
+	border: solid 2px var(--color-black);
 	border-radius: 8px;
 }
 
@@ -60,4 +60,3 @@
 .spinner-color {
 	color: var(--color-white);
 }
-

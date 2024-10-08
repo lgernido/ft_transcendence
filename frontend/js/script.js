@@ -43,3 +43,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const themeLinks = document.querySelectorAll('.dropdown-item-color');
+
+    themeLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            // Retirer les classes de thème existantes
+            document.body.classList.remove('theme-default', 'theme-light', 'theme-dark');
+            
+            // Ajouter la nouvelle classe de thème sélectionnée
+            const selectedTheme = this.getAttribute('data-theme');
+            document.body.classList.add(`theme-${selectedTheme}`);
+        });
+    });
+});

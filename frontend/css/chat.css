@@ -13,7 +13,7 @@
 .chat-box {
 	border: solid var(--color-white) 2px;
 	border-radius: 10px;
-	background-color: black;
+	background-color: var(--color-black);
 }
 
 .chat-txt {
@@ -23,5 +23,5 @@
 
 .send-btn {
 	color: var(--color-white);
-	background-color: black;
+	background-color: var(--color-black);
 }
