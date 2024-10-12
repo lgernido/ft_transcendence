@@ -1,37 +1,47 @@
-const savedValue = localStorage.getItem('selectedValue');
-const dropdownButton = document.getElementById('dropdownButton');
-const cardContainer = document.getElementById('cardContainer');
+document.addEventListener('DOMContentLoaded', () => {
+    const playerName1_public = document.querySelector('.card-lobby-text-name-public-1');
+	const colorSelect1_public = document.getElementById('selectColorPlayerPublic1');
 
-if (savedValue) {
-	dropdownButton.textContent = `NB playeur: ${savedValue}`;
-	generateCards(savedValue);
-}
+	const playerName2_public = document.querySelector('.card-lobby-text-name-public-2');
+	const colorSelect2_public = document.getElementById('selectColorPlayerPublic2');
 
-document.querySelectorAll('.dropdown-item').forEach(item => {
-	item.addEventListener('click', (event) => {
-		event.preventDefault();
-		const selectedValue = event.target.getAttribute('data-nb-player');
-		localStorage.setItem('selectedValue', selectedValue);
-		window.location.reload();
+	playerName1_public.classList.add('color-player-none');
+	if (playerName2_public)
+		playerName2_public.classList.add('color-player-none');
+
+	colorSelect1_public.addEventListener('change', (event) => {
+		playerName1_public.classList.remove(
+			'color-player-red',
+			'color-player-green',
+			'color-player-blue',
+			'color-player-yellow',
+			'color-player-cyan',
+			'color-player-magenta',
+			'color-player-orange',
+			'color-player-purple',
+			'color-player-pink',
+			'color-player-gray',
+			'color-player-none'
+		);
+		
+		playerName1_public.classList.add(event.target.value);
+	});
+
+	colorSelect2_public.addEventListener('change', (event) => {
+		playerName2_public.classList.remove(
+			'color-player-red',
+			'color-player-green',
+			'color-player-blue',
+			'color-player-yellow',
+			'color-player-cyan',
+			'color-player-magenta',
+			'color-player-orange',
+			'color-player-purple',
+			'color-player-pink',
+			'color-player-gray',
+			'color-player-none'
+		);
+		
+		playerName2_public.classList.add(event.target.value);
 	});
 });
-
-function generateCards(count) {
-	cardContainer.innerHTML = '';
-	for (let i = 0; i < count; i++) {
-		const card = document.createElement('div');
-		card.classList.add('card-lobby-wait', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
-		
-		card.innerHTML = `
-			<div class="d-flex flex-column align-items-center">
-				<div class="spinner-border spinner-color mt-3" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
-			</div>
-			<div class="card-lobby-body d-flex align-items-center justify-content-center">
-				<p class="card-lobby-text">Waiting for player...</p>
-			</div>
-		`;
-		cardContainer.appendChild(card);
-	}
-}
