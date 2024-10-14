@@ -22,29 +22,29 @@
 					<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-hidden" style="height: calc(100vh - 80px); min-height: 300px;">
 						<a class="btn btn-primary btn-lobby shadow my-3 w-75 text-nowrap" href="lobby_tournament.html" role="button"><p class="my-1">Tournoi</p></a>
 						<a class="btn btn-primary btn-lobby shadow my-3 w-75 text-nowrap" href="lobby.html" role="button"><p class="my-1">Partie Rapide</p></a>
-						<a class="btn btn-primary btn-lobby shadow my-3 w-75 text-nowrap" href="lobby_private.html" role="button"><p class="my-1">Partie privée</p></a>
+						<a class="btn btn-primary btn-lobby shadow my-3 w-75 text-nowrap" href="#" role="button" data-bs-toggle="modal" data-bs-target="#gameModeModal"><p class="my-1">Partie privée</p></a>
+
+						<div class="modal fade" id="gameModeModal" tabindex="-1" aria-labelledby="gameModeModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title mx-auto" id="gameModeModalLabel">Choisissez un mode de jeu</h5>
+										<button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="d-flex justify-content-around mt-1">
+											<a href="lobby_private.html" class="btn btn-local-game w-45">Local</a>
+											<a href="lobby_private.html" class="btn btn-online-game w-45">En ligne</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				
 				<!-- Chat section -->
-				<div class="chat-container mx-2 w-25 d-flex flex-column" style="height: calc(100vh - 80px);">
-					<div class="chat-box my-2 flex-grow-1" id="chatBox" style="min-height: 200px;">
-						<div class="d-flex justify-content-between align-items-center overflow-auto header-chat">
-							<a class="btn ms-1 btn-header-chat" style="font-size: 1.5vw;">Global</a>
-							<a class="btn btn-header-chat" style="font-size: 1.5vw;">Lobby</a>
-							<a class="btn me-1 btn-header-chat" style="font-size: 1.5vw;">
-								<i class="bi bi-plus icon"></i>
-							</a>
-						</div>
-						<p class="mx-1 my-1 chat-txt">Robert: Yo</p>
-						<p class="mx-1 my-1 chat-txt">Jack: hi</p>
-					</div>
-
-					<div class="chat-input d-flex align-items-center">
-						<textarea id="chatMessageInput" class="form-control me-2" placeholder="Type your message..."></textarea>
-						<button class="btn btn-primary send-btn h-100" type="button">Send</button>
-					</div>
-				</div>
+				<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
 			</div>
 		</div>
 		<script src="js/script.js"></script>

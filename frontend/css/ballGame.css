@@ -43,3 +43,17 @@
 .ball.disappearing {
 	animation: disappear 0.5s forwards;
 }
+
+
+/* Ball connect page */
+
+#ball_connect {
+    width: 30px;
+    height: 30px;
+	border: solid 3px black;
+    border-radius: 50%;
+    background-color: red;
+    position: absolute;
+    transform: translate(-50%, -50%);
+	z-index: 1;
+}

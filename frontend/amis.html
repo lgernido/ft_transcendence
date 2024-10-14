@@ -79,30 +79,31 @@
 							Add friend
 						</a>
 					</div>
+
+
+
+					<button type="button" class="btn btn-warning w-25" id="liveToastBtn">Show live toast</button>
+
+					<!-- toast d'invite dans une partie -->
+					<div class="position-absolute end-0 top-0 m-3">
+						<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+							<div class="toast-body">
+								You have been invited to play by ...
+								<div class="mt-2 pt-2 border-top">
+									<a type="button" class="btn btn-sm btn-toast-join ms-3" href="lobby_private.html">Join</a>
+									<button type="button" class="btn btn-sm btn-toast-close ms-1" data-bs-dismiss="toast">Refuse</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<!-- Chat section -->
-				<div class="chat-container mx-2 w-25 d-flex flex-column" style="height: calc(100vh - 80px);">
-					<div class="chat-box my-2 flex-grow-1" id="chatBox" style="min-height: 200px;">
-						<div class="d-flex justify-content-between align-items-center overflow-auto header-chat">
-							<a class="btn ms-1 btn-header-chat" style="font-size: 1.5vw;">Global</a>
-							<a class="btn btn-header-chat" style="font-size: 1.5vw;">Lobby</a>
-							<a class="btn me-1 btn-header-chat" style="font-size: 1.5vw;">
-								<i class="bi bi-plus icon"></i>
-							</a>
-						</div>
-						<p class="mx-1 my-1 chat-txt">Robert: je suis robert et j'aime le chocolat</p>
-						<p class="mx-1 my-1 chat-txt">Jack: hi</p>
-					</div>
-
-					<div class="chat-input d-flex align-items-center">
-						<textarea id="chatMessageInput" class="form-control me-2" placeholder="Type your message..."></textarea>
-						<button class="btn btn-primary send-btn h-100" type="button">Send</button>
-					</div>
-				</div>
+				<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
 			</div>
 		</div>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
 		<script src="js/script.js"></script>
+		<script src="js/toast.js"></script>
 	</body>
 </html>

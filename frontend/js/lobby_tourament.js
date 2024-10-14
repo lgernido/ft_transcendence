@@ -1,6 +1,6 @@
 const savedValue = localStorage.getItem('selectedValue');
 const dropdownButton = document.getElementById('dropdownButton');
-const cardContainer = document.getElementById('cardContainer');
+const cardContainer = document.getElementById('cardContainerTournament');
 
 if (savedValue) {
 	dropdownButton.textContent = `NB playeur: ${savedValue}`;
@@ -20,7 +20,7 @@ function generateCards(count) {
 	cardContainer.innerHTML = '';
 	for (let i = 0; i < count; i++) {
 		const card = document.createElement('div');
-		card.classList.add('card-lobby-wait', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
+		card.classList.add('card-lobby-wait-tournament', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
 		
 		card.innerHTML = `
 			<div class="d-flex flex-column align-items-center">

@@ -57,3 +57,35 @@ h3 {
 	color: var(--color-white);
 	background-color: var(--color-btn);
 }
+
+.btn-toast-join {
+	border: solid 1px green;
+	background-color: #b9ffb9;
+}
+
+.btn-toast-close {
+	border: solid 1px red;
+	background-color: #ff9f9f;
+}
+
+.btn-local-game {
+	border:solid 1px #990037;;
+	background-color: #cf92a9;
+
+}
+
+.btn-local-game:hover {
+	border:solid 1px #990037;
+	background-color: #ce658c;
+
+}
+
+.btn-online-game {
+	border: solid 1px orange;
+	background-color: #ffd891;
+}
+
+.btn-online-game:hover {
+	border: solid 1px orange;
+	background-color: #ffc455;
+}

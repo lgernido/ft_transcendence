@@ -26,6 +26,25 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 
+/* permet d'inserer la page chat.html dans toutes les pages */
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('chat.html')
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Error network response');
+		}
+		return response.text();
+	})
+	.then(data => {
+		document.getElementById('chat-placeholder').innerHTML = data;
+
+            const currentPath = window.location.pathname;
+	})
+	.catch(error => {
+		console.error('There has been a problem with your fetch operation:', error);
+	});
+});
+
 /* permet d'adapter la couleur du texte en fonction de ce qui est ecris */
 document.addEventListener('DOMContentLoaded', function() {
     const results = document.querySelectorAll('.result');

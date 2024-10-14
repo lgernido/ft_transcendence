@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			resettingBall = true;
 			clearInterval(ballInterval);
 
-			ball.style.left = posBallX - 1.5 + '%';
+			ball.style.left = posBallX - 1 + '%';
 			ball.style.top = posBallY - 2 + '%';
 			if (posBallX - 1.5 <= 0) {
 				scrorePlayerRight++;
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			ball.classList.add('breaking');
 			updateScore();
 			await sleep(1000);
-			ball.classList.remove('disappearing');
+			// ball.classList.remove('disappearing');
 			ball.classList.remove('breaking')
 			resetBall();
 			resettingBall = false;

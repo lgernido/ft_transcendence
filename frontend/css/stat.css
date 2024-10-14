@@ -14,7 +14,7 @@
 .card-custom:hover {
     transform: scale(1.1);
 	transition: 0.6s;
-	background-color: black;
+	background-color: var(--color-black);
 	box-shadow: 2px 2px 2px var(--color-btn);
 }
 

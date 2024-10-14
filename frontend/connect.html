@@ -7,22 +7,37 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 		
 		<link href="css/my_style.css" rel="stylesheet">
+		<link href="css/ballGame.css" rel="stylesheet">
 		<link href="css/variable.css" rel="stylesheet">
 		<title>Pong Ping</title>
 	</head>
 
 	<body style="height: 100vh;">
-		<div>
+		<div style="position: relative; z-index: 2;">
 			<span class="fs-2 text mx-3 text-nowrap site-title" style="font-family: cursive;">PONG PING</span>
 			
-			<div class="text-center" style="margin-top: 30%;">
-				<a class="btn btn-primary me-3" href="#" role="button">Sign in With 42</a>
-				<a class="btn btn-primary" href="myPage.html" role="button">Sign Without 42</a>
+			<div class="d-flex flex-column align-items-center justify-content-center" style="margin-top: 20%;">
+				<div class="w-25">
+					<div class="form-floating mb-3">
+						<input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+						<label for="floatingInput">Email address</label>
+					</div>
+					<div class="form-floating mb-4">
+						<input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+						<label for="floatingPassword">Password</label>
+					</div>
+				</div>
 				<div>
-					<a class="btn btn-primary mt-4" href="#" role="button">Create account</a>
+					<a class="btn btn-primary me-3" href="#" role="button">Sign in With 42</a>
+					<a class="btn btn-primary" href="myPage.html" role="button">Se connecter</a>
+				</div>
+				<div>
+					<a class="btn btn-primary mt-4" href="create_account.html" role="button">Create account</a>
 				</div>
 			</div>
 		</div>
+		<div id="ball_connect"></div>
 		<script src="js/script.js"></script>
+		<script src="js/connect.js"></script>
 	</body>
 </html>
