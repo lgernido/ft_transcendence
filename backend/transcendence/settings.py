@@ -15,7 +15,7 @@ from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+ 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -34,6 +34,10 @@ PORT = 8000
 # Application definition
 
 INSTALLED_APPS = [
+    # 'django_otp',
+    # 'django_otp.plugins.otp_totp',
+    # 'django_otp.plugins.otp_static',
+    # 'two_factor',
     'rest_framework',
     'rest_framework_simplejwt',
     'django.contrib.admin',
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # 'django_otp.middleware.OTPMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -84,7 +89,7 @@ DATABASES = {
         'NAME': "superpongdb",
         'USER': "superpong",
         'PASSWORD': "gnoprepus",
-        'HOST': "db",
+        'HOST': "172.18.0.2",
         'PORT': "5432",
     }
 }

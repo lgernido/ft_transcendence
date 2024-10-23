@@ -4,3 +4,8 @@ psycopg2>=2.9
 django-bootstrap-v5
 djangorestframework>=3.13
 djangorestframework-simplejwt
+django-otp
+django-formtools
+django-two-factor-auth
+phonenumbers
+python-dotenv
