@@ -1,0 +1,65 @@
+#camembert  {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+}
+ 
+#camembert svg {
+    display: block;
+    margin: 0 auto;
+    width: auto;
+    padding: 30px;
+}
+ 
+#camembert path:hover {
+    fill: var(--color-back);
+    cursor: pointer;
+}
+ 
+#camembert ul {
+    width: auto;
+    padding: 30px 20px;
+}
+ 
+#camembert ul li {
+    list-style-type: none;
+}
+ 
+#camembert span {
+    display: inline-block;
+    border: 1px solid var(--color-white);
+    height: 20px;
+    width: 30px;
+    margin-right: 10px;
+    position: relative;
+    top: 5px;
+}
+ 
+#camembert #vert {background: #27AE60;}
+#camembert #orange {background: #ff7b00;}
+#camembert #rouge {background: #ee1e1e;}
+ 
+/* Media Query pour grand écran > 650px */
+@media screen and (min-width: 650px) {
+ 
+    #camembert {
+        grid-template-rows: auto auto;
+        grid-template-columns: 1fr 1fr;
+        grid-area: auto;
+    }
+    #camembert svg {
+        grid-row: 2/3;
+        grid-column: 1/2;
+        padding: 10px;
+    }
+    #camembert ul {
+        grid-row: 2/3;
+        grid-column: 2/3;
+        margin-top: 50px;
+        border-top: none;
+        padding: 0;
+    }
+}

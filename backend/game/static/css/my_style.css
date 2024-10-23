@@ -1,0 +1,89 @@
+body {
+	background: var(--color-back);
+	background: linear-gradient(190deg, var(--color-back) 0%, var(--color-black) 50%, var(--color-back) 100%);
+	min-width: 600px;
+}
+
+.site-title {
+	color: cadetblue;
+}
+
+h2 {
+	color: var(--color-white);
+}
+
+h3 {
+	color: var(--color-white);
+}
+
+.text {
+	color: var(--color-white);
+}
+
+.btn-primary {
+	background-color: var(--color-btn);
+	border-color: var(--color-black);
+	border-width: 2px;
+	color: var(--color-black);
+	transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+	background-color:var(--color-back);
+	border-color: var(--color-black);
+	
+}
+
+.btn-primary:focus {
+	background-color: var(--color-black);
+	color: var(--color-white);
+	border-color: var(--color-white);
+}
+
+.btn-lobby {
+	overflow: hidden;
+	background-color: var(--color-back);
+	min-height: 50px;
+	font-size: 2vw;
+}
+
+.btn-exit {
+	background-color: rgb(223, 35, 35);
+}
+
+.btn-add {
+	color: var(--color-white);
+	background-color: var(--color-btn);
+}
+
+.btn-toast-join {
+	border: solid 1px green;
+	background-color: #b9ffb9;
+}
+
+.btn-toast-close {
+	border: solid 1px red;
+	background-color: #ff9f9f;
+}
+
+.btn-local-game {
+	border:solid 1px #990037;;
+	background-color: #cf92a9;
+
+}
+
+.btn-local-game:hover {
+	border:solid 1px #990037;
+	background-color: #ce658c;
+
+}
+
+.btn-online-game {
+	border: solid 1px orange;
+	background-color: #ffd891;
+}
+
+.btn-online-game:hover {
+	border: solid 1px orange;
+	background-color: #ffc455;
+}
