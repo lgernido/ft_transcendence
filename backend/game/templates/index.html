@@ -14,33 +14,46 @@
 	<body style="height: 100vh;">
 		<div style="position: relative; z-index: 2;">
 			<span class="fs-2 text mx-3 text-nowrap site-title" style="font-family: cursive;">PONG PING</span>
-			
-			<div class="d-flex flex-column align-items-center justify-content-center" style="margin-top: 20%;">
+
+			<form class="d-flex flex-column align-items-center justify-content-center" id="login-form" method="POST" style="margin-top: 20%;" action="{% url 'home_page' %}">
+				{% csrf_token %}
 				<div class="w-25">
 					<div class="form-floating mb-3">
-						<input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-						<label for="floatingInput">Email address</label>
+						<input type="" name="username_connect" class="form-control" id="InputUsername" placeholder="ID" required>
+						<label for="InputUsername">Identifiant</label>
 					</div>
 					<div class="form-floating mb-4">
-						<input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-						<label for="floatingPassword">Password</label>
+						<input type="password" name="password_connect" class="form-control" id="InputPassword" placeholder="Password" required>
+						<label for="InputPassword">Password</label>
 					</div>
 				</div>
 				<div>
 					<a class="btn btn-primary me-3" href="#" role="button">Sign in With 42</a>
-					<a class="btn btn-primary" href="{% url 'myPage' %}" role="button">Se connecter</a>
+					<button type="submit" class="btn btn-primary">Se connecter</button>
 				</div>
 				<div>
-					<a class="btn btn-primary mt-4" href="{% url 'create_account' %}" role="button">Create account</a>
+					<a class="btn btn-primary mt-4" href="{%url 'create_account' %}" role="button">Create account</a>
 				</div>
-			</div>
-		</div>
-		<div id="ball_connect"></div>
+			</form>
 
-		<script src="{% static 'js/script.js' %}"></script>
+		</div>
+		{% if messages %}
+			<div class="position-absolute justify-content-center" style="top: 20px; right: 20px; width: 25%;">
+				{% for message in messages %}
+					<div class="alert alert-info alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		<div id="ball_connect"></div>
 		<script src="{% static 'js/connect.js' %}"></script>
 	</body>
 </html>
 
 <!-- Permet de creer les sessions -->
 <!-- docker-compose exec backend python manage.py migrate --> 
+<!-- docker-compose exec backend python manage.py makemigrations -->
+<!-- docker-compose exec backend python manage.py migrate --> 
+<!-- docker-compose exec backend python manage.py createsuperuser -->

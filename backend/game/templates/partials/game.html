@@ -24,7 +24,7 @@
 					<div class="border border-dark rounded d-flex flex-column align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
 						<div class="fs-5 fw-bold mt-3 d-flex">
 							<!-- <div class="player-name player-left" id="playerLeft">jaiunnomvraimenttropcestrelou</div> -->
-							<div class="player-name player-left" id="playerLeft">Bob</div>
+							<div class="player-name player-left" id="playerLeft">{{ user.username }}</div>
 							<span class="vs">VS</span>
 							<div class="player-name player-right" id="playerRight">Jacob</div>
 						</div>
@@ -37,7 +37,6 @@
 							</div>
 						</div>
 						<div class="text fs-5 fw-bold mb-4 px-3 show-score d-flex">
-							<p>limite de point: {{ max_point }}</p>
 							<p class="mx-2" id="scorePLeft"></p> - <p class="mx-2" id="scorePRight"></p>
 						</div>
 					</div>

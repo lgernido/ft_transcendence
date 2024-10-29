@@ -1,16 +1,9 @@
 function drawCamembert() {
-    const data = {
-        victoires: 8,
-        defaites: 1,
-        draw: 3
-    };
-
-    // Mettre à jour la légende avec les valeurs actuelles
     function updateLegend() {
-        document.getElementById("nb-win").textContent = data.victoires;
-        document.getElementById("nb-loss").textContent = data.defaites;
-        document.getElementById("nb-draw").textContent = data.draw;
-        document.getElementById("nb-game").textContent = data.victoires + data.defaites + data.draw;
+        document.getElementById("nb-win").textContent = gamesWin;
+        document.getElementById("nb-loss").textContent = gamesLose;
+        document.getElementById("nb-draw").textContent = gamesDraw;
+        document.getElementById("nb-game").textContent = gamesWin + gamesLose + gamesDraw;
     }
 
     updateLegend();
@@ -42,11 +35,11 @@ function drawCamembert() {
     const cy = 100;
     const radius = 80;
 
-    const total = data.victoires + data.defaites + data.draw;
+    const total = gamesWin + gamesLose + gamesDraw;
     const angles = {
-        victoires: (data.victoires / total) * 360,
-        defaites: (data.defaites / total) * 360,
-        draw: (data.draw / total) * 360
+        victoires: (gamesWin / total) * 360,
+        defaites: (gamesLose / total) * 360,
+        draw: (gamesDraw / total) * 360
     };
 
     const svg = document.getElementById('drawgraph');
@@ -59,16 +52,24 @@ function drawCamembert() {
     let startAngle = 0;
     let i = 0;
 
-    // Dessiner les secteurs du camembert
     for (const key in angles) {
         const endAngle = startAngle + angles[key];
-
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", describeArc(cx, cy, radius, startAngle, endAngle));
-        path.setAttribute("fill", colors[i]);
-
-        svg.appendChild(path);
-
+        if (angles[key] == 360) {
+            const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path1.setAttribute("d", describeArc(cx, cy, radius, 0, 180));
+            path1.setAttribute("fill", colors[i]);
+            svg.appendChild(path1);
+            path2.setAttribute("d", describeArc(cx, cy, radius, 180, 360));
+            path2.setAttribute("fill", colors[i]);
+            svg.appendChild(path2);
+        }
+        else if (angles[key] != 0) {
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", describeArc(cx, cy, radius, startAngle, endAngle));
+            path.setAttribute("fill", colors[i]);
+            svg.appendChild(path);
+        }
         startAngle = endAngle;
         i++;
     }

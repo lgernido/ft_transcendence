@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	playerName1_public.classList.add('color-player-none');
 	if (playerName2_public)
 		playerName2_public.classList.add('color-player-none');
-	else
-		 ;
 
 	colorSelect1_public.addEventListener('change', (event) => {
 		playerName1_public.classList.remove(
@@ -25,27 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
 			'color-player-gray',
 			'color-player-none'
 		);
-		
 		playerName1_public.classList.add(event.target.value);
 	});
 
-	colorSelect2_public.addEventListener('change', (event) => {
-		playerName2_public.classList.remove(
-			'color-player-red',
-			'color-player-green',
-			'color-player-blue',
-			'color-player-yellow',
-			'color-player-cyan',
-			'color-player-magenta',
-			'color-player-orange',
-			'color-player-purple',
-			'color-player-pink',
-			'color-player-gray',
-			'color-player-none'
-		);
-		
-		playerName2_public.classList.add(event.target.value);
-	});
+	if (colorSelect2_public) {
+		colorSelect2_public.addEventListener('change', (event) => {
+			playerName2_public.classList.remove(
+				'color-player-red',
+				'color-player-green',
+				'color-player-blue',
+				'color-player-yellow',
+				'color-player-cyan',
+				'color-player-magenta',
+				'color-player-orange',
+				'color-player-purple',
+				'color-player-pink',
+				'color-player-gray',
+				'color-player-none'
+			);
+			playerName2_public.classList.add(event.target.value);
+		});
+	}
 });
 
 document.getElementById('btn-ready').addEventListener('click', function() {

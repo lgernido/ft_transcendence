@@ -16,4 +16,5 @@ urlpatterns = [
     path('compte/', views.compte, name='compte'),
 	path('header/', views.header, name='header'),
     path('store_colors/', views.store_colors, name='store_colors'),
+	path('', views.logout_view, name='logout'),
 ]
