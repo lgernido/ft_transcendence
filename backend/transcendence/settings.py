@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # 'django_otp.plugins.otp_totp',
     # 'django_otp.plugins.otp_static',
     # 'two_factor',
+    'oauth2_provider',
     'rest_framework',
     'rest_framework_simplejwt',
     'django.contrib.admin',
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user',
+    'game',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +166,5 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
+
+LOGIN_URL = '/admin/login'

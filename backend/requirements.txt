@@ -9,3 +9,4 @@ django-formtools
 django-two-factor-auth
 phonenumbers
 python-dotenv
+django-oauth-toolkit
