@@ -1,9 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
+function validChanges() {
 	document.getElementById('profileImageButton').addEventListener('click', function() {
 		document.getElementById('profileImageInput').click();
 	});
 
-	// Écoutez l'événement de changement sur l'input pour gérer l'importation de l'image
 	document.getElementById('profileImageInput').addEventListener('change', function(event) {
 		const file = event.target.files[0];
 		
@@ -24,4 +23,4 @@ document.addEventListener('DOMContentLoaded', () => {
 			reader.readAsDataURL(file);
 		}
 	});
-});
+}

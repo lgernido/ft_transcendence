@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	let ballDirectionX = (Math.random() < 0.5 ? -1 : 1) * (Math.random() * 1 + 0.5);
 	let ballDirectionY = (Math.random() < 0.5 ? -1 : 1) * (Math.random() * 1 + 0.5);
 
-	let ballX = 50;
-	let ballY = 50;
+	let ballX = 100;
+	let ballY = 100;
 
 	function getRandomColor() {
 		const letters = '0123456789ABCDEF';

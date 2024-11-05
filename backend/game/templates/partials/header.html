@@ -1,19 +1,19 @@
 <header>
 	<div class="d-flex my-2 justify-content-between overflow-hidden ">
 		<span class="fs-2 text mx-3 text-nowrap site-title" style="font-family: cursive;">PONG PING</span>
-		<a class="btn btn-primary btn-header shadow icon-with-text" href="{% url 'myPage' %}" role="button">
+		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadMyPage()" role="button">
 			<i class="bi bi-house-fill icon"></i>
 			<span class="text-header">Home</span>
 		</a>
-		<a class="btn btn-primary btn-header shadow icon-with-text" href="{%url 'stats' %}" role="button">
+		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadStats()" role="button">
 			<i class="bi bi-file-bar-graph-fill icon"></i>
 			<span class="text-header">Stats</span>
 		</a>
-		<a class="btn btn-primary btn-header shadow icon-with-text" href="{%url 'amis' %}" role="button">
+		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadFriends()" role="button">
 			<i class="bi bi-people-fill icon"></i>
 			<span class="text-header">Friends</span>
 		</a>
-		<a class="btn btn-primary btn-header shadow icon-with-text" href="{%url 'compte' %}" role="button">
+		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadAccount()" role="button">
 			<i class="bi bi-gear-fill icon"></i>
 			<span class="text-header">Settings</span>
 		</a>
@@ -25,7 +25,7 @@
 		</form>
 	</div>
 
-	{% if messages %}
+	<!-- {% if messages %}
 		<div class="position-absolute justify-content-center" style="top: 20px; right: 20px; width: 25%;">
 			{% for message in messages %}
 				<div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -34,5 +34,5 @@
 				</div>
 			{% endfor %}
 		</div>
-	{% endif %}
+	{% endif %} -->
 </header>

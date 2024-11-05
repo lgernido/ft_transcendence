@@ -1,6 +1,6 @@
 FROM python:3.12
 
-WORKDIR /backend
+WORKDIR /code/backend
 
 COPY . /backend/
 

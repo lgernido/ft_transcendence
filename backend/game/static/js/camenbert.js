@@ -75,8 +75,8 @@ function drawCamembert() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.pathname === "/stats/") {
-        drawCamembert();
-    }
-});
+// document.addEventListener('DOMContentLoaded', function() {
+//     if (window.location.pathname === "/stats/") {
+//         drawCamembert();
+//     }
+// });

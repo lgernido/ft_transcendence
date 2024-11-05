@@ -41,6 +41,22 @@
     }
 }
 
+.winner-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s, transform 1s;
+}
+
+.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
 .slide-in-left {
     animation: slideInLeft 2s forwards;
 }
