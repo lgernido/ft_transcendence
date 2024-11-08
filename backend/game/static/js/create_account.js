@@ -1,5 +1,4 @@
 function ValidFormCreateAccount() {   
-    // Réinitialiser le message d'erreur
     displayError('');
     document.getElementById('submitButton').addEventListener('click', function() {
         const emailInput = document.getElementById('floatingInputEmail');
@@ -8,7 +7,6 @@ function ValidFormCreateAccount() {
         const password2 = document.getElementById('floatingInputPassword2').value;
 
         if (!emailInput.value || !username || !password || !password2) {
-            console.log("Champ vide");
             displayError('Veuillez remplir tous les champs !');
             return;
         }
@@ -20,20 +18,12 @@ function ValidFormCreateAccount() {
             return;
         }
 
-        // if (password !== password2) {
-        //     console.log("password different");
-        //     displayError('Les mots de passe ne correspondent pas !');
-        //     return;
-        // }
-
         const formData = {
             email: emailInput.value,
             username: username,
             password: password,
             password2: password2,
         };
-
-        console.log("All infos corect");
 
         fetch('/create_account/', {
             method: 'POST',
@@ -44,7 +34,6 @@ function ValidFormCreateAccount() {
             }
         })
         .then(response => {
-            submitButton.disabled = false;
             if (!response.ok) {
                 return response.json().then(data => { 
                     throw new Error(data.error || 'Erreur inconnue'); 

@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from django.http import JsonResponse
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import *
-from django.contrib import messages
+from .models import Game
 import json
 
 @csrf_exempt
@@ -27,52 +27,26 @@ def store_colors(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def home(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username_connect')
-#         password = request.POST.get('password_connect')
-
-#         user = authenticate(request, username=username, password=password)
-
-#         if user is not None:
-#             login(request, user)
-#             return JsonResponse({'success': True})
-#         else:
-#             return JsonResponse({'error': 'Echec lors de la connection'}, status=400)
-    return render(request, '/index.html')
-
-@csrf_exempt
-def create_account(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-
-        email = data.get('email')
-        username = data.get('username')
-        password = data.get('password')
-        password2 = data.get('password2')
-
-        if not email or not username or not password or not password2:
-            return JsonResponse({'error': 'Tous les champs sont requis.'}, status=400)
-
-        if password != password2:
-            return JsonResponse({'error': 'Les mots de passe ne correspondent pas.'}, status=400)
-
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Ce nom d utilisateur est deja pris.'}, status=400)
-        
-        if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Cet email est deja utilise.'}, status=400)
-
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.save()
-
-        profile = Profile.objects.create(user=user)
-        profile.save()
-        return JsonResponse({'success': True})
-
-    return render(request, 'partials/create_account.html')
+    return render(request, 'index.html')
 
 # @login_required
-def my_page(request):
+@csrf_exempt
+def mypage(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'error': 'Username or password invalid'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
     return render(request, 'partials/mypage.html')
 
 # @login_required
@@ -140,7 +114,7 @@ def lobby(request):
 def amis(request):
     return render(request, 'partials/amis.html')
 
-# @login_required
+@login_required
 def compte(request):
     if request.method == 'POST':
         user = request.user
@@ -149,9 +123,11 @@ def compte(request):
         username = request.POST.get('change_username')
         password = request.POST.get('change_password')
 
+        if not username or not email:
+            return JsonResponse({'error': 'Username and email are required.'}, status=400)
+        
         if User.objects.exclude(pk=user.pk).filter(username=username).exists():
-            messages.error(request, "Ce nom d'utilisateur est deja pris.")
-            return render(request, 'partials/compte.html', {'user': user})
+            return JsonResponse({'error': 'Username already used'}, status=400)
 
         user.email = email
         user.username = username
@@ -159,11 +135,11 @@ def compte(request):
         if password:
             user.set_password(password)
             user.save()
-            return render(request, 'index.html')
+            update_session_auth_hash(request, user)  # Reauthentifie automatiquement l'utilisateur
+            return JsonResponse({'success': True})
 
         user.save()
-        messages.success(request, "Profil mis à jour avec succes !")
-        render(request, 'partials/compte.html')
+        return JsonResponse({'success': True})
 
     return render(request, 'partials/compte.html', {'user': request.user})
 
@@ -175,7 +151,6 @@ def header(request):
 # @login_required
 def logout_view(request):
     logout(request)
-    messages.success(request, "Deconnecte !")
     return render(request, 'index.html')
     
 

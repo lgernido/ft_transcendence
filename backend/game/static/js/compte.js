@@ -1,4 +1,6 @@
 function validChanges() {
+	displayError('');
+
 	document.getElementById('profileImageButton').addEventListener('click', function() {
 		document.getElementById('profileImageInput').click();
 	});
@@ -23,4 +25,60 @@ function validChanges() {
 			reader.readAsDataURL(file);
 		}
 	});
+
+	document.getElementById('saveChangesAccount').addEventListener('click', function() {
+		const email = document.getElementById('modifEmailAccount').value;
+        const username = document.getElementById('modifUsernameAccount').value;
+        const password = document.getElementById('modifPasswordAccount').value;
+
+		if (!email || !username) {
+			displayError('Veuillez remplir tous les champs !');
+            return;
+		}
+
+		const formData = {
+            email: email,
+            username: username,
+            password: password,
+        };
+
+		fetch('/compte/', {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => { 
+                    throw new Error(data.error || 'Erreur inconnue'); 
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                loadAccount();
+            } else if (data.error) {
+                displayError(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la création du compte :', error);
+            displayError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+        });
+	});
+}
+
+function displayError(message) {
+    const errorMessageElement = document.getElementById('error-message');
+    if (message) {
+        errorMessageElement.innerText = message;
+        errorMessageElement.style.display = 'block';
+    }
+    else {
+        errorMessageElement.style.display = 'none';
+    }
 }

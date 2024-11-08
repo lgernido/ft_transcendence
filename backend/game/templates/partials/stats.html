@@ -1,54 +1,51 @@
 {% load static %}
-<div class="min-vh-100 overflow-auto">
-	<div id="header-placeholder"></div>
-	<div class="d-flex" style="height: calc(100vh - 80px);">
-		<div class="border border-dark rounded m-2 w-75 px-5 flex-grow-1 d-flex flex-column align-items-center overflow-auto">
-			<div class="d-flex justify-content-between w-100">
-				<div class="d-flex flex-column align-items-center my-3 me-2 card-custom">
-					<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-					<h2>Bob</h2>
-					<p class="result">Win</p>
-				</div>
-				<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
-					<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-					<h2>Carlos</h2>
-					<p class="result">Lose</p>
-				</div>
-				<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
-					<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-					<h2>Jacob</h2>
-					<p class="result">Win</p>
-				</div>
-				<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
-					<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-					<h2>Carlos</h2>
-					<p class="result">Draw</p>
-				</div>
+<div class="d-flex" style="height: calc(100vh - 100px);">
+	<div class="border border-dark rounded m-2 w-75 px-5 flex-grow-1 d-flex flex-column align-items-center overflow-auto">
+		<div class="d-flex justify-content-between w-100">
+			<div class="d-flex flex-column align-items-center my-3 me-2 card-custom">
+				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
+				<h2>Bob</h2>
+				<p class="result">Win</p>
 			</div>
-			<div class="w-100 my-5 stat-container">
-				<h3 class="m-4 fw-bold">Statistiques Player</h3>
-				<section id="camembert">
-					<svg id="drawgraph" width="210" height="210" xmlns="http://www.w3.org/2000/svg">
-						<circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="5" />
-					</svg>
-					<ul>
-						<li id="liVert" class="d-flex"><span id="vert"></span> Win :<p id="nb-win" class="ms-2"></p></li>
-						<li id="liRouge" class="d-flex"><span id="rouge"></span> Loss :<p id="nb-loss" class="ms-2"></p></li>
-						<li id="liOrange" class="d-flex"><span id="orange"></span> Draw :<p id="nb-draw" class="ms-2"></p></li>
-					</ul>
-				</section>
-				<div class="m-4 align-items-center d-flex justify-content-between">
-					<li class="d-flex fw-bold" style="list-style-type: none;">Total Partie :<p id="nb-game" class="mx-2"></p></li>
-					<p class="fw-bold">Classement global : #3</p>
-					<p class="fw-bold">Classement amis : #3</p>
-					<p class="fw-bold">Nb tournoi gagne : 0</p>
-				</div>
+			<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
+				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
+				<h2>Carlos</h2>
+				<p class="result">Lose</p>
+			</div>
+			<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
+				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
+				<h2>Jacob</h2>
+				<p class="result">Win</p>
+			</div>
+			<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
+				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
+				<h2>Carlos</h2>
+				<p class="result">Draw</p>
 			</div>
 		</div>
-
-		<!-- Chat section -->
-		<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
+		<div class="w-100 my-5 stat-container">
+			<h3 class="m-4 fw-bold">Statistiques Player</h3>
+			<section id="camembert">
+				<svg id="drawgraph" width="210" height="210" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="5" />
+				</svg>
+				<ul>
+					<li id="liVert" class="d-flex"><span id="vert"></span> Win :<p id="nb-win" class="ms-2"></p></li>
+					<li id="liRouge" class="d-flex"><span id="rouge"></span> Loss :<p id="nb-loss" class="ms-2"></p></li>
+					<li id="liOrange" class="d-flex"><span id="orange"></span> Draw :<p id="nb-draw" class="ms-2"></p></li>
+				</ul>
+			</section>
+			<div class="m-4 align-items-center d-flex justify-content-between">
+				<li class="d-flex fw-bold" style="list-style-type: none;">Total Partie :<p id="nb-game" class="mx-2"></p></li>
+				<p class="fw-bold">Classement global : #3</p>
+				<p class="fw-bold">Classement amis : #3</p>
+				<p class="fw-bold">Nb tournoi gagne : 0</p>
+			</div>
+		</div>
 	</div>
+
+	<!-- Chat section -->
+	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
 </div>
 
 <script>

@@ -35,6 +35,14 @@ document.addEventListener('DOMContentLoaded', function () {
     loadheader();
 });
 
+function loadscript(file, func) {
+    const script = document.createElement('script');
+    script.src = "/static/js/" + file;
+    document.body.appendChild(script);
+    script.onload = () => {
+        func();
+    }
+}
 
 function loadConnectPage() {
     const appDiv = document.getElementById('app');
@@ -47,6 +55,7 @@ function loadConnectPage() {
         })
         .then(html => {
             appDiv.innerHTML = html;
+            loadscript('valid_login.js', () => ValidConnection());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -65,12 +74,7 @@ function loadCreateAccount() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/create_account.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                ValidFormCreateAccount();
-            }
+            loadscript('create_account.js', () => ValidFormCreateAccount());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -88,6 +92,8 @@ function loadMyPage() {
         })
         .then(html => {
             appDiv.innerHTML = html;
+
+            loadscript('loadelement.js', () => loadchat());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -106,12 +112,8 @@ function loadStats() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/camenbert.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                drawCamembert();
-            }
+            loadscript('camenbert.js', () => drawCamembert());
+            loadscript('loadelement.js', () => loadchat());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -129,6 +131,8 @@ function loadFriends() {
         })
         .then(html => {
             appDiv.innerHTML = html;
+
+            loadscript('loadelement.js', () => loadchat());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -148,12 +152,7 @@ function loadAccount()
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/compte.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                validChanges();
-            }
+            loadscript('compte.js', () => validChanges());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -173,12 +172,8 @@ function loadTournament()
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/lobby_tournament.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                tournament();
-            }
+            loadscript('loadelement.js', () => loadchat());
+            loadscript('lobby_tournament.js', () => tournament());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -197,12 +192,8 @@ function loadPublic() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/lobby.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                lobby();
-            }
+            loadscript('loadelement.js', () => loadchat());
+            loadscript('lobby.js', () => lobby());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -221,12 +212,8 @@ function loadPrivate() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/lobby.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                lobby_private();
-            }
+            loadscript('loadelement.js', () => loadchat());
+            loadscript('lobby_private.js', () => lobby_private());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -245,12 +232,8 @@ function loadGame() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const script = document.createElement('script');
-            script.src = "/static/js/game.js";
-            document.body.appendChild(script);
-            script.onload = () => {
-                startCountdown();
-            }
+            loadscript('loadelement.js', () => loadchat());
+            loadscript('game.js', () => lauchgame());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
