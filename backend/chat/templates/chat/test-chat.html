@@ -1,0 +1,47 @@
+<!-- send_private_message.html -->
+
+  <h1>Send Private Message</h1>
+
+  <div id="chat-container">
+    <!-- Zone de message -->
+    <div id="messages"></div>
+
+    <!-- Formulaire pour envoyer un message -->
+    <textarea id="message" class="form-control" placeholder="Write your message..."></textarea>
+    <button id="send-message" class="btn btn-primary">Send Message</button>
+  </div>
+
+  <p><a href="" >Back to profile</a></p>
+
+
+<script>
+  const channelId = "{{ channel.id }}";  // ID du canal privé
+  const user = "{{ user.username }}";  // Nom de l'utilisateur actuel
+  
+  // Connecter le WebSocket
+  const socket = new WebSocket(
+    `ws://${window.location.host}/ws/chat/${channelId}/`
+  );
+
+  // Écouter les messages entrants
+  socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const messageContainer = document.getElementById('messages');
+    messageContainer.innerHTML += `<p>${data.message}</p>`;
+  };
+
+  // Envoyer un message via WebSocket
+  document.getElementById('send-message').onclick = function() {
+    const message = document.getElementById('message').value;
+
+    if (message) {
+      // Envoyer le message à travers le WebSocket
+      socket.send(JSON.stringify({
+        'message': message,
+      }));
+
+      // Vider le champ de message
+      document.getElementById('message').value = '';
+    }
+  };
+</script>
