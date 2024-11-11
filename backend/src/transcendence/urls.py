@@ -21,5 +21,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', include('game.urls')),
 	path('chat2/', include('chat.urls')),
-	# path('users/', include('users.urls')),
 ]

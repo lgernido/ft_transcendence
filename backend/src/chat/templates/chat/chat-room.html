@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXhW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'chat/css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <title>Messagerie</title>
 
 </head>
@@ -58,112 +58,71 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const userSearchInput = document.getElementById("userSearchInput");
-            const userList = document.getElementById("userList");
-            const messageInput = document.getElementById("message-input");
-            const messageForm = document.getElementById("message-form");
-            const messagesContainer = document.querySelector(".messages-container");
-            const chatArea = document.getElementById("chat-area");
-
-            let currentChatSocket = null;
-            let currentUserId = null;
-
-            function openChat(channelId) {
-                if (currentChatSocket) {
-                    currentChatSocket.close();
-                }
-                currentUserId = channelId;
-                const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-                currentChatSocket = new WebSocket(`${wsProtocol}://${window.location.host}/ws/chat/${channelId}/`);
-                
-                currentChatSocket.onopen = function () {
-                    console.log("Connected to WebSocket for channel ID:", channelId);
-                    messagesContainer.innerHTML = '';
-                };
-
-                currentChatSocket.onmessage = function (event) {
-                    const data = JSON.parse(event.data);
-                    addMessage(data.sender, data.message, data.timestamp, data.message_id);
-                };
-
-                currentChatSocket.onclose = function () {
-                    console.log("WebSocket connection closed");
-                };
-
-                window.addEventListener("beforeunload", () => {
-                    if (currentChatSocket) {
-                        currentChatSocket.close();
-                    }
-                });
+          let userList = document.getElementById('userList');
+          userList.innerHTML = '';
+        // Recherche d'utilisateur
+        document.getElementById('userSearchInput').addEventListener('input', function() {
+            const query = this.value;
+            
+            if (query.length >= 2) {
+                // fetch(`/chat2/search-users/${query}`)
+                fetch(`/chat2/search-users?query=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        let userList = document.getElementById('userList');
+                        userList.innerHTML = '';
+    
+                        data.results.forEach(user => {
+                            const userEntry = document.createElement('div');
+                            userEntry.classList.add('user-entry', 'd-flex', 'align-items-center', 'mb-3');
+                            userEntry.innerHTML = `
+                                <img src="" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
+                                <div><strong>${user.username}</strong></div>
+                            `;
+                            userEntry.addEventListener('click', () => createChannel(user.id));
+                            userList.appendChild(userEntry);
+                        });
+                    });
             }
-
-            function addMessage(sender, message, timestamp, messageId) {
-                const messageElement = document.createElement("div");
-                messageElement.classList.add("message");
-                messageElement.innerHTML = `
-                    <strong>${sender}</strong>: ${message} <br>
-                    <small>${timestamp}</small>
-                `;
-                messagesContainer.appendChild(messageElement);
-            }
-
-            messageForm.addEventListener("submit", function (event) {
-                event.preventDefault();
-                const message = messageInput.value.trim();
-                if (message && currentChatSocket) {
-                    currentChatSocket.send(JSON.stringify({
-                        "message": message,
-                    }));
-                    messageInput.value = "";
-                }
-            });
-
-            userList.addEventListener("click", function (event) {
-                const userEntry = event.target.closest(".user-entry");
-                if (userEntry) {
-                    const channelId = userEntry.getAttribute("data-channel-id");
-                    openChat(channelId);
-                }
-            });
-
-            userSearchInput.addEventListener('input', function() {
-                var query = this.value;
-                
-                if (query.length >= 2) {
-                    fetch(`/search-users/?query=${query}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                console.error(response);
-                                throw new Error('La réponse du réseau n\'était pas correcte');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log(data);
-                            let resultsContainer = document.getElementById('userListResults');
-                            resultsContainer.innerHTML = '';
-
-                            data.results.forEach(user => {
-                                console.log(user);
-                                let userEntry = document.createElement('div');
-                                userEntry.classList.add('user-entry', 'd-flex', 'align-items-center', 'mb-3');
-                                userEntry.setAttribute('data-channel-id', user.channel_id); // Supposons que vous avez channel_id dans les données utilisateur
-                                userEntry.innerHTML = `
-                                    <div>
-                                        <div class="user-details">
-                                            <strong>${user.username}</strong>
-                                        </div>
-                                    </div>
-                                `;
-                                resultsContainer.appendChild(userEntry);
-                            });
-                        })
-                        .catch(error => console.error('Erreur lors de la récupération des résultats de recherche:', error));
-                }
-            });
         });
+    
+        // Création de canal privé
+        function createChannel(userId) {
+            fetch(`/create_private_channel/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                openChat(data.channel_id);
+            });
+        }
+    
+        // Ouverture d'un chat avec WebSocket
+        function openChat(channelId) {
+            const socket = new WebSocket(`ws://${window.location.host}/ws/chat/${channelId}/`);
+    
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const messageContainer = document.querySelector('.messages-container');
+                const messageElement = document.createElement('p');
+                messageElement.classList.add(data.sender === '{{ user.username }}' ? 'send' : 'receive');
+                messageElement.textContent = `${data.sender}: ${data.message}`;
+                messageContainer.appendChild(messageElement);
+            };
+    
+            document.getElementById('message-form').onsubmit = function(event) {
+                event.preventDefault();
+                const messageInput = document.getElementById('message-input');
+                socket.send(JSON.stringify({'message': messageInput.value}));
+                messageInput.value = '';
+            };
+        }
     </script>
+    
 </body>
 </html>
 
