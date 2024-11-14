@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    # path('search-users/<str:username>', views.search_users, name='search_users'),
-    path('search-users/', views.search_users, name='search_users'),
-	path('create_private_channel/<int:user_id>/', views.create_private_channel, name='create_private_channel'),
+    path('search_users/', views.search_users, name='search_users'),
+    path('load_messages/', views.load_messages, name='load_messages'),
+    path('get_current_user/', views.get_current_user, name='get_current_user'),
 ]

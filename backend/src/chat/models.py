@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from asgiref.sync import sync_to_async
 
 User = get_user_model()
 
@@ -11,6 +12,7 @@ class Channel(models.Model):
     ]
     
     id = models.AutoField(primary_key=True, unique=True)
+    unique_identifier = models.CharField(max_length=255, unique=True, blank=True, null=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     mode = models.IntegerField(choices=CHANNEL_TYPE)
@@ -21,6 +23,8 @@ class Channel(models.Model):
     def last_message(self):
         return self.messages.order_by('-timestamp').first()
     
+    @property
+    @sync_to_async
     def is_user_allowed(self, user):
         if self.mode == 1:  # Private message
             return self.users.count() == 2 and user in self.users.all()   

@@ -110,7 +110,7 @@ Styles généraux
 /* Style pour le bouton d'envoi avec une image PNG */
 button[type="submit"] {
     position: absolute;
-    right: 1a5px; /* Espace entre le bouton et le bord droit */
+    right: 15px; /* Espace entre le bouton et le bord droit */
     top: 50%;
     transform: translateY(-50%); /* Centre le bouton verticalement */
     border: none;

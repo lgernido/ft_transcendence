@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from .models import Channel, Message
@@ -12,18 +13,35 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.channel_id = self.scope['url_route']['kwargs']['channel_id']
         self.user = self.scope['user']
 
-        try:
-            self.channel = await sync_to_async(Channel.objects.get)(id=self.channel_id)
-        except Channel.DoesNotExist:
-            await self.close()
-            return
+         # Identifier le type de canal en fonction du préfixe
+        if self.channel_id.startswith("party_"):  # Canal de type 'party'
+            self.channel_id = self.channel_id[6:]  # Retirer le préfixe "&"
+            self.channel = await self.get_or_create_party_channel()
 
-        if not self.channel.is_user_allowed(self.user):
-            await self.close()
-            return
-        
-        self.group_name = f"channel_{self.channel_id}"
+        elif self.channel_id.startswith("public_"):  # Canal public
+            self.channel_id = self.channel_id[7:]  # Retirer le préfixe "#"
+            self.channel = await self.get_or_create_public_channel()
 
+        elif self.channel_id.startswith("private_"):  # Canal privé
+            user2_id = self.channel_id[8:]  # Retirer le préfixe "#"       
+            self.user1, self.user2 = await self.get_users(str(self.user.id), user2_id)
+            
+            if not self.user1 or not self.user2:
+                await self.close(code=4002)
+            self.channel = await self.get_or_create_channel(str(self.user.id), user2_id)
+        else:
+            await self.close(code=4001)
+
+        # # Vérifier si l'utilisateur est autorisé à rejoindre ce canal
+        # if not await self.channel.is_user_allowed(self.user):
+        #     await self.close(code=403)  # Code d'erreur 403 : accès refusé
+        #     return
+
+        # self.group_name = f"channel_{self.channel_id}"
+        self.group_name = f"channel_{self.channel.unique_identifier}"
+
+
+        # Ajouter le canal au groupe et accepter la connexion WebSocket
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name,
@@ -31,12 +49,66 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
+    @database_sync_to_async
+    def get_users(self, user1_id, user2_id):
+        """Récupère les deux utilisateurs en fonction de leurs ID."""
+        try:
+            user1 = User.objects.get(id=user1_id)
+            user2 = User.objects.get(id=user2_id)
+            return user1, user2
+        except User.DoesNotExist:
+            return None, None
+
+    @database_sync_to_async
+    def get_or_create_channel(self, user1_id, user2_id):
+        user1_id, user2_id = sorted([user1_id, user2_id])
+        id_chan = f"private_{user1_id}-{user2_id}"
+
+        # Si le canal n'existe pas, le créer
+        channel, created = Channel.objects.get_or_create(
+            unique_identifier=id_chan,
+            defaults={
+                'name': f'Private Channel {self.user1.username} & {self.user2.username}',
+                'mode': 1
+                }
+            )
+
+        if created:
+            channel.users.add(self.user1, self.user2)
+            channel.save()
+        return channel
+    
+    @database_sync_to_async
+    def get_or_create_public_channel(self):
+        """Crée ou récupère un canal public."""
+        channel, created = Channel.objects.get_or_create(
+            unique_identifier=self.channel_id,
+            defaults={
+                'name': f'Public Channel {self.channel_id}',
+                'mode': 2
+            }
+        )
+        return channel
+
+    @database_sync_to_async
+    def get_or_create_party_channel(self):
+        """Crée ou récupère un canal de type party."""
+        channel, created = Channel.objects.get_or_create(
+            unique_identifier=self.channel_id,
+            defaults={
+                'name': f'Party Channel {self.channel_id}',
+                'mode': 3
+            }
+        )
+        return channel
+        
+#====================================================================================================
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name
         )
-
+#====================================================================================================
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']

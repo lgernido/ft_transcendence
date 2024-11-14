@@ -10,23 +10,23 @@ all help:
 	@echo "  shell              : Ouvre un shell Django"
 
 start:
-	docker-compose up --build
+	docker compose up --build
 
 stop:
-	docker-compose down
+	docker compose down
 
 restart:
-	docker-compose down && docker-compose up --build
+	docker compose down && docker compose up --build
 
 makemigrations:
-	docker-compose exec backend python src/manage.py makemigrations
+	docker compose exec backend python src/manage.py makemigrations
 
 migrate:
-	docker-compose exec backend python src/manage.py migrate
+	docker compose exec backend python src/manage.py migrate
 
 createsuperuser:
-	docker-compose exec backend python src/manage.py createsuperuser
+	docker compose exec backend python src/manage.py createsuperuser
 
 shell:
-	docker-compose exec backend python src/manage.py shell
+	docker compose exec backend python src/manage.py shell
 
