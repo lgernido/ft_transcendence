@@ -51,3 +51,5 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message de {self.sender.username} dans {self.channel.name}: {self.content[:20]}..."
+
+

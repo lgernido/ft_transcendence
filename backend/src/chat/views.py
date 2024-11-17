@@ -76,3 +76,31 @@ def search_users(request):
             })
         return JsonResponse({'results': results})
     return JsonResponse({'results': []})
+
+
+def user_conversations(request):
+    user = request.user
+    # Récupérer tous les channels où l'utilisateur est présent
+    channels = Channel.objects.filter(users=user)
+
+    conversations = []
+    for channel in channels:
+        last_message = channel.last_message
+        if last_message:
+            # Identifier les autres utilisateurs dans le channel (exclure l'utilisateur courant)
+            other_users = channel.users.exclude(id=user.id)
+            other_users_data = [{'id': u.id, 'username': u.username} for u in other_users]
+
+            conversations.append({
+                'channel_id': channel.id,
+                'channel_name': channel.name,
+                'participants': other_users_data,
+                'last_message': {
+                    'sender': last_message.sender.username,
+                    'content': last_message.content,
+                    'timestamp': last_message.timestamp.isoformat(),
+                    'is_read': user in last_message.is_read_by.all()
+                }
+            })
+
+    return JsonResponse({'conversations': conversations}, safe=False)

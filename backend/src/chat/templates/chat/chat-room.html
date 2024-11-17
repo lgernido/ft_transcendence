@@ -87,8 +87,9 @@
         }
 
         const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-        const wsUrl = `${wsScheme}://${window.location.host}/ws/chat2/private_${channelId}/`;
+        const wsUrl = `${wsScheme}://${window.location.host}/ws/chat2/chat/private_${channelId}/`;
         chatSocket = new WebSocket(wsUrl);
+        console.log(chatSocket);
 
         chatSocket.onopen = function () {
             console.log("WebSocket connected to channel:", channelId);
@@ -195,6 +196,79 @@
         }
     });
 });
+//=========================================
+    // function fetchUserConversations() {
+    //     fetch('/chat2/user_conversations/')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log('Conversations utilisateur :', data);
+    //         })
+    //         .catch(error => {
+    //             console.error('Erreur lors de la requête :', error);
+    //         });
+    // }
+
+    // // Lancer la fonction toutes les 1 seconde
+    //  setInterval(fetchUserConversations, 10000);
+//===========================================
+
+// Crée une nouvelle connexion WebSocket avec l'URL de votre WebSocket
+const socket = new WebSocket('ws://localhost:8000/ws/chat2/conversations/');
+
+// Lorsque la connexion WebSocket est ouverte
+socket.onopen = function(e) {
+    console.log("Connexion WebSocket réussie !");
+    // Vous pouvez envoyer un message de demande si nécessaire (mais ici c'est optionnel)
+    // socket.send(JSON.stringify({
+    //     type: 'request_conversations',
+    // }));
+};
+
+// Lorsque vous recevez un message depuis le serveur
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    console.log('Message reçu:', data);
+    
+    // Vérification si on reçoit les conversations
+    if (data.conversations) {
+        // Traitez les conversations reçues
+        console.log('Conversations:', data.conversations);
+        
+        // Mettez à jour l'interface utilisateur avec les conversations
+        const conversationList = document.querySelector('#conversation-list');
+        conversationList.innerHTML = '';  // Vider les conversations existantes
+
+        data.conversations.forEach(conv => {
+            const conversationItem = document.createElement('div');
+            conversationItem.classList.add('conversation-item');
+            conversationItem.textContent = `Conversation: ${conv.channel_name}`;
+            conversationList.appendChild(conversationItem);
+        });
+    }
+
+    // Vérification si on reçoit un nouveau message
+    if (data.sender && data.content && data.timestamp) {
+        console.log('Nouveau message:', data);
+
+        // Mettez à jour l'interface utilisateur avec le nouveau message
+        const messageContainer = document.querySelector('#messages');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = `${data.sender}: ${data.content} (${data.timestamp})`;
+        messageContainer.appendChild(messageElement);
+    }
+};
+
+// Si la connexion WebSocket est fermée
+socket.onclose = function(e) {
+    console.error('Connexion WebSocket fermée:', e);
+};
+
+// Si une erreur se produit sur la connexion WebSocket
+socket.onerror = function(e) {
+    console.error('Erreur WebSocket:', e);
+};
+
+
     </script>
 </body>
 </html>
