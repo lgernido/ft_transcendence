@@ -1,0 +1,25 @@
+{% load static %}
+<div class="d-flex" style="height: calc(100vh - 80px);">
+	<div class="mx-2 my-2 w-75 d-flex flex-column">
+		<div class="border border-dark rounded mb-3 overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
+			<div class="d-flex flex-column align-items-center">
+				<h3 class="my-4">Tournament</h3>
+				<div class="d-flex align-items-center">
+					<div class="dropdown dropdown-player-tournament">
+						<button id="dropdownButton" class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Select Number player
+						</button>
+						<ul class="dropdown-menu dropdown-menu-dark">
+							<li><a class="dropdown-item" href="#" data-nb-player="4">4</a></li>
+							<li><a class="dropdown-item" href="#" data-nb-player="6">6</a></li>
+							<li><a class="dropdown-item" href="#" data-nb-player="8">8</a></li>
+							<li><a class="dropdown-item" href="#" data-nb-player="10">10</a></li>
+						</ul>
+					</div>
+				</div>
+				<div id="cardContainerTournament" class="d-flex flex-wrap justify-content-center my-4"></div>
+			</div>
+		</div>
+	</div>
+	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
+</div>

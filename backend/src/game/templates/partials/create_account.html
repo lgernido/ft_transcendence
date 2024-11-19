@@ -1,0 +1,41 @@
+{% load static %}
+<div class="alert alert-warning position-absolute" id="error-message" style="top: 20px; right: 20px; width: 25%;">
+	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<form class="d-flex" style="height: calc(100vh - 80px); min-height: 450px;" id="createAccountForm" method="POST">
+	{% csrf_token %}
+	<div class="mb-3 mx-2 my-2 w-75 flex-grow-1 d-flex align-items-center justify-content-center">
+		<div class="row w-100 align-items-center mx-5">
+			<div class="col-lg d-flex justify-content-center position-relative">
+				<input type="file" id="profileImageInput" accept="image/*" style="display: none;" />
+				<a class="btn profile-btn" id="profileImageButton">
+					<i class="bi bi-person-circle" style="font-size: 200px; color: black;"></i>
+				</a>
+				<i class="bi bi-pencil-square icon-overlay position-absolute"></i>
+			</div>
+			<div class="col-lg w-100">
+				<div class="form-floating form-floating-create mb-3">
+					<input type="email" class="form-control" id="floatingInputEmail" name="email" placeholder="name@example.com" required value="{{ email }}">
+					<label for="floatingInputEmail">Email address</label>
+				</div>
+				<div class="form-floating form-floating-create mb-3">
+					<input type="text" class="form-control" id="floatingInputUsername" name="username" placeholder="Buzz" required value="{{ username }}">
+					<label for="floatingInputUsername">Username</label>
+				</div>
+				<div class="form-floating form-floating-create mb-3">
+					<input type="password" class="form-control" id="floatingInputPassword" name="password" required>
+					<label for="floatingInputPassword">Password</label>
+				</div>
+				<div class="form-floating form-floating-create mb-3">
+					<input type="password" class="form-control" id="floatingInputPassword2" name="password2" required>
+					<label for="floatingInputPassword2">Verif Password</label>
+				</div>
+			</div>
+			<div class="d-flex align-items-center justify-content-center mt-3">
+				<button type="button" class="btn btn-primary my-3" id="submitButton">Create account</button>
+				<a class="btn btn-primary my-3 ms-5" onclick="loadConnectPage()">Go back</a>
+			</div>
+		</div>
+	</div>
+</form>

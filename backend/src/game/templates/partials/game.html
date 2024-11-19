@@ -1,0 +1,33 @@
+<div class="d-flex" style="height: calc(100vh - 80px);">
+	<div class="mx-2 my-2 w-75 d-flex flex-column">
+		<div class="border border-dark rounded d-flex flex-column align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
+			<div class="fs-5 fw-bold mt-3 d-flex">
+				<!-- <div class="player-name player-left" id="playerLeft">jaiunnomvraimenttropcestrelou</div> -->
+				<div class="player-name player-left" id="playerLeft">{{ user.username }}</div>
+				<span class="vs">VS</span>
+				<div class="player-name player-right" id="playerRight">Jacob</div>
+				
+				<div class="winner-message" id="winnerMessage"></div>
+			</div>
+			<div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+				<div class="game-window  position-relative">
+					<div id="countdown" class="countdown">3</div>
+					<div class="left-barre position-absolute {{ player1_color }}"></div>
+					<div class="right-barre position-absolute {{ player2_color }}"></div>
+					<div class="ball"></div>
+				</div>
+			</div>
+			<div class="text fs-5 fw-bold mb-4 px-3 show-score d-flex">
+				<p class="mx-2" id="scorePLeft"></p> - <p class="mx-2" id="scorePRight"></p>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Chat section -->
+	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
+</div>
+
+<script>
+	const limitPoint = {{ max_point }};
+</script>
+	
