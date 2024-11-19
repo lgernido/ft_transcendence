@@ -10,3 +10,5 @@ django-two-factor-auth
 phonenumbers
 python-dotenv
 django-oauth-toolkit
+py-oauth2
+os

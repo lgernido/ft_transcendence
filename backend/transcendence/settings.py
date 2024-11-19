@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # 'django_otp.plugins.otp_totp',
     # 'django_otp.plugins.otp_static',
     # 'two_factor',
+    'py-oauth2',
     'oauth2_provider',
     'rest_framework',
     'rest_framework_simplejwt',
