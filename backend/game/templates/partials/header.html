@@ -1,0 +1,38 @@
+<header>
+	<div class="d-flex my-2 justify-content-between overflow-hidden ">
+		<span class="fs-2 text mx-3 text-nowrap site-title" style="font-family: cursive;">PONG PING</span>
+		<a class="btn btn-primary btn-header shadow icon-with-text" href="{% url 'myPage' %}" role="button">
+			<i class="bi bi-house-fill icon"></i>
+			<span class="text-header">Home</span>
+		</a>
+		<a class="btn btn-primary btn-header shadow icon-with-text" href="{%url 'stats' %}" role="button">
+			<i class="bi bi-file-bar-graph-fill icon"></i>
+			<span class="text-header">Stats</span>
+		</a>
+		<a class="btn btn-primary btn-header shadow icon-with-text" href="{%url 'amis' %}" role="button">
+			<i class="bi bi-people-fill icon"></i>
+			<span class="text-header">Friends</span>
+		</a>
+		<a class="btn btn-primary btn-header shadow icon-with-text" href="{%url 'compte' %}" role="button">
+			<i class="bi bi-gear-fill icon"></i>
+			<span class="text-header">Settings</span>
+		</a>
+		<form method="POST" action="{% url 'logout' %}">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-primary btn-exit shadow me-3">
+				<i class="bi bi-door-open icon"></i>
+			</button>
+		</form>
+	</div>
+
+	{% if messages %}
+		<div class="position-absolute justify-content-center" style="top: 20px; right: 20px; width: 25%;">
+			{% for message in messages %}
+				<div class="alert alert-info alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+</header>

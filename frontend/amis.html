@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+		
+		<link href="css/my_style.css" rel="stylesheet">
+		<link href="css/variable.css" rel="stylesheet">
+		<link href="css/header.css" rel="stylesheet">
+		<link href="css/chat.css" rel="stylesheet">
+		<link href="css/amis.css" rel="stylesheet">
+		<title>Pong Ping</title>
+	</head>
+
+	<body>
+		<div class="min-vh-100 overflow-auto">
+			<div id="header-placeholder"></div>
+
+			<div class="d-flex" style="height: calc(100vh - 80px);">
+				<div class="border border-dark rounded mx-2 my-2 w-75 flex-grow-1 d-flex flex-column overflow-auto">
+					<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3" style="margin-inline: 10%; min-width: 450px;">
+						<div class="d-flex mx-3 my-1">
+							<img src="img/bob.jpg" class="img-profil-60-rounded" alt="img-profil">
+							<div class="ms-5">
+								<p class="text fw-bold ms-5">Bob</p>
+								<p class="text ms-4">Ratio: 98% Classement: #45</p>
+							</div>
+						</div>
+						<div class="me-3">
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-envelope-open icon"></i>
+								<div class="hover-text">Send message</div>
+							</a>
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-plus-lg icon"></i>
+								<div class="hover-text">Invite</div>
+							</a>
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-slash-circle icon"></i>
+								<div class="hover-text">Block</div>
+							</a>
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-trash icon"></i>
+								<div class="hover-text">Delete</div>
+							</a>
+						</div>
+					</div>
+					<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3" style="margin-inline: 10%; min-width: 450px;">
+						<div class="d-flex mx-3 my-1">
+							<img src="img/bob.jpg" class="img-profil-60" alt="img-profil">
+							<div class="ms-5">
+								<p class="text fw-bold ms-5">Bob</p>
+								<p class="text ms-4">Ratio: 98% Classement: #45</p>
+							</div>
+						</div>
+						<div class="me-3">
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-envelope-open icon"></i>
+								<div class="hover-text">Send message</div>
+							</a>
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-plus-lg icon"></i>
+								<div class="hover-text">Invite</div>
+							</a>
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-slash-circle icon"></i>
+								<div class="hover-text">Block</div>
+							</a>
+							<a class="btn btn-primary btn-add shadow hover-container" role="button">
+								<i class="bi bi-trash icon"></i>
+								<div class="hover-text">Delete</div>
+							</a>
+						</div>
+					</div>
+					<div class="d-flex justify-content-center mt-3">
+						<a class="btn btn-primary btn-add shadow hover-container w-25">
+							Add friend
+						</a>
+					</div>
+
+
+
+					<button type="button" class="btn btn-warning w-25" id="liveToastBtn">Show live toast</button>
+
+					<!-- toast d'invite dans une partie -->
+					<div class="position-absolute end-0 top-0 m-3">
+						<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+							<div class="toast-body">
+								You have been invited to play by ...
+								<div class="mt-2 pt-2 border-top">
+									<a type="button" class="btn btn-sm btn-toast-join ms-3" href="lobby_private.html">Join</a>
+									<button type="button" class="btn btn-sm btn-toast-close ms-1" data-bs-dismiss="toast">Refuse</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Chat section -->
+				<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
+			</div>
+		</div>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+		<script src="js/script.js"></script>
+		<script src="js/toast.js"></script>
+	</body>
+</html>

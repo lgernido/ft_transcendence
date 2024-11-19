@@ -1,0 +1,26 @@
+.header-chat {
+	color: var(--color-white);
+	border-bottom: solid 3px var(--color-white);
+}
+
+.btn-header-chat {
+	color: var(--color-white);
+	font-weight: bold;
+}
+
+.chat-box {
+	border: solid var(--color-white) 2px;
+	border-radius: 10px;
+	background-color: var(--color-black);
+	min-height: 200px;
+}
+
+.chat-txt {
+	color: var(--color-white);
+	font-weight: bold;
+}
+
+.send-btn {
+	color: var(--color-white);
+	background-color: var(--color-black);
+}

@@ -1,0 +1,53 @@
+@import url('variable.css');
+
+.card-custom {
+    border: 2px solid var(--color-white);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    text-align: center;
+	background-color: transparent;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-custom:hover {
+    transform: scale(1.1);
+	transition: 0.6s;
+	background-color: var(--color-black);
+	box-shadow: 2px 2px 2px var(--color-btn);
+}
+
+.img-profil-100 {
+	width: 100px;
+	height: 100px;
+	border: solid var(--color-btn);
+	border-radius: 50%;
+	background-color: var(--color-white);
+}
+
+.result {
+	font-weight: bolder;
+	text-align: center;
+	width: 100%;
+}
+
+.win-color {
+    color: green;
+}
+
+.lose-color {
+    color: red;
+}
+
+.draw-color {
+    color: orange;
+}
+
+.stat-container {
+	border: solid 2px var(--color-black);
+	border-radius: 5px;
+	background: transparent;
+	color: var(--color-white);
+	box-shadow: 2px 2px 2px var(--color-btn);
+}

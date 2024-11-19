@@ -1,0 +1,137 @@
+@import url('variable.css');
+
+.card-lobby {
+	background-color: var(--color-btn);
+	border: solid 2px var(--color-white);
+	border-radius: 10px;
+	margin-right: 50px;
+	min-height: 380px;
+	padding: 5px;
+	width: 12rem;
+}
+
+.card-lobby-wait {
+	background-color: var(--color-btn);
+	border: solid 2px var(--color-white);
+	border-radius: 10px;
+	margin-right: 50px;
+	padding: 5px;
+	min-height: 380px;
+	width: 12rem;
+	height: auto;
+}
+
+.card-lobby-wait-tournament {
+	background-color: var(--color-btn);
+	border: solid 2px var(--color-white);
+	border-radius: 10px;
+	margin-right: 50px;
+	padding: 5px;
+	width: 12rem;
+}
+
+.btn-ready {
+	width: 20%;
+	font-size: x-large;
+}
+
+.card-lobby-img-top {
+	width: 100%;
+	border: solid 2px var(--color-black);
+	border-radius: 8px;
+}
+
+.card-lobby-body {
+	color: var(--color-white);
+	margin-top: 15%;
+}
+
+.card-lobby-text-name1,
+.card-lobby-text-name2,
+.card-lobby-text-name-public-1,
+.card-lobby-text-name-public-2 {
+	font-weight: bold;
+	font-size: xx-large;
+	border-bottom: solid 2px;
+	background-color: rgba(0, 0, 0, 0.4);
+	padding-inline: 10%;
+	white-space: nowrap; /* Empêche le texte de se plier sur une nouvelle ligne */
+    overflow: hidden; /* Cache tout débordement de texte */
+    text-overflow: ellipsis; /* Affiche "..." à la fin si le texte est trop long */
+    max-width: 100%;
+}
+
+.card-lobby-text-rank {
+	font-weight: bold;
+	font-size: large;
+}
+
+.card-lobby-text-ratio {
+	font-weight: bold;
+	font-size: large;
+}
+
+.dropdown-player-tournament
+{
+	width: 400px;
+}
+
+.lobbySettings {
+	color: var(--color-white);
+}
+
+.inputMaxPoint {
+	color: var(--color-white);
+	border-radius: 5px;
+	background: transparent;
+	width: 20%;
+	padding-inline: 5px;
+}
+
+.spinner-color {
+	color: var(--color-white);
+}
+
+.color-player-none {
+	color: var(--color-white)
+}
+
+.color-player-red {
+    color: #FF0000;
+}
+
+.color-player-green {
+    color: #008000;
+}
+
+.color-player-blue {
+    color: #0000FF;
+}
+
+.color-player-yellow {
+    color: #FFFF00;
+}
+
+.color-player-cyan {
+    color: #00FFFF;
+}
+
+.color-player-magenta {
+    color: #FF00FF;
+}
+
+.color-player-orange {
+    color: #FFA500;
+}
+
+.color-player-purple {
+    color: #800080;
+}
+
+.color-player-pink {
+    color: #ff3f99;
+}
+
+.color-player-gray {
+    color: #808080;
+}
