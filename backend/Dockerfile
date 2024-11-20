@@ -20,4 +20,4 @@ RUN chmod +x /wait-for-it.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["/wait-for-it.sh", "db:5432", "--timeout=15", "--", "python", "src/manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/wait-for-it.sh", "db:5432", "--timeout=15", "--", "python", "src/manage.py", "runserver", "0.0.0.0:8000"]1.0.0
