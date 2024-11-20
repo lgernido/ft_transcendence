@@ -6,7 +6,7 @@ COPY . /backend/
 
 COPY tools/requirements.txt .
 
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt 
 
 COPY conf/wait-for-it.sh /wait-for-it.sh
 

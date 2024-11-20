@@ -10,5 +10,4 @@ django-two-factor-auth
 phonenumbers
 python-dotenv==0.19.0
 django-oauth-toolkit
-py-oauth2
 Authlib==1.0.0
