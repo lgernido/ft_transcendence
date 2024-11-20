@@ -35,34 +35,26 @@ PORT = 8000
 # Application definition
 
 INSTALLED_APPS = [
-<<<<<<< HEAD:backend/transcendence/settings.py
     # 'django_otp',
     # 'django_otp.plugins.otp_totp',
     # 'django_otp.plugins.otp_static',
     # 'two_factor',
-    'py-oauth2',
+	'Authlib',
     'oauth2_provider',
     'rest_framework',
     'rest_framework_simplejwt',
-=======
 	'daphne',
 	'channels',
 	'game',
 	'users',
-	'chat',
+	# 'chat',
 	
->>>>>>> origin/scely:backend/src/transcendence/settings.py
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD:backend/transcendence/settings.py
-    'user',
-    'game',
-=======
->>>>>>> origin/scely:backend/src/transcendence/settings.py
 ]
 
 MIDDLEWARE = [
