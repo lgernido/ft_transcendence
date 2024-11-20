@@ -45,19 +45,19 @@ services:
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
 
-  # nginx:
-  #   container_name: nginx
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - default
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+    networks:
+      - default
 
 volumes:
   postgres_data:
