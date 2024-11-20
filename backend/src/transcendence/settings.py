@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 	'channels',
 	'game',
 	'users',
-	# 'chat',
+	'chat',
 	
     'django.contrib.admin',
     'django.contrib.auth',
@@ -110,7 +110,7 @@ DATABASES = {
         'NAME': "superpongdb",
         'USER': "superpong",
         'PASSWORD': "gnoprepus",
-        'HOST': "172.18.0.2",
+        'HOST': "db",
         'PORT': "5432",
     }
 }
@@ -193,4 +193,4 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
 
-LOGIN_URL = '/admin/login'
+# LOGIN_URL = '/admin/login'
