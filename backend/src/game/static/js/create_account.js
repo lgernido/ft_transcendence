@@ -25,12 +25,15 @@ function ValidFormCreateAccount() {
             password2: password2,
         };
 
+        const csrfToken = getCookie('csrftoken');
+
         fetch('/create_account/', {
             method: 'POST',
             body: JSON.stringify(formData),
             headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
             }
         })
         .then(response => {
@@ -53,15 +56,4 @@ function ValidFormCreateAccount() {
             displayError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
         });
     });
-}
-
-function displayError(message) {
-    const errorMessageElement = document.getElementById('error-message');
-    if (message) {
-        errorMessageElement.innerText = message;
-        errorMessageElement.style.display = 'block';
-    }
-    else {
-        errorMessageElement.style.display = 'none';
-    }
 }

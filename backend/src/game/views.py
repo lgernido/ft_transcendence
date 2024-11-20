@@ -1,8 +1,7 @@
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 
 from django.contrib.auth.models import User
@@ -10,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Game
 import json
 
-@csrf_exempt
-# @login_required
+@csrf_protect
+@login_required
 def store_colors(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -29,14 +28,16 @@ def store_colors(request):
 def home(request):
     return render(request, 'index.html')
 
-# @login_required
-@csrf_exempt
-def mypage(request):
+@csrf_protect
+def log_user(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             username = data.get('username')
             password = data.get('password')
+
+            if not username or not password:
+                return JsonResponse({'error': 'Username and password are required.'}, status=400)
 
             user = authenticate(request, username=username, password=password)
 
@@ -46,29 +47,39 @@ def mypage(request):
             else:
                 return JsonResponse({'error': 'Username or password invalid'}, status=400)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    return render(request, 'partials/connect.html')
+
+@csrf_protect
+@login_required
+def mypage(request):
     return render(request, 'partials/mypage.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def lobby_private(request):
     return render(request, 'partials/lobby_private.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def lobby_tournament(request):
     return render(request, 'partials/lobby_tournament.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def stats(request):
     return render(request, 'partials/stats.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def chat(request):
     return render(request, 'partials/chat.html')
 
 def connect(request):
     return render(request, 'partials/connect.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def game(request):
     player1_color = request.session.get('player1_color', 'color-player-none')
     player2_color = request.session.get('player2_color', 'color-player-none')
@@ -97,7 +108,6 @@ def game(request):
             player1_score=player1_score,
             player2_score=player2_score
         )
-
         return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
 
     return render(request, 'partials/game.html', {
@@ -106,51 +116,66 @@ def game(request):
         'max_point': max_point
     })
 
-# @login_required
+@csrf_protect
+@login_required
 def lobby(request):
     return render(request, 'partials/lobby.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def amis(request):
     return render(request, 'partials/amis.html')
 
+@csrf_protect
 @login_required
 def compte(request):
     if request.method == 'POST':
-        user = request.user
-        
-        email = request.POST.get('change_email')
-        username = request.POST.get('change_username')
-        password = request.POST.get('change_password')
+        try:
+            user = request.user
+            data = json.loads(request.body)
 
-        if not username or not email:
-            return JsonResponse({'error': 'Username and email are required.'}, status=400)
-        
-        if User.objects.exclude(pk=user.pk).filter(username=username).exists():
-            return JsonResponse({'error': 'Username already used'}, status=400)
+            email = data.get('email')
+            username = data.get('username')
+            password = data.get('password')
 
-        user.email = email
-        user.username = username
+            if not username or not email:
+                return JsonResponse({'error': 'Username and email are required.'}, status=400)
+            
+            if User.objects.exclude(pk=request.user.pk).filter(username=username).exists():
+                return JsonResponse({'error': 'Username already used'}, status=400)
 
-        if password:
-            user.set_password(password)
+            user.email = email
+            user.username = username
+
+            if password:
+                user.set_password(password)
+                user.save()
+                update_session_auth_hash(request, user) 
+                return JsonResponse({'success': True})
+            
             user.save()
-            update_session_auth_hash(request, user)  # Reauthentifie automatiquement l'utilisateur
             return JsonResponse({'success': True})
 
-        user.save()
-        return JsonResponse({'success': True})
-
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error execption': str(e)}, status=400)
     return render(request, 'partials/compte.html', {'user': request.user})
 
 
-# @login_required
+@csrf_protect
 def header(request):
     return render(request, 'partials/header.html')
 
-# @login_required
+@csrf_protect
+@login_required
 def logout_view(request):
-    logout(request)
-    return render(request, 'index.html')
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'CSRF token missing or invalid'}, status=403)
+
+def check_user_status(request):
+    return JsonResponse({'is_authenticated': request.user.is_authenticated})
     
 
