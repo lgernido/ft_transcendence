@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from pyoauth2 import Client
+from authlib.integrations.django_client import OAuth
+from django.shortcuts import redirect
 from django.http import HttpResponse
 import os
 from dotenv import load_dotenv
@@ -10,20 +10,27 @@ CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 REDIRECT_URL = os.getenv('REDIRECT_URL')
 
-client = Client(CLIENT_ID, CLIENT_SECRET, 
-                site='https://api.intra.42.fr',
-                authorize_url='/oauth/authorize',
-                token_url='/oauth/access_token')
+oauth = OAuth()
+oauth.register(
+    name='42',
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
+    access_token_url='https://api.intra.42.fr/oauth/token',
+    authorize_url='https://api.intra.42.fr/oauth/authorize',
+    api_base_url='https://api.intra.42.fr/v2/',
+    client_kwargs={'scope': 'public'},
+)
 
 def login(request):
-    authorize_url = client.auth_code.authorize_url(redirect_uri=REDIRECT_URL)
-    return redirect(authorize_url)
+    redirect_uri = REDIRECT_URL
+    return oauth['42'].authorize_redirect(redirect_uri)
 
 
 def callback(request):
-    code = request.GET.get('code')
-    if code:
-        access_token = client.auth_code.get_token(code, redirect_uri=REDIRECT_URL)
-        return HttpResponse(f'Token: {access_token.params}')
+    token = oauth['42'].authorize_access_token()
+    if token:
+        access_token = token['access_token']
+        request.session['access_token'] = access_token
+        return HttpResponse(f'Token: {access_token}')
     else:
         return HttpResponse('Authorization failed.')
