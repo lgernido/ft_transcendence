@@ -33,7 +33,7 @@ services:
     volumes:
       - ./backend:/code/backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
     expose:
       - "8000"
     depends_on:
@@ -53,8 +53,8 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      - "8443:443"
-      # - "8080:8080"
+      - "8000:8000"
+      - "8080:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       # - ./ssl:/etc/ssl
