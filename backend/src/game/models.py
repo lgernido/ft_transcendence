@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from users.models import Profile
-
+    
 class Game(models.Model):
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="games_as_player1")
     player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="games_as_player2")

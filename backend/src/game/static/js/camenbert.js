@@ -1,12 +1,16 @@
 function drawCamembert() {
-    function updateLegend() {
-        document.getElementById("nb-win").textContent = gamesWin;
-        document.getElementById("nb-loss").textContent = gamesLose;
-        document.getElementById("nb-draw").textContent = gamesDraw;
-        document.getElementById("nb-game").textContent = gamesWin + gamesLose + gamesDraw;
-    }
+    // function updateLegend() {
+    //     document.getElementById("nb-win").textContent = gamesWin;
+    //     document.getElementById("nb-loss").textContent = gamesLose;
+    //     document.getElementById("nb-draw").textContent = gamesDraw;
+    //     document.getElementById("nb-game").textContent = gamesWin + gamesLose + gamesDraw;
+    // }
 
-    updateLegend();
+    // updateLegend();
+
+    const gamesWin = 3;
+    const gamesLose = 2;
+    const gamesDraw = 1;
 
     // Fonction pour calculer les coordonnées polaires
     function polarToCartesian(cx, cy, radius, angleInDegrees) {

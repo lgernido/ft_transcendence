@@ -11,3 +11,12 @@ class Profile(models.Model):
     
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+class Friendship(models.Model):
+    requester = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
+    is_accepted = models.BooleanField(default=False)
+    is_blocked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
