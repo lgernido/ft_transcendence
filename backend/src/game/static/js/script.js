@@ -35,6 +35,34 @@ document.addEventListener('DOMContentLoaded', function () {
     loadheader();
 });
 
+function displayError(message) {
+    const errorMessageElement = document.getElementById('error-message');
+    if (errorMessageElement) {
+        if (message) {
+            errorMessageElement.innerText = message;
+            errorMessageElement.style.display = 'block';
+        }
+        else {
+            errorMessageElement.style.display = 'none';
+        }
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function loadscript(file, func) {
     const script = document.createElement('script');
     script.src = "/static/js/" + file;
@@ -83,26 +111,34 @@ function loadCreateAccount() {
 
 function loadMyPage() {
     const appDiv = document.getElementById('app');
-    fetch('/mypage/')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(html => {
-            appDiv.innerHTML = html;
+    const csrfToken = getCookie('csrftoken'); 
 
-            loadscript('loadelement.js', () => loadchat());
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+    fetch('/mypage/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        appDiv.innerHTML = html;
+
+        loadscript('loadelement.js', () => loadchat());
+    })
+    .catch(error => {
+        console.error('Erreur lors de la récupération de mypage :', error);
+    });
 }
 
 function loadStats() {
     const appDiv = document.getElementById('app');
-    fetch('/stats/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/stats/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -122,7 +158,13 @@ function loadStats() {
 
 function loadFriends() {
     const appDiv = document.getElementById('app');
-    fetch('/amis/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/amis/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -142,7 +184,13 @@ function loadFriends() {
 function loadAccount()
 {
     const appDiv = document.getElementById('app');
-    fetch('/compte/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/compte/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -162,7 +210,13 @@ function loadAccount()
 function loadTournament()
 {
     const appDiv = document.getElementById('app');
-    fetch('/lobby_tournament/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/lobby_tournament/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -182,7 +236,13 @@ function loadTournament()
 
 function loadPublic() {
     const appDiv = document.getElementById('app');
-    fetch('/lobby/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/lobby/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -202,7 +262,13 @@ function loadPublic() {
 
 function loadPrivate() {
     const appDiv = document.getElementById('app');
-    fetch('/lobby_private/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/lobby_private/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -222,7 +288,13 @@ function loadPrivate() {
 
 function loadGame() {
     const appDiv = document.getElementById('app');
-    fetch('/game/')
+    const csrfToken = getCookie('csrftoken');
+    fetch('/game/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

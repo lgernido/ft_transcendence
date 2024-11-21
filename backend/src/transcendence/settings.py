@@ -40,14 +40,15 @@ INSTALLED_APPS = [
     # 'django_otp.plugins.otp_static',
     # 'two_factor',
     'authlib',
+    'oauth2_provider',
     'rest_framework',
     'rest_framework_simplejwt',
 	'daphne',
 	'channels',
 	'game',
 	'users',
-    'oauth2_provider',
-	# 'chat',
+	'chat',
+	
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -109,7 +110,7 @@ DATABASES = {
         'NAME': "superpongdb",
         'USER': "superpong",
         'PASSWORD': "gnoprepus",
-        'HOST': "172.18.0.2",
+        'HOST': "db",
         'PORT': "5432",
     }
 }
