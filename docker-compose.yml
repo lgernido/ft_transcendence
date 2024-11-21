@@ -19,12 +19,12 @@ services:
       - default
 
   redis:
-      image: redis:7.4
-      container_name: redis
-      expose:
-        - 6379
-      networks:
-        - default
+    image: redis:7.4
+    container_name: redis
+    expose:
+      - 6379
+    networks:
+      - default
 
   backend:
     build:
@@ -47,22 +47,25 @@ services:
     env_file:
       - .env
 
-  # nginx:
-  #   container_name: nginx
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - default
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8443:443"
+      # - "8080:8080"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./ssl:/etc/ssl
+    depends_on:
+      - backend
+    networks:
+      - default
 
 volumes:
   postgres_data:
+
 
 networks:
   default:

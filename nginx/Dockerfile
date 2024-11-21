@@ -1,10 +1,20 @@
-FROM nginx 
+FROM nginx
 
-RUN apt-get update && apt-get install -y openssl
+RUN apt-get update
+RUN apt-get install openssl -y
 
-RUN openssl req -x509 -newkey rsa:4096 -days 365 -nodes \
+# Générer les certificats SSL
+RUN mkdir -p /etc/ssl/certs /etc/ssl/private \
+    && openssl req -x509 -newkey rsa:4096 -days 365 -nodes \
+    -out /etc/ssl/private/superpong.fr_cert.pem -sha256 \
     -keyout /etc/ssl/private/superpong.fr_key.pem \
-    -out /etc/ssl/certs/superpong.fr_cert.pem -sha256 \
-    -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=superpong.fr" 
+    -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=superpong.fr"
+
+RUN chmod 644 /etc/ssl/private/superpong.fr_cert.pem
+RUN chmod 600 /etc/ssl/private/superpong.fr_key.pem
+
+RUN mkdir -p /var/run/nginx
 
 COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 443
