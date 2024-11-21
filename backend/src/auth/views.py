@@ -13,8 +13,8 @@ REDIRECT_URL = os.getenv('REDIRECT_URL')
 oauth = OAuth()
 oauth.register(
     name='42',
-    client_id='u-s4t2ud-a4e6c11cfe216257e83900fc923bc41232cb77a93960670721c2021970f76ed2',
-    client_secret='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',
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET,
     access_token_url='https://api.intra.42.fr/oauth/token',
     authorize_url='https://api.intra.42.fr/oauth/authorize',
     api_base_url='https://api.intra.42.fr/v2/',
@@ -22,7 +22,7 @@ oauth.register(
 )
 
 def login(request):    
-    redirect_uri = 'http://localhost:8000/mypage'
+    redirect_uri = REDIRECT_URL
     client = oauth.create_client('42')
     return client.authorize_redirect(request, redirect_uri)
 

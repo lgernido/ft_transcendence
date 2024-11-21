@@ -44,6 +44,8 @@ services:
     environment:
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env
 
   # nginx:
   #   container_name: nginx
