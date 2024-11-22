@@ -179,7 +179,7 @@
                         userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
                         userEntry.innerHTML = `
                             <img src="" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
-                            <div>
+                            <div data_user_id='${user.id}'>
                                 <div class="user-details"><strong>${user.username}</strong></div>
                                 <div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
                             </div>

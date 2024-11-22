@@ -26,5 +26,7 @@ urlpatterns = [
     path('o/', include(oauth2_urls)),
     path('auth/', include("auth.urls")),
 	path('', include('game.urls')),
+	
+	path('users', include('users.urls')),
 	path('chat2/', include('chat.urls')),
 ]
