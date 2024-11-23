@@ -1,12 +1,19 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+
+from .forms import AvatarForm
 from .models import *
+
 import json
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import UserProfileSerializer
 
 # Create your views here.
 
@@ -108,3 +115,25 @@ def get_blocked_users(request):
 
 def get_users(request):
     pass
+
+def update_avatar(request):
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES, instance=request.user.social)
+        if form.is_valid():
+            form.save()  # Sauvegarde la nouvelle image comme avatar
+            return redirect('profile')  # Redirige vers le profil de l'utilisateur
+    else:
+        form = AvatarForm(instance=request.user.social)
+
+    return render(request, 'users/update_avatar.html', {'form': form})
+
+class UserProfileList(APIView):
+    def get(self, request):
+        try:
+            users = User.objects.all()
+            if not users:
+                return Response({"error": "No users found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = UserProfileSerializer(users, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

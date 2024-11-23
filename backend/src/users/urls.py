@@ -8,4 +8,7 @@ urlpatterns = [
     path('unblock_user/<int:userid>', views.unblock_user, name='unblock_user'),
     path('get_contacts/<int:userid>', views.get_contacts, name='get_contacts'),
     path('get_blocked_users/<int:userid>', views.get_blocked_users, name='get_blocked_users'),
+	path('update-avatar/', views.update_avatar, name='update_avatar'),
+	
+    path('user_profiles/', views.UserProfileList.as_view(), name='user_profile-list'),
 ]
