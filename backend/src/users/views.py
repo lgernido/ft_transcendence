@@ -13,9 +13,12 @@ import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, FriendshipActionSerializer, ContactSerializer
 
 # Create your views here.
+
+def index(request):
+    return render(request, 'test.html')
 
 @csrf_exempt
 def create_account(request):
@@ -50,72 +53,6 @@ def create_account(request):
 
 # ================================================================================================
 
-
-def add_friend(request, user_id):
-    user = request.user
-    person = get_object_or_404(User, id=user_id)
-    profile = user.profile
-
-    if user != person:
-        profile.add_friend(person)
-        return JsonResponse({"message": f"User with ID {person.user} added to your friends."})
-    else:
-        return JsonResponse({"error": "You cannot add yourself as a friend."}, status=400)
-
-def remove_friend(request, user_id):
-    user = request.user
-    person = get_object_or_404(User, id=user_id)
-    profile = user.profile
-
-    if person in profile.friends_user.all():
-        profile.remove_friend(person)
-        return JsonResponse({"message": f"User with ID {person.user} removed from your friends."})
-    else:
-        return JsonResponse({"error": f"User with ID {person.user} is not in your friends list."}, status=400)
-
-
-def block_user(request, user_id):
-    user = request.user
-    person = get_object_or_404(User, id=user_id)
-    profile = user.profile
-
-    if user != person:
-        profile.block_user(person)
-        return JsonResponse({"message": f"User with ID {person.user} has been blocked."})
-    else:
-        return JsonResponse({"error": "You cannot block yourself."}, status=400)
-
-def unblock_user(request, user_id):
-    user = request.user
-    person = get_object_or_404(User, id=user_id)
-    profile = user.profile
-
-    if person in profile.blocked_user.all():
-        profile.unblock_user(person)
-        return JsonResponse({"message": f"User with ID {person.user} has been unblocked."})
-    else:
-        return JsonResponse({"error": f"User with ID {person.user} is not in your blocked list."}, status=400)
-
-def get_contacts(request):
-    user = request.user
-    profile = user.profile
-    contacts = profile.get_contacts()
-
-    contacts_list = [{"id": contact.id, "username": contact.username, "email": contact.email} for contact in contacts]
-    return JsonResponse({"contacts": contacts_list})
-
-
-def get_blocked_users(request):
-    user = request.user
-    profile = user.profile
-    blocked_users = profile.get_blocked_users()
-
-    blocked_list = [{"id": blocked.id, "username": blocked.username, "email": blocked.email} for blocked in blocked_users]
-    return JsonResponse({"blocked_users": blocked_list})
-
-def get_users(request):
-    pass
-
 def update_avatar(request):
     if request.method == 'POST':
         form = AvatarForm(request.POST, request.FILES, instance=request.user.social)
@@ -127,6 +64,8 @@ def update_avatar(request):
 
     return render(request, 'users/update_avatar.html', {'form': form})
 
+# ================================================================================================
+
 class UserProfileList(APIView):
     def get(self, request):
         try:
@@ -137,3 +76,57 @@ class UserProfileList(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class FriendshipActionView(APIView):
+    def post(self, request):
+        current_user = request.user
+        if current_user.is_anonymous:
+            return Response(
+                {"error": "You must be authenticated to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        serializer = FriendshipActionSerializer(data=request.data)
+        if serializer.is_valid():
+            action = serializer.validated_data['action']
+            user_id = serializer.validated_data['user_id']
+            current_user_social = request.user.social
+            target_user = User.objects.get(id=user_id).social
+            
+            if action == 'add':
+                current_user_social.add_friend(target_user)
+                return Response({"message": f"User {target_user.user.username} added as a friend."}, status=status.HTTP_200_OK)
+            elif action == 'remove':
+                current_user_social.remove_friend(target_user)
+                return Response({"message": f"User {target_user.user.username} removed from friends."}, status=status.HTTP_200_OK)
+            elif action == 'block':
+                current_user_social.block_user(target_user)
+                return Response({"message": f"User {target_user.user.username} blocked."}, status=status.HTTP_200_OK)
+            elif action == 'unblock':
+                current_user_social.unblock_user(target_user)
+                return Response({"message": f"User {target_user.user.username} unblocked."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ContactsView(APIView):
+    def get(self, request):
+        contacts = request.user.social.get_contacts()
+        serializer = ContactSerializer(contacts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class BlockedUsersView(APIView):
+    def get(self, request):
+        blocked_users = request.user.social.get_blocked_users()
+        serializer = ContactSerializer(blocked_users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class AvatarView(APIView):
+    def get(self, request):
+        serializer = ContactSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+    def put(self, request):
+        serializer = ContactSerializer(request.user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
