@@ -7,7 +7,13 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Game
+from users.models import Social
 import json
+
+import base64
+from io import BytesIO
+from django.core.files.base import ContentFile
+from django.core.exceptions import ObjectDoesNotExist
 
 @csrf_protect
 @login_required
@@ -129,6 +135,12 @@ def amis(request):
 @csrf_protect
 @login_required
 def compte(request):
+
+    try:
+        social = Social.objects.get(user=request.user)
+    except Social.DoesNotExist:
+        return JsonResponse({'error': 'Social profile not found.'}, status=404)
+
     if request.method == 'POST':
         try:
             user = request.user
@@ -137,6 +149,8 @@ def compte(request):
             email = data.get('email')
             username = data.get('username')
             password = data.get('password')
+            new_avatar = data.get('avatar')
+            
 
             if not username or not email:
                 return JsonResponse({'error': 'Username and email are required.'}, status=400)
@@ -146,6 +160,25 @@ def compte(request):
 
             user.email = email
             user.username = username
+
+            if new_avatar:
+                current_avatar_name = social.avatar.url.split('/')[-1]  # Nom du fichier actuel de l'avatar
+                new_avatar_name = new_avatar.split('/')[-1]  # Nom du fichier de l'avatar proposé
+
+                if current_avatar_name == new_avatar_name:
+                    return JsonResponse({'success': True, 'message': 'Avatar is already up-to-date.'})
+                # Vérification si l'avatar est une chaîne base64
+                if new_avatar.startswith('data:image'):
+                    format, imgstr = new_avatar.split(';base64,')
+                    ext = format.split('/')[1]
+                    image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
+                    social.update_avatar(image_data)
+                else:
+                    # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
+                    social.update_avatar(new_avatar)
+
+   
+            
 
             if password:
                 user.set_password(password)

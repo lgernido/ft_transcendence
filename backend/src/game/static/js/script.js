@@ -175,6 +175,7 @@ function loadFriends() {
             appDiv.innerHTML = html;
 
             loadscript('loadelement.js', () => loadchat());
+            loadscript('amis.js', () => loadFriendsList());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

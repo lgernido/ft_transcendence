@@ -15,6 +15,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserProfileSerializer, FriendshipActionSerializer, ContactSerializer
 
+import base64
+from io import BytesIO
+from django.core.files.base import ContentFile
+from django.core.exceptions import ObjectDoesNotExist
+
+
 # Create your views here.
 
 def index(request):
@@ -29,6 +35,7 @@ def create_account(request):
         username = data.get('username')
         password = data.get('password')
         password2 = data.get('password2')
+        new_avatar = data.get('avatar')
 
         if not email or not username or not password or not password2:
             return JsonResponse({'error': 'Tous les champs sont requis.'}, status=400)
@@ -47,22 +54,26 @@ def create_account(request):
 
         profile = Profile.objects.create(user=user)
         profile.save()
+
+        # Traitement du nouvel avatar si disponible
+        try:
+            social = Social.objects.get(user=user)
+        except Social.DoesNotExist:
+            return JsonResponse({'error': 'Social profile not found.'}, status=404)
+        if new_avatar:
+            # Vérification si l'avatar est une chaîne base64
+            if new_avatar.startswith('data:image'):
+                format, imgstr = new_avatar.split(';base64,')
+                ext = format.split('/')[1]
+                image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
+                social.update_avatar(image_data)
+            else:
+                # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
+                social.update_avatar(new_avatar)
+
         return JsonResponse({'success': True})
     return render(request, 'partials/create_account.html')
 
-
-# ================================================================================================
-
-def update_avatar(request):
-    if request.method == 'POST':
-        form = AvatarForm(request.POST, request.FILES, instance=request.user.social)
-        if form.is_valid():
-            form.save()  # Sauvegarde la nouvelle image comme avatar
-            return redirect('profile')  # Redirige vers le profil de l'utilisateur
-    else:
-        form = AvatarForm(instance=request.user.social)
-
-    return render(request, 'users/update_avatar.html', {'form': form})
 
 # ================================================================================================
 

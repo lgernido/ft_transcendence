@@ -39,7 +39,7 @@ function createActionButtons(userId) {
         // { icon: 'bi-envelope-open', text: 'Send message', action: () => sendMessage(userId) }, Remplacer par autre chose
         { icon: 'bi-plus-lg', text: 'Invite', action: () => inviteUser(userId) },
         { icon: 'bi-slash-circle', text: 'Block', action: () => blockUser(userId) },
-        { icon: 'bi-trash', text: 'Delete', action: () => deleteUser(userId) },
+        // { icon: 'bi-trash', text: 'Delete', action: () => deleteUser(userId) },
     ];
 
     const container = document.createElement('div');
@@ -157,19 +157,43 @@ function sendMessage(userId) {
 document.addEventListener('DOMContentLoaded', loadFriendsList);
 
 // Fonction pour inviter un utilisateur à jouer
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 function inviteUser(userId) {
     alert(`Inviting user ${userId} to play`);
 
+    const csrfToken = getCookie('csrftoken'); // Assure-toi que 'csrftoken' est généré par Django
+    if (!csrfToken) {
+        alert('CSRF token not found. Please refresh the page.');
+        return;
+    }
     // Effectuer une requête API pour inviter l'utilisateur
+    console.log(getCookie('sessionid'));
     fetch(API_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Ajout du token CSRF
         },
         body: JSON.stringify({
             action: 'add',
             user_id: userId
-        })
+        }),
+        credentials: 'same-origin' // Important pour inclure les cookies avec la requête
     })
     .then(response => response.json())
     .then(data => {

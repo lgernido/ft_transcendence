@@ -2,7 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 import time
+import os
 
 # Gestion des stats
 class Profile(models.Model):
@@ -60,6 +62,22 @@ class Social(models.Model):
 
     def get_blocked_users(self):
         return self.blocked_user.all()
+    
+    def update_avatar(self, new_avatar):
+        # Vérifier si l'avatar actuel est différent de l'avatar par défaut
+        if self.avatar and self.avatar != 'avatars/default_avatar.png':
+            # Supprimer l'ancien avatar si ce n'est pas celui par défaut
+            try:
+                # Supprimer le fichier de l'ancien avatar du système de fichiers
+                avatar_path = os.path.join(settings.MEDIA_ROOT, self.avatar.name)
+                if os.path.isfile(avatar_path):
+                    os.remove(avatar_path)
+            except Exception as e:
+                print(f"Erreur lors de la suppression de l'avatar : {e}")
+
+        # Remplacer l'avatar par le nouveau
+        self.avatar = new_avatar
+        self.save()
 
 
 # Signaux pour gérer la création automatique des profils
