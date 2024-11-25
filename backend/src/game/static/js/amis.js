@@ -228,3 +228,4 @@ fetch(API_URL, {
 // Appeler la fonction lorsque la page est chargée
 
 console.log('test');
+
