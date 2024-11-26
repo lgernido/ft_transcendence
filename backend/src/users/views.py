@@ -13,7 +13,7 @@ import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserProfileSerializer, FriendshipActionSerializer, ContactSerializer
+from .serializers import UserProfileSerializer, FriendshipActionSerializer, ContactActionSerializer
 
 import base64
 from io import BytesIO
@@ -22,9 +22,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
-
-def index(request):
-    return render(request, 'test.html')
 
 @csrf_exempt
 def create_account(request):
@@ -116,28 +113,36 @@ class FriendshipActionView(APIView):
                 current_user_social.unblock_user(target_user)
                 return Response({"message": f"User {target_user.user.username} unblocked."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class ContactsView(APIView):
-    def get(self, request):
-        contacts = request.user.social.get_contacts()
-        serializer = ContactSerializer(contacts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class BlockedUsersView(APIView):
-    def get(self, request):
-        blocked_users = request.user.social.get_blocked_users()
-        serializer = ContactSerializer(blocked_users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
     
-class AvatarView(APIView):
-    def get(self, request):
-        serializer = ContactSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
-    def put(self, request):
-        serializer = ContactSerializer(request.user, data=request.data)
+
+class ContactActionView(APIView):
+    def post(self, request):
+        current_user = request.user
+        if current_user.is_anonymous:
+            return Response(
+                {"error": "You must be authenticated to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        serializer = ContactActionSerializer(data=request.data)
+        
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            action = serializer.validated_data['action']
+
+            if action == 'users':
+                users = User.objects.exclude(id__in=current_user.social.blocked_user.values('id'))
+                user_data = ContactActionSerializer(users, many=True).data
+                return Response(user_data)
+
+            elif action == 'added':
+                added_users = current_user.social.friends_user.exclude(id__in=current_user.social.blocked_user.values('id'))
+                added_user_data = ContactActionSerializer(added_users, many=True).data
+                return Response(added_user_data)
+
+            elif action == 'blocked':
+                blocked_users = current_user.social.blocked_user.exclude(id__in=current_user.social.blocked_user.values('id'))
+                blocked_user_data = ContactActionSerializer(blocked_users, many=True).data
+                return Response(blocked_user_data)
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

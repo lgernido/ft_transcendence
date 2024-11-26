@@ -31,12 +31,22 @@ class FriendshipActionSerializer(serializers.Serializer):
             raise serializers.ValidationError("User with this ID does not exist.")
         return value
 
-class ContactSerializer(serializers.ModelSerializer):
-    avatar_url = serializers.ImageField(source='social.avatar.url', read_only=True)
+class ContactActionSerializer(serializers.ModelSerializer):
+    action = serializers.ChoiceField(choices=['users', 'added', 'blocked'])
 
+    avatar_url = serializers.SerializerMethodField()
+    games_played = serializers.IntegerField(source='profile.games_played', read_only=True)
+    games_win = serializers.IntegerField(source='profile.games_win', read_only=True)
+    games_lose = serializers.IntegerField(source='profile.games_lose', read_only=True)
+    games_draw = serializers.IntegerField(source='profile.games_draw', read_only=True)
+    
     class Meta:
         model = User
-        fields = ['id', 'username', 'avatar_url']
+        fields = ['id', 'username', 'avatar_url', 'games_played', 'games_win', 'games_lose', 'games_draw', "action"]
 
+    def get_avatar_url(self, obj):
+        if obj.social and obj.social.avatar:
+            return obj.social.avatar.url
+        return '/media/avatars/default_avatar.png'
 
 
