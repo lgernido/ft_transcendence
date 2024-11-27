@@ -2,8 +2,8 @@
 # Script de démarrage pour Django
 
 echo "Appliquer les migrations..."
-python src/manage.py migrate #--noinput
 python src/manage.py makemigrations #--noinput
+python src/manage.py migrate #--noinput
 
 echo "Créer un super utilisateur..."
 python src/manage.py shell -c "

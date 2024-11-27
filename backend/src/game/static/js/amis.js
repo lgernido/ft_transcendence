@@ -1,4 +1,48 @@
-console.log('test.0');
+function get_users () {
+    console.log('DOM chargé');
+    const search_user = document.getElementById('search_user'); // Utilisez `document.getElementById`
+
+    if (!search_user) {
+        console.error("L'élément #search_user n'a pas été trouvé dans le DOM.");
+        return;
+    }
+
+    search_user.addEventListener("input", function () {
+        const csrfToken = getCookie('csrftoken'); // Assurez-vous que `getCookie` est bien définie
+        const query = search_user.value.trim();
+        if (search_user.value.length == 0)
+        // if (query.length == 0)
+            fetchUserList('users')
+        else if (query.length > 0) {
+            fetch(`/users/get_users?query=${query}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des utilisateurs');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && Array.isArray(data)) {
+                    displayUserList(data); // Assurez-vous que `displayUserList` est bien définie
+                } else {
+                    alert('Aucun utilisateur trouvé.');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la récupération des données.');
+            });
+        }
+    });
+};
+
+
 
 function createActionButtons(userId) {
 const actions = [
@@ -29,7 +73,6 @@ return container;
 }
 
 function loadFriendsList() {
-
 // Effectuer une requête GET vers l'API
 fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
 .then(response => {
@@ -38,53 +81,12 @@ fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
 	}
 	return response.json();
 })
-.then(users => {
-	// Sélectionner l'élément HTML qui contiendra la liste d'amis
-	console.log(users);
-	const friendsListContainer = document.getElementById('list');
-
-	// Vider la liste actuelle pour la mettre à jour
-	friendsListContainer.innerHTML = '';
-
-	// Parcourir les utilisateurs et générer le HTML pour chaque utilisateur
-	users.forEach(user => {
-		const winRatio = user.games_win && user.games_lose 
-			? (user.games_win / user.games_lose).toFixed(2) 
-			: 0;
-
-		// Créer l'élément principal pour un utilisateur
-		const friendDiv = document.createElement('div');
-		friendDiv.className = "friends_info my-2 d-flex justify-content-between align-items-center border-bottom border-3";
-		friendDiv.style.marginInline = "10%";
-		friendDiv.style.minWidth = "450px";
-
-		// HTML pour les informations utilisateur
-		const userInfoHtml = `
-			<div class="d-flex mx-3 my-1">
-				<img src="${user.avatar_url || 'img/default.jpg'}" class="img-profil-60" alt="img-profil">
-					<div class="ms-5">
-						<h5 class="text fw-bold ms-5">${user.username || 'Unknown'}</h5>
-						<p class="text ms-4">
-							Games Played: ${user.games_played || 0} 🕹️
-							Wins: ${user.games_win || 0} 🏆
-							Losses: ${user.games_lose || 0} 💀
-							Ratio: ${winRatio} ⚖️
-						</p>
-					</div>
-
-
-			</div>
-		`;
-
-		friendDiv.innerHTML = userInfoHtml;
-
-		// Ajouter les boutons d'action générés dynamiquement
-		const actionButtons = createActionButtons(user.id || '');
-		friendDiv.appendChild(actionButtons);
-
-		// Ajouter cet utilisateur à la liste
-		friendsListContainer.appendChild(friendDiv);
-	});
+.then(data => {
+    if (data && Array.isArray(data)) {
+        displayUserList(data);
+    } else {
+        alert('Aucun utilisateur trouvé.');
+    }
 })
 .catch(error => {
 	console.error('Erreur:', error);
@@ -92,7 +94,7 @@ fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
 });
 }
 
-document.addEventListener('DOMContentLoaded', loadFriendsList);
+document.addEventListener('DOMContentLoaded', loadFriendsList, get_users);
 
 const API_URL = '/users/friendship/';
 
@@ -120,6 +122,7 @@ if (!csrfToken) {
 }
 
 // Effectuer une requête API pour ajouter l'utilisateur
+console.log(csrfToken);
 fetch(API_URL, {
 	method: 'POST',
 	headers: {
@@ -253,14 +256,12 @@ function unblockUser(userId) {
 // Fonction pour faire une requête POST et récupérer les utilisateurs
 function fetchUserList(action) {
     const csrfToken = getCookie('csrftoken');
-    alert(`Ceci est une ${action}`)
-    fetch('/users/contact/', {
-        method: 'POST',
+    fetch(`/users/contact?action=${action}`, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken,
         },
-        body: JSON.stringify({ action: "users" })
     })
     .then(response => {
         if (!response.ok) {
@@ -282,27 +283,47 @@ function fetchUserList(action) {
 }
 
 function displayUserList(users) {
+    console.log(users);
     const userListContainer = document.getElementById('list');
     userListContainer.innerHTML = '';
 
     users.forEach(user => {
-        const winRatio = (user.games_lose !== 0) ? (user.games_win / user.games_lose).toFixed(2) : user.games_win;
+        const winRatio = user.games_win && user.games_lose 
+			? (user.games_win / user.games_lose).toFixed(2) 
+			: 0;
 
-        const userInfoHtml = `
-            <div class="d-flex mx-3 my-1">
-                <img src="${user.avatar_url || 'img/default.jpg'}" class="img-profil-60" alt="img-profil">
-                <div class="ms-5">
-                    <h5 class="text fw-bold ms-5">${user.username || 'Unknown'}</h5>
-                    <p class="text ms-4">
-                        Games Played: ${user.games_played || 0} 🕹️
-                        Wins: ${user.games_win || 0} 🏆
-                        Losses: ${user.games_lose || 0} 💀
-                        Ratio: ${winRatio} ⚖️
-                    </p>
-                </div>
-            </div>
-        `;
-        userListContainer.innerHTML += userInfoHtml;
+		// Créer l'élément principal pour un utilisateur
+		const friendDiv = document.createElement('div');
+		friendDiv.className = "friends_info my-2 d-flex justify-content-between align-items-center border-bottom border-3";
+		friendDiv.style.marginInline = "10%";
+		friendDiv.style.minWidth = "450px";
+
+		// HTML pour les informations utilisateur
+		const userInfoHtml = `
+			<div class="d-flex mx-3 my-1">
+				<img src="${user.avatar_url || 'img/default.jpg'}" class="img-profil-60" alt="img-profil">
+					<div class="ms-5">
+						<h5 class="text fw-bold ms-5">${user.username || 'Unknown'}</h5>
+						<p class="text ms-4">
+							Games Played: ${user.games_played || 0} 🕹️
+							Wins: ${user.games_win || 0} 🏆
+							Losses: ${user.games_lose || 0} 💀
+							Ratio: ${winRatio} ⚖️
+						</p>
+					</div>
+
+
+			</div>
+		`;
+
+		friendDiv.innerHTML = userInfoHtml;
+
+		// Ajouter les boutons d'action générés dynamiquement
+		const actionButtons = createActionButtons(user.id || '');
+		friendDiv.appendChild(actionButtons);
+
+		// Ajouter cet utilisateur à la liste
+		userListContainer.appendChild(friendDiv);
     });
 }
 
@@ -317,3 +338,7 @@ document.getElementById('showFriendsBtn').addEventListener('click', () => {
 document.getElementById('showBlockedBtn').addEventListener('click', () => {
     fetchUserList('blocked');
 });
+
+
+     
+

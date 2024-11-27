@@ -13,7 +13,7 @@ import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserProfileSerializer, FriendshipActionSerializer, ContactActionSerializer
+from .serializers import UserProfileSerializer, FriendshipActionSerializer
 
 import base64
 from io import BytesIO
@@ -77,7 +77,7 @@ def create_account(request):
 class UserProfileList(APIView):
     def get(self, request):
         try:
-            users = User.objects.all()
+            users = User.objects.filter(is_staff=False)
             if not users:
                 return Response({"error": "No users found"}, status=status.HTTP_404_NOT_FOUND)
             serializer = UserProfileSerializer(users, many=True)
@@ -117,32 +117,66 @@ class FriendshipActionView(APIView):
 
 
 class ContactActionView(APIView):
-    def post(self, request):
+    def get(self, request):
         current_user = request.user
+
+        # Vérification de l'authentification
         if current_user.is_anonymous:
             return Response(
                 {"error": "You must be authenticated to perform this action."},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        serializer = ContactActionSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            action = serializer.validated_data['action']
+        # Vérification du paramètre de requête
+        query = request.query_params.get('action')
+        if not query:
+            return Response(
+                {"error": "Query parameter 'action' is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-            if action == 'users':
-                users = User.objects.exclude(id__in=current_user.social.blocked_user.values('id'))
-                user_data = ContactActionSerializer(users, many=True).data
-                return Response(user_data)
+        # Exclusion du staff (si nécessaire) et gestion des différentes actions
+        if query == 'users':
+            # Récupérer tous les utilisateurs sauf le staff et les bloqués
+            users = User.objects.filter(is_staff=False)
+            serializer = UserProfileSerializer(users, many=True)
+            return Response(serializer.data)
 
-            elif action == 'added':
-                added_users = current_user.social.friends_user.exclude(id__in=current_user.social.blocked_user.values('id'))
-                added_user_data = ContactActionSerializer(added_users, many=True).data
-                return Response(added_user_data)
+        elif query == 'added':
+            # Récupérer les amis
+            added_users = current_user.social.friends_user.all()
+            serializer = UserProfileSerializer(added_users, many=True)
+            return Response(serializer.data)
 
-            elif action == 'blocked':
-                blocked_users = current_user.social.blocked_user.exclude(id__in=current_user.social.blocked_user.values('id'))
-                blocked_user_data = ContactActionSerializer(blocked_users, many=True).data
-                return Response(blocked_user_data)
-            
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif query == 'blocked':
+            # Récupérer les utilisateurs bloqués
+            blocked_users = current_user.social.blocked_user.all()
+            serializer = UserProfileSerializer(blocked_users, many=True)
+            return Response(serializer.data)
+
+        # Si le type d'action est invalide
+        return Response(
+            {"error": f"Invalid query type '{query}'. Expected 'users', 'added', or 'blocked'."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class GetUsers(APIView):
+    def get(self, request):
+        current_user = request.user
+
+        # Vérification de l'authentification
+        if current_user.is_anonymous:
+            return Response(
+                {"error": "You must be authenticated to perform this action."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        # Vérification du paramètre de requête
+        query = request.query_params.get('query')
+        if not query:
+            return Response(
+                {"error": "Query parameter 'query' is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
+        serializer = UserProfileSerializer(users, many=True)
+        return Response(serializer.data)

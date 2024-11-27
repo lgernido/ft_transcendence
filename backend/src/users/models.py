@@ -31,10 +31,8 @@ class Social(models.Model):
         default='avatars/default_avatar.png',
         blank=True
     )
-    # friends_user = models.ManyToManyField(User, related_name='friends', blank=True)
-    # blocked_user = models.ManyToManyField(User, related_name='blocked_by', blank=True)
-    friends_user = models.ManyToManyField('self', symmetrical=True, blank=True)
-    blocked_user = models.ManyToManyField('self', symmetrical=False, blank=True)
+    friends_user = models.ManyToManyField(User, related_name='friends', blank=True)
+    blocked_user = models.ManyToManyField(User, related_name='blocked_by', blank=True)
 
     def __str__(self):
         return f"{self.user.username}'s Social"
@@ -42,27 +40,21 @@ class Social(models.Model):
     # Gestion des amis
     def add_friend(self, other_user):
         if other_user not in self.friends_user.all():
-            self.friends_user.add(other_user)
+            self.friends_user.add(other_user.user)
 
     def remove_friend(self, other_user):
         if other_user in self.friends_user.all():
-            self.friends_user.remove(other_user)
+            self.friends_user.remove(other_user.user)
 
     def block_user(self, other_user):
         if other_user not in self.blocked_user.all():
-            self.blocked_user.add(other_user)
-            self.friends_user.remove(other_user)  # Supprime des amis si bloqué
+            self.blocked_user.add(other_user.user)
+            self.friends_user.remove(other_user.user)  # Supprime des amis si bloqué
 
     def unblock_user(self, other_user):
         if other_user in self.blocked_user.all():
-            self.blocked_user.remove(other_user)
+            self.blocked_user.remove(other_user.user)
 
-    def get_contacts(self):
-        return self.friends_user.all()
-
-    def get_blocked_users(self):
-        return self.blocked_user.all()
-    
     def update_avatar(self, new_avatar):
         # Vérifier si l'avatar actuel est différent de l'avatar par défaut
         if self.avatar and self.avatar != 'avatars/default_avatar.png':

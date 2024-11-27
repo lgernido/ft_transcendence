@@ -21,19 +21,19 @@
 	visibility: visible;
 }
 
-.img-profil-60-rounded {
+/* .img-profil-60-rounded {
 	width: 60px;
 	height: 60px;
 	border: solid var(--color-btn);
 	border-radius: 50%;
 	background-color: var(--color-white);
-}
+} */
 
 .img-profil-60 {
 	width: 60px;
-	height: 60px;
+	height: 75px;
 	border: solid var(--color-btn);
-	background-color: var(--color-white);
+	background-color: var(--color-blueBlack);
 }
 
 
