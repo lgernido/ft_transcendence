@@ -3,16 +3,9 @@ function ValidConnection() {
 
     const loginButton = document.getElementById('loginButton')
 
-    if (loginButton)
-        console.log("bouton is here");
-    else
-        console.log("Bouton not here");
-
     loginButton.addEventListener('click', function() {
         const username_connect = document.getElementById('InputUsername').value;
         const password_connect = document.getElementById('InputPassword').value;
-
-        console.log("press bouton login");
 
         if (!username_connect || !password_connect) {
             displayError('Veuillez remplir tous les champs !');

@@ -50,8 +50,6 @@ function validChanges() {
                 username: username,
                 password: password,
             };
-            
-            console.log(email, username, password)
 
             const csrfToken = getCookie('csrftoken'); 
             fetch('/compte/', {

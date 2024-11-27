@@ -53,7 +53,6 @@ def log_user(request):
     return render(request, 'partials/connect.html')
 
 @csrf_protect
-@login_required
 def mypage(request):
     return render(request, 'partials/mypage.html')
 
@@ -68,7 +67,6 @@ def lobby_tournament(request):
     return render(request, 'partials/lobby_tournament.html')
 
 @csrf_protect
-@login_required
 def stats(request):
     return render(request, 'partials/stats.html')
 
@@ -124,12 +122,10 @@ def lobby(request):
     return render(request, 'partials/lobby.html')
 
 @csrf_protect
-@login_required
 def amis(request):
     return render(request, 'partials/amis.html')
 
 @csrf_protect
-@login_required
 def compte(request):
     if request.method == 'POST':
         try:
@@ -152,7 +148,7 @@ def compte(request):
             if password:
                 user.set_password(password)
                 user.save()
-                update_session_auth_hash(request, user) 
+                # update_session_auth_hash(request, user) 
                 return JsonResponse({'success': True})
             
             user.save()
@@ -170,7 +166,6 @@ def header(request):
     return render(request, 'partials/header.html')
 
 @csrf_protect
-@login_required
 def logout_view(request):
     if request.method == 'POST':
         logout(request)
@@ -178,7 +173,7 @@ def logout_view(request):
     return JsonResponse({'error': 'CSRF token missing or invalid'}, status=403)
 
 def check_user_status(request):
-    return JsonResponse({'is_authenticated': request.user.is_authenticated})
+    return JsonResponse({'authenticated': request.user.is_authenticated})
     
 
 

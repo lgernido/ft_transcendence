@@ -20,4 +20,5 @@ urlpatterns = [
 	path('logout/', views.logout_view, name='logout'),
 	path('log_user/', views.log_user, name='log_user'),
     path('set_language/', views.set_language, name='set_language'),
+	path('check_user_status/', views.check_user_status, name='check_user_status'),
 ]

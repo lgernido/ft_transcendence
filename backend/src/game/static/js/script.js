@@ -74,19 +74,37 @@ function loadscript(file, func) {
 
 function loadConnectPage() {
     const appDiv = document.getElementById('app');
-    fetch('/connect/')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    fetch('/check_user_status/', {
+        method: 'GET',
+        credentials: 'same-origin'  
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.authenticated) {
+                fetch('/connect/')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        appDiv.innerHTML = html;
+
+                        const state = { page: 'connect' };
+                        history.replaceState(state, '', "/connect");
+                        loadscript('valid_login.js', () => ValidConnection());
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
             }
-            return response.text();
-        })
-        .then(html => {
-            appDiv.innerHTML = html;
-            loadscript('valid_login.js', () => ValidConnection());
+            else {
+                loadMyPage();
+            }
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
 
@@ -102,6 +120,8 @@ function loadCreateAccount() {
         .then(html => {
             appDiv.innerHTML = html;
 
+            const state = { page: 'create_account' };
+            history.replaceState(state, '', "/create_account");
             loadscript('create_account.js', () => ValidFormCreateAccount());
         })
         .catch(error => {
@@ -111,99 +131,169 @@ function loadCreateAccount() {
 
 function loadMyPage() {
     const appDiv = document.getElementById('app');
-    const csrfToken = getCookie('csrftoken'); 
+    const csrfToken = getCookie('csrftoken');
 
-    fetch('/mypage/', {
+    fetch('/check_user_status/', {
         method: 'GET',
-        headers: {
-            'X-CSRFToken': csrfToken
-        }
+        credentials: 'same-origin'  
     })
-    .then(response => response.text())
-    .then(html => {
-        appDiv.innerHTML = html;
-
-        loadscript('loadelement.js', () => loadchat());
-    })
-    .catch(error => {
-        console.error('Erreur lors de la récupération de mypage :', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                fetch('/mypage/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    appDiv.innerHTML = html;
+                    
+                    const state = { page: 'mypage' };
+                    history.replaceState(state, '', "/mypage");
+                    loadscript('loadelement.js', () => loadchat());
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération de mypage :', error);
+                });
+            }
+            else {
+                loadConnectPage();
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la vérification de l\'authentification :', error);
+        });
 }
 
 function loadStats() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch('/stats/', {
-        method: 'GET',
-        headers: {
-            'X-CSRFToken': csrfToken
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(html => {
-            appDiv.innerHTML = html;
 
-            loadscript('camenbert.js', () => drawCamembert());
-            loadscript('loadelement.js', () => loadchat());
+    fetch('/check_user_status/', {
+        method: 'GET',
+        credentials: 'same-origin'  
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                fetch('/stats/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    appDiv.innerHTML = html;
+
+                    const state = { page: 'stats' };
+                    history.replaceState(state, '', "/stats");
+                    loadscript('camenbert.js', () => drawCamembert());
+                    loadscript('loadelement.js', () => loadchat());
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            }
+            else {
+                loadConnectPage();
+            }
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
 
 function loadFriends() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch('/amis/', {
+     
+    fetch('/check_user_status/', {
         method: 'GET',
-        headers: {
-            'X-CSRFToken': csrfToken
-        }
+        credentials: 'same-origin'  
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(html => {
-            appDiv.innerHTML = html;
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                fetch('/amis/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    appDiv.innerHTML = html;
 
-            loadscript('loadelement.js', () => loadchat());
+                    const state = { page: 'friends' };
+                    history.replaceState(state, '', "/friends");
+                    loadscript('loadelement.js', () => loadchat());
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            }
+            else {
+                loadConnectPage();
+            }
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
 
-function loadAccount()
-{
+function loadAccount() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch('/compte/', {
+    
+    fetch('/check_user_status/', {
         method: 'GET',
-        headers: {
-            'X-CSRFToken': csrfToken
-        }
+        credentials: 'same-origin'  
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(html => {
-            appDiv.innerHTML = html;
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                fetch('/compte/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    appDiv.innerHTML = html;
 
-            loadscript('compte.js', () => validChanges());
+                    const state = { page: 'account' };
+                    history.replaceState(state, '', "/account");
+                    loadscript('compte.js', () => validChanges());
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            }
+            else {
+                loadConnectPage();
+            }
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
+            console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
 
@@ -226,6 +316,8 @@ function loadTournament()
         .then(html => {
             appDiv.innerHTML = html;
 
+            const state = { page: 'lobby_T' };
+            history.replaceState(state, '', "/lobby_T");
             loadscript('loadelement.js', () => loadchat());
             loadscript('lobby_tournament.js', () => tournament());
         })
@@ -252,6 +344,8 @@ function loadPublic() {
         .then(html => {
             appDiv.innerHTML = html;
 
+            const state = { page: 'lobby_Pu' };
+            history.replaceState(state, '', "/lobby_Pu");
             loadscript('loadelement.js', () => loadchat());
             loadscript('lobby.js', () => lobby());
         })
@@ -278,6 +372,8 @@ function loadPrivate() {
         .then(html => {
             appDiv.innerHTML = html;
 
+            const state = { page: 'lobby_Pr' };
+            history.replaceState(state, '', "/lobby_Pr");
             loadscript('loadelement.js', () => loadchat());
             loadscript('lobby_private.js', () => lobby_private());
         })
@@ -304,6 +400,8 @@ function loadGame() {
         .then(html => {
             appDiv.innerHTML = html;
 
+            const state = { page: 'game' };
+            history.replaceState(state, '', "/game");
             loadscript('loadelement.js', () => loadchat());
             loadscript('game.js', () => lauchgame());
         })
@@ -312,5 +410,73 @@ function loadGame() {
         });
 }
 
+window.addEventListener('popstate', function(event) {
+    if (event.state) {
+        const pageType = event.state.page;
+
+        console.log(pageType);
+
+        if (pageType === 'mypage')
+        {
+            console.log("Fleche: go my page");
+            loadMyPage();
+        }
+        else if (pageType === 'stats')
+        {
+            console.log("Fleche: go stats");
+            loadStats();
+        }
+        else if (pageType === 'game')
+        {
+            console.log("Fleche: go game");
+            loadGame();
+        }
+        else if (pageType === 'lobby_Pr')
+        {
+            console.log("Fleche: go lobby pr");
+            loadPrivate();
+        }
+        else if (pageType === 'lobby_Pu')
+        {
+            console.log("Fleche: go lobbt pu");
+            loadPublic();
+        }
+        else if (pageType === 'lobby_T')
+        {
+            console.log("Fleche: go lobby T");
+            loadTournament();
+        }
+        else if (pageType === 'account')
+        {
+            console.log("Fleche: go account");
+            loadAccount();
+        }
+        else if (pageType === 'friends')
+        {
+            console.log("Fleche: go friends");
+            loadFriends();
+        }
+        else if (pageType === 'create_account')
+        {
+            console.log("Fleche: go create account");
+            loadCreateAccount();
+        }
+        else if (pageType === 'connect')
+        {
+            console.log("Fleche: go connect");
+            loadConnectPage();
+        }
+    } 
+    else {
+        console.log("page not found");
+        loadConnectPage();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', loadConnectPage);
+
+window.addEventListener('load', function() {
+    const initialState = { page: 'connect' };
+    history.replaceState(initialState, '', window.location.pathname);
+});
 
