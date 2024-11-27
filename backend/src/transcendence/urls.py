@@ -19,6 +19,8 @@ from django.urls import include, path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from oauth2_provider import urls as oauth2_urls
 from django.conf.urls.i18n import i18n_patterns
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +29,8 @@ urlpatterns = [
     path('o/', include(oauth2_urls)),
     path('auth/', include("auth.urls")),
 	path('', include('game.urls')),
+	
+	path('users/', include('users.urls')),
 	path('chat2/', include('chat.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

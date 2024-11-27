@@ -1,3 +1,17 @@
+  # nginx:
+  #   container_name: nginx
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - default
+
 services:
   db:
     image: postgres:13.4
@@ -5,11 +19,12 @@ services:
     build:
       context: ./db
       dockerfile: Dockerfile
+    env_file: 
+      - .env
     environment:
-      - POSTGRES_DB=superpongdb
-      - POSTGRES_USER=superpong
-      - POSTGRES_PASSWORD=gnoprepus
-    env_file: .env
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -17,6 +32,11 @@ services:
       - "5432:5432"
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7.4
@@ -35,13 +55,21 @@ services:
     # ports:
     #   - "8000:8000"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - default
+    env_file:
+      - .env
     environment:
+      - DJANGO_SUPERUSER_USERNAME=${ADMIN_NAME}
+      - DJANGO_SUPERUSER_EMAIL=${ADMIN_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${ADMIN_PASS}
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
+<<<<<<< HEAD
     env_file:
       - .env
 
@@ -62,6 +90,12 @@ services:
       - default
     env_file:
       .env
+=======
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      - DJANGO_SUPERUSER_PASSWORD=securepassword
+
+>>>>>>> origin/zarb
 
 volumes:
   postgres_data:
@@ -70,3 +104,4 @@ volumes:
 networks:
   default:
     driver: bridge
+

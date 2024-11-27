@@ -24,18 +24,15 @@
         
             <!-- Liste des personnes avec qui l'utilisateur a échangé -->
             <div id="userList">
-                <div class="user-entry d-flex align-items-center mb-3">
-                    <img src="" alt="Avatar de l'utilisateur" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
-                </div>
                 <!-- Répétez le modèle de user-entry pour chaque utilisateur -->
             </div>
         </div>
         <div id="chat-area">
             <div class="chat-header d-flex align-items-center">
                 <!-- Info de la personne avec qui je parle  -->
-                <img src="" alt="Avatar du contact" class="rounded-circle me-3"> 
+                <img src="" alt="" class="rounded-circle me-3"> 
                 <div class="contact-details">
-                    <strong>Nom du contact</strong>
+                    <strong>Start a chat with someone</strong>
                 </div>
             </div>
             <div class="messages-container">
@@ -182,7 +179,7 @@
                         userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
                         userEntry.innerHTML = `
                             <img src="" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
-                            <div>
+                            <div data_user_id='${user.id}'>
                                 <div class="user-details"><strong>${user.username}</strong></div>
                                 <div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
                             </div>
@@ -211,64 +208,6 @@
     // // Lancer la fonction toutes les 1 seconde
     //  setInterval(fetchUserConversations, 10000);
 //===========================================
-
-// Crée une nouvelle connexion WebSocket avec l'URL de votre WebSocket
-const socket = new WebSocket('ws://localhost:8000/ws/chat2/conversations/');
-
-// Lorsque la connexion WebSocket est ouverte
-socket.onopen = function(e) {
-    console.log("Connexion WebSocket réussie !");
-    // Vous pouvez envoyer un message de demande si nécessaire (mais ici c'est optionnel)
-    // socket.send(JSON.stringify({
-    //     type: 'request_conversations',
-    // }));
-};
-
-// Lorsque vous recevez un message depuis le serveur
-socket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    console.log('Message reçu:', data);
-    
-    // Vérification si on reçoit les conversations
-    if (data.conversations) {
-        // Traitez les conversations reçues
-        console.log('Conversations:', data.conversations);
-        
-        // Mettez à jour l'interface utilisateur avec les conversations
-        const conversationList = document.querySelector('#conversation-list');
-        conversationList.innerHTML = '';  // Vider les conversations existantes
-
-        data.conversations.forEach(conv => {
-            const conversationItem = document.createElement('div');
-            conversationItem.classList.add('conversation-item');
-            conversationItem.textContent = `Conversation: ${conv.channel_name}`;
-            conversationList.appendChild(conversationItem);
-        });
-    }
-
-    // Vérification si on reçoit un nouveau message
-    if (data.sender && data.content && data.timestamp) {
-        console.log('Nouveau message:', data);
-
-        // Mettez à jour l'interface utilisateur avec le nouveau message
-        const messageContainer = document.querySelector('#messages');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = `${data.sender}: ${data.content} (${data.timestamp})`;
-        messageContainer.appendChild(messageElement);
-    }
-};
-
-// Si la connexion WebSocket est fermée
-socket.onclose = function(e) {
-    console.error('Connexion WebSocket fermée:', e);
-};
-
-// Si une erreur se produit sur la connexion WebSocket
-socket.onerror = function(e) {
-    console.error('Erreur WebSocket:', e);
-};
-
-
     </script>
 </body>
 </html>

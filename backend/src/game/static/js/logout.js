@@ -17,7 +17,6 @@ function logoutUser() {
                 })
                 .then(response => {
                     if (response.ok) {
-                        console.log("Go connect page");
                         loadConnectPage();
                     } else {
                         console.error('Erreur lors de la déconnexion');

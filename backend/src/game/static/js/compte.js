@@ -1,36 +1,36 @@
 function validChanges() {
 	displayError('');
 
-    // if (document.getElementById('profileImageButton'))
-    // {
-    //     document.getElementById('profileImageButton').addEventListener('click', function() {
-    //         document.getElementById('profileImageInput').click();
-    //     });
-    // }
+    if (document.getElementById('profileImageButton'))
+    {
+        document.getElementById('profileImageButton').addEventListener('click', function() {
+            document.getElementById('profileImageInput').click();
+        });
+    }
 
-    // if (document.getElementById('profileImageInput'))
-    // {
-    //     document.getElementById('profileImageInput').addEventListener('change', function(event) {
-    //         const file = event.target.files[0];
+    document.getElementById('profileImageInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
             
-    //         if (file) {
-    //             const reader = new FileReader();
+            reader.onload = function(e) {
+                // Remplacez l'icône de la personne par l'image importée
+                const profileIcon = document.querySelector('.profile-btn img');
                 
-    //             reader.onload = function(e) {
-    //                 // Remplacez l'icône de la personne par l'image importée
-    //                 const profileIcon = document.querySelector('.profile-btn i');
-    //                 profileIcon.style.backgroundImage = `url(${e.target.result})`;
-    //                 profileIcon.style.backgroundSize = 'cover';
-    //                 profileIcon.style.color = 'transparent'; // Cacher l'icône par défaut
-    //                 profileIcon.style.width = '200px'; // Ajustez la taille si nécessaire
-    //                 profileIcon.style.height = '200px'; // Ajustez la taille si nécessaire
-    //                 profileIcon.classList.remove('bi-person-circle'); // Retirer l'icône par défaut
-    //             };
+                // Mettez à jour la source de l'image avec la nouvelle image
+                profileIcon.src = e.target.result;
                 
-    //             reader.readAsDataURL(file);
-    //         }
-    //     });
-    // }
+                // Vous pouvez aussi ajuster le style de l'image si nécessaire
+                profileIcon.style.width = '200px'; // Ajustez la taille si nécessaire
+                profileIcon.style.height = '200px'; // Ajustez la taille si nécessaire
+            };
+            
+            // Lire l'image comme une URL de données
+            reader.readAsDataURL(file);
+        }
+    });
+    
 
     const validChangesAccount = document.getElementById('saveChangesAccount');
     if (validChangesAccount) {
@@ -39,7 +39,8 @@ function validChanges() {
             const email = document.getElementById('modifEmailAccount').value;
             const username = document.getElementById('modifUsernameAccount').value;
             const password = document.getElementById('modifPasswordAccount').value;
-            
+            const avatar = document.getElementById('avatar').src;
+
             if (!email || !username) {
                 displayError('Veuillez remplir tous les champs !');
                 return;
@@ -49,7 +50,10 @@ function validChanges() {
                 email: email,
                 username: username,
                 password: password,
+                avatar: avatar
             };
+            
+            console.log(email, username, password)
 
             const csrfToken = getCookie('csrftoken'); 
             fetch('/compte/', {
