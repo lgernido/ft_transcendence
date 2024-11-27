@@ -19,4 +19,8 @@ if not User.objects.filter(username=username).exists():
 
 
 echo "Lancer le serveur Django..."
+<<<<<<< HEAD
 exec "$@"
+=======
+exec "$@"
+>>>>>>> origin/scely

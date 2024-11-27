@@ -8,11 +8,15 @@ COPY tools/requirements.txt .
 
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-COPY conf/wait-for-it.sh /wait-for-it.sh
+COPY conf/build.sh /build.sh
 
+<<<<<<< HEAD
 COPY conf/build.sh /build.sh
 
 RUN chmod +x /wait-for-it.sh
+=======
+RUN chmod +x /build.sh
+>>>>>>> origin/scely
 
 RUN chmod +x /build.sh
 
@@ -24,4 +28,8 @@ RUN chmod +x /build.sh
 
 EXPOSE 8000
 
+<<<<<<< HEAD
 ENTRYPOINT ["/wait-for-it.sh", "db:5432", "--timeout=15", "--", "/build.sh", "--", "python", "src/manage.py", "runserver", "0.0.0.0:8000"]1.0.0
+=======
+ENTRYPOINT ["/build.sh", "python", "src/manage.py", "runserver", "0.0.0.0:8000"]
+>>>>>>> origin/scely
