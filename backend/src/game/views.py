@@ -146,7 +146,7 @@ def compte(request):
             if password:
                 user.set_password(password)
                 user.save()
-                # update_session_auth_hash(request, user) 
+                update_session_auth_hash(request, user) # permet au user de rester connecter apres la modif du mdp
                 return JsonResponse({'success': True})
             
             user.save()

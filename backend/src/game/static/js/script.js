@@ -63,12 +63,30 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function checkScriptPresence(src) {
+    src = "/static/js/" + src;
+    const existingScript = document.querySelector(`script[src="${src}"]`);
+    
+    if (!existingScript) {
+        return (false);
+    } else {
+        return (true);
+    }
+}
+
 function loadscript(file, func) {
-    const script = document.createElement('script');
-    script.src = "/static/js/" + file;
-    document.body.appendChild(script);
-    script.onload = () => {
-        func();
+    if (!checkScriptPresence(file)) {
+        const script = document.createElement('script');
+        script.src = "/static/js/" + file;
+        document.body.appendChild(script);
+        script.onload = () => {
+            func();
+        }
+    }
+    else {
+        if (func) {
+            func();
+        }
     }
 }
 
@@ -90,9 +108,11 @@ function loadConnectPage() {
                     })
                     .then(html => {
                         appDiv.innerHTML = html;
-
-                        const state = { page: 'connect' };
-                        history.replaceState(state, '', "/connect");
+                        
+                        if (history.state?.page !== 'connect') {
+                            const state = { page: 'connect' };
+                            history.pushState(state, '', "/connect");
+                        }
                         loadscript('valid_login.js', () => ValidConnection());
                     })
                     .catch(error => {
@@ -120,8 +140,10 @@ function loadCreateAccount() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const state = { page: 'create_account' };
-            history.replaceState(state, '', "/create_account");
+            if (history.state?.page !== 'create_account') {
+                const state = { page: 'create_account' };
+                history.pushState(state, '', "/create_account");
+            }
             loadscript('create_account.js', () => ValidFormCreateAccount());
         })
         .catch(error => {
@@ -150,8 +172,10 @@ function loadMyPage() {
                 .then(html => {
                     appDiv.innerHTML = html;
                     
-                    const state = { page: 'mypage' };
-                    history.replaceState(state, '', "/mypage");
+                    if (history.state?.page !== 'mypage') {
+                        const state = { page: 'mypage' };
+                        history.pushState(state, '', "/mypage");
+                    }
                     loadscript('loadelement.js', () => loadchat());
                 })
                 .catch(error => {
@@ -193,8 +217,10 @@ function loadStats() {
                 .then(html => {
                     appDiv.innerHTML = html;
 
-                    const state = { page: 'stats' };
-                    history.replaceState(state, '', "/stats");
+                    if (history.state?.page !== 'stats') {
+                        const state = { page: 'stats' };
+                        history.pushState(state, '', "/stats");
+                    }
                     loadscript('camenbert.js', () => drawCamembert());
                     loadscript('loadelement.js', () => loadchat());
                 })
@@ -237,8 +263,10 @@ function loadFriends() {
                 .then(html => {
                     appDiv.innerHTML = html;
 
-                    const state = { page: 'friends' };
-                    history.replaceState(state, '', "/friends");
+                    if (history.state?.page !== 'amis') {
+                        const state = { page: 'amis' };
+                        history.pushState(state, '', "/amis");
+                    }
                     loadscript('loadelement.js', () => loadchat());
                 })
                 .catch(error => {
@@ -280,8 +308,10 @@ function loadAccount() {
                 .then(html => {
                     appDiv.innerHTML = html;
 
-                    const state = { page: 'account' };
-                    history.replaceState(state, '', "/account");
+                    if (history.state?.page !== 'compte') {
+                        const state = { page: 'compte' };
+                        history.pushState(state, '', "/compte");
+                    }
                     loadscript('compte.js', () => validChanges());
                 })
                 .catch(error => {
@@ -316,8 +346,10 @@ function loadTournament()
         .then(html => {
             appDiv.innerHTML = html;
 
-            const state = { page: 'lobby_T' };
-            history.replaceState(state, '', "/lobby_T");
+            if (history.state?.page !== 'lobby_T') {
+                const state = { page: 'lobby_T' };
+                history.pushState(state, '', "/lobby_T");
+            }
             loadscript('loadelement.js', () => loadchat());
             loadscript('lobby_tournament.js', () => tournament());
         })
@@ -344,8 +376,10 @@ function loadPublic() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const state = { page: 'lobby_Pu' };
-            history.replaceState(state, '', "/lobby_Pu");
+            if (history.state?.page !== 'lobby_Pu') {
+                const state = { page: 'lobby_Pu' };
+                history.pushState(state, '', "/lobby_Pu");
+            }
             loadscript('loadelement.js', () => loadchat());
             loadscript('lobby.js', () => lobby());
         })
@@ -372,8 +406,10 @@ function loadPrivate() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const state = { page: 'lobby_Pr' };
-            history.replaceState(state, '', "/lobby_Pr");
+            if (history.state?.page !== 'lobby_Pr') {
+                const state = { page: 'lobby_Pr' };
+                history.pushState(state, '', "/lobby_Pr");
+            }
             loadscript('loadelement.js', () => loadchat());
             loadscript('lobby_private.js', () => lobby_private());
         })
@@ -400,8 +436,10 @@ function loadGame() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            const state = { page: 'game' };
-            history.replaceState(state, '', "/game");
+            if (history.state?.page !== 'game') {
+                const state = { page: 'game' };
+                history.pushState(state, '', "/game");
+            }
             loadscript('loadelement.js', () => loadchat());
             loadscript('game.js', () => lauchgame());
         })
@@ -410,73 +448,104 @@ function loadGame() {
         });
 }
 
-window.addEventListener('popstate', function(event) {
-    if (event.state) {
-        const pageType = event.state.page;
+document.addEventListener('DOMContentLoaded', function () {
+    window.addEventListener('popstate', function(event) {
+        if (event.state) {
+            const pageType = event.state.page;
 
-        console.log(pageType);
-
-        if (pageType === 'mypage')
-        {
-            console.log("Fleche: go my page");
-            loadMyPage();
-        }
-        else if (pageType === 'stats')
-        {
-            console.log("Fleche: go stats");
-            loadStats();
-        }
-        else if (pageType === 'game')
-        {
-            console.log("Fleche: go game");
-            loadGame();
-        }
-        else if (pageType === 'lobby_Pr')
-        {
-            console.log("Fleche: go lobby pr");
-            loadPrivate();
-        }
-        else if (pageType === 'lobby_Pu')
-        {
-            console.log("Fleche: go lobbt pu");
-            loadPublic();
-        }
-        else if (pageType === 'lobby_T')
-        {
-            console.log("Fleche: go lobby T");
-            loadTournament();
-        }
-        else if (pageType === 'account')
-        {
-            console.log("Fleche: go account");
-            loadAccount();
-        }
-        else if (pageType === 'friends')
-        {
-            console.log("Fleche: go friends");
-            loadFriends();
-        }
-        else if (pageType === 'create_account')
-        {
-            console.log("Fleche: go create account");
-            loadCreateAccount();
-        }
-        else if (pageType === 'connect')
-        {
-            console.log("Fleche: go connect");
+            if (pageType === 'mypage') {
+                loadMyPage();
+            }
+            else if (pageType === 'stats') {
+                loadStats();
+            }
+            else if (pageType === 'game') {
+                loadGame();
+            }
+            else if (pageType === 'lobby_Pr') {
+                loadPrivate();
+            }
+            else if (pageType === 'lobby_Pu') {
+                loadPublic();
+            }
+            else if (pageType === 'lobby_T') {
+                loadTournament();
+            }
+            else if (pageType === 'compte') {
+                loadAccount();
+            }
+            else if (pageType === 'amis') {
+                loadFriends();
+            }
+            else if (pageType === 'create_account') {
+                loadCreateAccount();
+            }
+            else if (pageType === 'connect') {
+                loadConnectPage();
+            }
+            else {
+                console.log("Page not found", pageType);
+                loadMyPage();
+            }
+        } 
+        else {
+            console.log("page not found");
             loadConnectPage();
         }
-    } 
-    else {
-        console.log("page not found");
-        loadConnectPage();
-    }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', loadConnectPage);
 
-window.addEventListener('load', function() {
-    const initialState = { page: 'connect' };
+document.addEventListener('DOMContentLoaded', function () {
+    window.addEventListener("keydown", function(event) {
+        if (event.key === "F5") {
+            event.preventDefault();
+            const path = window.location.pathname;
+            const lastPart = path.split('/').filter(Boolean).pop();
+
+            console.log("Refresh page");
+            if (lastPart === 'mypage') {
+                loadMyPage();
+            }
+            else if (lastPart === 'stats') {
+                loadStats();
+            }
+            else if (lastPart === 'game') {
+                loadGame();
+            }
+            else if (lastPart === 'lobby_Pr') {
+                loadPrivate();
+            }
+            else if (lastPart === 'lobby_Pu') {
+                loadPublic();
+            }
+            else if (lastPart === 'lobby_T') {
+                loadTournament();
+            }
+            else if (lastPart === 'compte') {
+                loadAccount();
+            }
+            else if (lastPart === 'amis') {
+                loadFriends();
+            }
+            else if (lastPart === 'create_account') {
+                loadCreateAccount();
+            }
+            else if (lastPart === 'connect') {
+                loadConnectPage();
+            }
+            else {
+                console.log("Page not found", lastPart);
+                loadConnectPage();
+            }
+        }
+    });
+});
+
+window.addEventListener('load', function () {
+    const initialPage = window.location.pathname.split('/').pop() || 'connect';
+    const initialState = { page: initialPage };
     history.replaceState(initialState, '', window.location.pathname);
 });
 
