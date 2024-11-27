@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from oauth2_provider import urls as oauth2_urls
+from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +28,5 @@ urlpatterns = [
     path('auth/', include("auth.urls")),
 	path('', include('game.urls')),
 	path('chat2/', include('chat.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]

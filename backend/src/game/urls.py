@@ -19,4 +19,5 @@ urlpatterns = [
     path('store_colors/', views.store_colors, name='store_colors'),
 	path('logout/', views.logout_view, name='logout'),
 	path('log_user/', views.log_user, name='log_user'),
+    path('set_language/', views.set_language, name='set_language'),
 ]

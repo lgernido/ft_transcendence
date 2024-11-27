@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.utils.translation import activate
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import redirect
 from django.http import JsonResponse
 
 from django.contrib.auth.models import User
@@ -179,3 +181,11 @@ def check_user_status(request):
     return JsonResponse({'is_authenticated': request.user.is_authenticated})
     
 
+
+def set_language(request):
+    if request.method == 'POST':
+        lang = request.POST.get('language')
+        if lang:
+            activate(lang)
+            request.session[LANGUAGE_SESSION_KEY] = lang
+    return redirect(request.META.get('HTTP_REFERER', '/')) 

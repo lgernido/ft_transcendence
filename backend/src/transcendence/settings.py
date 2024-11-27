@@ -35,35 +35,31 @@ PORT = 8000
 # Application definition
 
 INSTALLED_APPS = [
-    # 'django_otp',
-    # 'django_otp.plugins.otp_totp',
-    # 'django_otp.plugins.otp_static',
-    # 'two_factor',
-    'authlib',
     'oauth2_provider',
     'rest_framework',
     'rest_framework_simplejwt',
 	'daphne',
-	'channels',
+	# 'channels',
 	'game',
 	'users',
 	'chat',
-	
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
-    # 'django_otp.middleware.OTPMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -97,9 +93,6 @@ CHANNEL_LAYERS = {
         }
     }
 }
-
-
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -149,7 +142,15 @@ PASSWORD_HASHERS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('fr', 'Français'),
+    ('es', 'Español'),
+]
+
+LANGUAGE_SESSION_KEY = 'django_language'
 
 TIME_ZONE = 'UTC'
 
@@ -193,4 +194,11 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
 
-LOGIN_URL = '/admin/login'
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:8443',
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+    # os.path.join(BASE_DIR, 'backend/src/auth/locale'),
+]
