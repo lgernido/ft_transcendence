@@ -16,3 +16,4 @@ python-dotenv
 django-oauth-toolkit
 py-oauth2
 authlib==1.3.2
+pillow==11.0.0

@@ -1,10 +1,43 @@
 function ValidFormCreateAccount() {   
     displayError('');
+    
+    if (document.getElementById('profileImageButton'))
+        {
+            document.getElementById('profileImageButton').addEventListener('click', function() {
+                document.getElementById('profileImageInput').click();
+            });
+        }
+    
+        document.getElementById('profileImageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Remplacez l'icône de la personne par l'image importée
+                    const profileIcon = document.querySelector('.profile-btn img');
+                    
+                    // Mettez à jour la source de l'image avec la nouvelle image
+                    profileIcon.src = e.target.result;
+                    
+                    // Vous pouvez aussi ajuster le style de l'image si nécessaire
+                    profileIcon.style.width = '200px'; // Ajustez la taille si nécessaire
+                    profileIcon.style.height = '200px'; // Ajustez la taille si nécessaire
+                };
+                
+                // Lire l'image comme une URL de données
+                reader.readAsDataURL(file);
+            }
+        });
+
     document.getElementById('submitButton').addEventListener('click', function() {
         const emailInput = document.getElementById('floatingInputEmail');
         const username = document.getElementById('floatingInputUsername').value;
         const password = document.getElementById('floatingInputPassword').value;
         const password2 = document.getElementById('floatingInputPassword2').value;
+        const avatar = document.getElementById('avatar').src;
+
 
         if (!emailInput.value || !username || !password || !password2) {
             displayError('Veuillez remplir tous les champs !');
@@ -23,6 +56,7 @@ function ValidFormCreateAccount() {
             username: username,
             password: password,
             password2: password2,
+            avatar: avatar,
         };
 
         const csrfToken = getCookie('csrftoken');

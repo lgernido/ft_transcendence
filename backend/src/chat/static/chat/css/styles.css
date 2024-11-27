@@ -126,3 +126,7 @@ button[type="submit"] img {
     height: auto;
     display: block;
 }
+
+.form-control {
+    width: 100%;
+}

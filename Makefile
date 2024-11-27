@@ -13,10 +13,11 @@ start:
 	docker compose up --build
 
 stop:
-	docker compose down
+	docker compose down 
 
 restart:
-	docker compose down && docker compose up --build
+	@$(MAKE) stop
+	@$(MAKE) start
 
 makemigrations:
 	docker compose exec backend python src/manage.py makemigrations
