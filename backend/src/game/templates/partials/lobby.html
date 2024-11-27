@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <div class="d-flex" style="height: calc(100vh - 80px);">
 	<div class="mx-2 my-2 w-75 d-flex flex-column">
 		<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
@@ -12,37 +13,37 @@
 						<div class="form-floating mb-1 w-75">
 							<select class="form-select" id="selectColorPlayerPublic1">
 								<option value="color-player-none">--</option>
-								<option value="color-player-red">Red</option>
-								<option value="color-player-green">Green</option>
-								<option value="color-player-blue">Blue</option>
-								<option value="color-player-yellow">Yellow</option>
-								<option value="color-player-cyan">Cyan</option>
-								<option value="color-player-magenta">Magenta</option>
-								<option value="color-player-orange">Orange</option>
-								<option value="color-player-purple">Purple</option>
-								<option value="color-player-pink">Pink</option>
-								<option value="color-player-gray">Gray</option>
+								<option value="color-player-red">{%trans 'Red' %}</option>
+								<option value="color-player-green">{%trans 'Green' %}</option>
+								<option value="color-player-blue">{%trans 'Blue' %}</option>
+								<option value="color-player-yellow">{%trans 'Yellow' %}</option>
+								<option value="color-player-cyan">{%trans 'Cyan' %}</option>
+								<option value="color-player-magenta">{%trans 'Magenta' %}</option>
+								<option value="color-player-orange">{%trans 'Orange' %}</option>
+								<option value="color-player-purple">{%trans 'Purple' %}</option>
+								<option value="color-player-pink">{%trans 'Pink' %}</option>
+								<option value="color-player-gray">{%trans 'Gray' %}</option>
 							</select>
-							<label for="selectColorPlayerPublic1">Colors :</label>
+							<label for="selectColorPlayerPublic1">{%trans 'Colors :' %}</label>
 						</div>
 					</div>
 				</div>
 				<div class="card-lobby-wait d-flex flex-column align-items-center justify-content-center">
 					<div class="d-flex flex-column align-items-center">
 						<div class="spinner-border spinner-color mt-3" role="status">
-							<span class="visually-hidden">Loading...</span>
+							<span class="visually-hidden">{%trans 'Loading...' %}</span>
 						</div>
 					</div>
 					<div class="card-lobby-body d-flex align-items-center justify-content-center">
-						<p class="card-lobby-text">Waiting for player...</p>
+						<p class="card-lobby-text">{%trans 'Waiting for player...'%}</p>
 					</div>
 				</div>
 			</div>
 			<div class="lobbySettings my-5">
-				Limite de points : <input type="number" class="inputMaxPoint ms-2" id="maxPoint">
+				{%trans 'Limite de points : '%}<input type="number" class="inputMaxPoint ms-2" id="maxPoint">
 			</div>
 			<div class="w-100 d-flex flex-column align-items-center justify-content-center">
-				<button class="btn btn-primary btn-ready" id="btn-ready">Lancer</button>
+				<button class="btn btn-primary btn-ready" id="btn-ready">{%trans 'Lancer' %}</button>
 			</div>
 		</div>
 	</div>

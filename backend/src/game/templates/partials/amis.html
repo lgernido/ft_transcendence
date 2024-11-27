@@ -1,6 +1,8 @@
+{% load i18n %}
 <div class="d-flex" style="height: calc(100vh - 80px);">
 	<div class="border border-dark rounded mx-2 my-2 w-75 flex-grow-1 d-flex flex-column overflow-auto">
-		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3" style="margin-inline: 10%; min-width: 450px;">
+		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3"
+			style="margin-inline: 10%; min-width: 450px;">
 			<div class="d-flex mx-3 my-1">
 				<img src="img/bob.jpg" class="img-profil-60-rounded" alt="img-profil">
 				<div class="ms-5">
@@ -11,23 +13,24 @@
 			<div class="me-3">
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-envelope-open icon"></i>
-					<div class="hover-text">Send message</div>
+					<div class="hover-text">{%trans 'Send message' %}</div>
 				</a>
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-plus-lg icon"></i>
-					<div class="hover-text">Invite</div>
+					<div class="hover-text">{%trans 'Invite' %}</div>
 				</a>
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-slash-circle icon"></i>
-					<div class="hover-text">Block</div>
+					<div class="hover-text">{%trans 'Block' %}</div>
 				</a>
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-trash icon"></i>
-					<div class="hover-text">Delete</div>
+					<div class="hover-text">{% trans 'Delete'}</div>
 				</a>
 			</div>
 		</div>
-		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3" style="margin-inline: 10%; min-width: 450px;">
+		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3"
+			style="margin-inline: 10%; min-width: 450px;">
 			<div class="d-flex mx-3 my-1">
 				<img src="img/bob.jpg" class="img-profil-60" alt="img-profil">
 				<div class="ms-5">
@@ -38,19 +41,19 @@
 			<div class="me-3">
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-envelope-open icon"></i>
-					<div class="hover-text">Send message</div>
+					<div class="hover-text">{%trans 'Send message' %}</div>
 				</a>
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-plus-lg icon"></i>
-					<div class="hover-text">Invite</div>
+					<div class="hover-text">{%trans 'Invite' %}</div>
 				</a>
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-slash-circle icon"></i>
-					<div class="hover-text">Block</div>
+					<div class="hover-text">{%trans 'Block' %}</div>
 				</a>
 				<a class="btn btn-primary btn-add shadow hover-container" role="button">
 					<i class="bi bi-trash icon"></i>
-					<div class="hover-text">Delete</div>
+					<div class="hover-text">{%trans 'Delete' %}</div>
 				</a>
 			</div>
 		</div>
@@ -68,10 +71,11 @@
 		<div class="position-absolute end-0 top-0 m-3">
 			<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 				<div class="toast-body">
-					You have been invited to play by ...
+					{%trans 'You have been invited to play by ...' %}
 					<div class="mt-2 pt-2 border-top">
 						<a type="button" class="btn btn-sm btn-toast-join ms-3" href="lobby_private.html">Join</a>
-						<button type="button" class="btn btn-sm btn-toast-close ms-1" data-bs-dismiss="toast">Refuse</button>
+						<button type="button" class="btn btn-sm btn-toast-close ms-1"
+							data-bs-dismiss="toast">{%trans 'Refuse'}</button>
 					</div>
 				</div>
 			</div>
@@ -79,5 +83,6 @@
 	</div>
 
 	<!-- Chat section -->
-	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
+	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);">
+	</div>
 </div>
