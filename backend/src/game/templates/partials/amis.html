@@ -1,110 +1,14 @@
-<<<<<<< HEAD
 {% load i18n %}
-<div class="d-flex" style="height: calc(100vh - 80px);">
-<<<<<<< HEAD
-	<div class="border border-dark rounded mx-2 my-2 w-75 flex-grow-1 d-flex flex-column overflow-auto">
-		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3"
-			style="margin-inline: 10%; min-width: 450px;">
-=======
-	<div class="border border-dark rounded mx-2 my-2 w-100 flex-grow-1 d-flex flex-column overflow-auto">
-		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3" style="margin-inline: 10%; min-width: 450px;">
->>>>>>> origin/zarb
-			<div class="d-flex mx-3 my-1">
-				<img src="img/bob.jpg" class="img-profil-60-rounded" alt="img-profil">
-				<div class="ms-5">
-					<p class="text fw-bold ms-5">Bob</p>
-					<p class="text ms-4">Ratio: 98% Classement: #45</p>
-				</div>
-			</div>
-			<div class="me-3">
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-envelope-open icon"></i>
-					<div class="hover-text">{%trans 'Send message' %}</div>
-				</a>
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-plus-lg icon"></i>
-					<div class="hover-text">{%trans 'Invite' %}</div>
-				</a>
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-slash-circle icon"></i>
-					<div class="hover-text">{%trans 'Block' %}</div>
-				</a>
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-trash icon"></i>
-					<div class="hover-text">{% trans 'Delete'}</div>
-				</a>
-			</div>
-		</div>
-		<div class="my-2 d-flex justify-content-between align-items-center border-bottom border-3"
-			style="margin-inline: 10%; min-width: 450px;">
-			<div class="d-flex mx-3 my-1">
-				<img src="img/bob.jpg" class="img-profil-60" alt="img-profil">
-				<div class="ms-5">
-					<p class="text fw-bold ms-5">Bob</p>
-					<p class="text ms-4">Ratio: 98% Classement: #45</p>
-				</div>
-			</div>
-			<div class="me-3">
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-envelope-open icon"></i>
-					<div class="hover-text">{%trans 'Send message' %}</div>
-				</a>
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-plus-lg icon"></i>
-					<div class="hover-text">{%trans 'Invite' %}</div>
-				</a>
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-slash-circle icon"></i>
-					<div class="hover-text">{%trans 'Block' %}</div>
-				</a>
-				<a class="btn btn-primary btn-add shadow hover-container" role="button">
-					<i class="bi bi-trash icon"></i>
-					<div class="hover-text">{%trans 'Delete' %}</div>
-				</a>
-			</div>
-		</div>
-		<div class="d-flex justify-content-center mt-3">
-			<a class="btn btn-primary btn-add shadow hover-container w-25">
-				Add friend
-			</a>
-		</div>
-=======
 <div class="d-flex flex-column border border-dark m-2 rounded" style="height: calc(100vh - 80px);">
->>>>>>> origin/zarb
 
     <div class="d-flex justify-content-between p-2" >
         <input id='search_user' type="text" value="" placeholder="Search user">
-        <button id="showAllUserBtn" class="btn btn-primary">Afficher tous les utilisateurs</button>
-        <button id="showFriendsBtn" class="btn btn-primary">Afficher Amis</button>
-        <button id="showBlockedBtn" class="btn btn-primary">Afficher Bloqués</button>
+        <button id="showAllUserBtn" class="btn btn-primary">{%trans 'Afficher tous les utilisateurs'%}</button>
+        <button id="showFriendsBtn" class="btn btn-primary">{%trans 'Afficher Amis' %}</button>
+        <button id="showBlockedBtn" class="btn btn-primary">{%trans 'Afficher Bloqués' %}</button>
     </div>
 
-<<<<<<< HEAD
-
-		<button type="button" class="btn btn-warning w-25" id="liveToastBtn">Show live toast</button>
-
-		<!-- toast d'invite dans une partie -->
-		<div class="position-absolute end-0 top-0 m-3">
-			<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-				<div class="toast-body">
-					{%trans 'You have been invited to play by ...' %}
-					<div class="mt-2 pt-2 border-top">
-						<a type="button" class="btn btn-sm btn-toast-join ms-3" href="lobby_private.html">Join</a>
-						<button type="button" class="btn btn-sm btn-toast-close ms-1"
-							data-bs-dismiss="toast">{%trans 'Refuse'}</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Chat section -->
-	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);">
-	</div>
-</div>
-=======
     <div id="list" class="mx-2 my-2 w-100 flex-grow-1 d-flex flex-column overflow-auto">
         <!-- Ici se trouvera la liste des amis -->
     </div>
 </div>
->>>>>>> origin/zarb
