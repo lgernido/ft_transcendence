@@ -310,8 +310,6 @@ function displayUserList(users) {
 							Ratio: ${winRatio} ⚖️
 						</p>
 					</div>
-
-
 			</div>
 		`;
 
