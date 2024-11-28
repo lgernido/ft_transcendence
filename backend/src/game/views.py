@@ -209,7 +209,6 @@ def check_user_status(request):
     return JsonResponse({'authenticated': request.user.is_authenticated})
     
 
-
 def set_language(request):
     if request.method == 'POST':
         lang = request.POST.get('language')
