@@ -1,9 +1,4 @@
-Styles généraux
-* {
-    margin: 0;
-    padding: 0;
-}
-#container {
+#container-chat {
     display: flex;
     height: 100vh;
 }

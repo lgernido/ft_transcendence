@@ -31,21 +31,21 @@ function loadheader()
 }
 
 /* permet d'inserer la page chat.html dans toutes les pages */
-function loadchat()
-{
-	displayError("");
-	fetch('/chat/')
-	.then(response => {
-		if (!response.ok) {
-			throw new Error('Error network response');
-		}
-		return response.text();
-	})
-	.then(data => {
-		if (document.getElementById('chat-placeholder'))
-			document.getElementById('chat-placeholder').innerHTML = data;
-	})
-	.catch(error => {
-		console.error('There has been a problem with your fetch operation:', error);
-	});
-}
+// function loadchat()
+// {
+// 	displayError("");
+// 	fetch('/chat/')
+// 	.then(response => {
+// 		if (!response.ok) {
+// 			throw new Error('Error network response');
+// 		}
+// 		return response.text();
+// 	})
+// 	.then(data => {
+// 		if (document.getElementById('chat-placeholder'))
+// 			document.getElementById('chat-placeholder').innerHTML = data;
+// 	})
+// 	.catch(error => {
+// 		console.error('There has been a problem with your fetch operation:', error);
+// 	});
+// }

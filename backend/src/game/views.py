@@ -217,3 +217,7 @@ def set_language(request):
             activate(lang)
             request.session[LANGUAGE_SESSION_KEY] = lang
     return redirect(request.META.get('HTTP_REFERER', '/')) 
+
+@csrf_protect
+def chat(request):
+    return render(request, 'partials/chat.html')

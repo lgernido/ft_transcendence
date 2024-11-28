@@ -1,26 +1,129 @@
-.header-chat {
-	color: var(--color-white);
-	border-bottom: solid 3px var(--color-white);
+/* Conteneur principal */
+#container-chat {
+    display: flex;
+    height: 100%; /* Remplir toute la hauteur de l'écran */
+	width: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Couleur de fond claire */
 }
 
-.btn-header-chat {
-	color: var(--color-white);
-	font-weight: bold;
+/* Barre latérale (sidebar) */
+#sidebar {
+    width: 25%; /* Largeur de la barre latérale */
+    background-color: #ffffff; /* Couleur de fond blanche */
+    border-right: 1px solid #ddd; /* Séparation avec le contenu principal */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-.chat-box {
-	border: solid var(--color-white) 2px;
-	border-radius: 10px;
-	background-color: var(--color-black);
-	min-height: 200px;
+#sidebar form {
+    margin-bottom: 1rem;
 }
 
-.chat-txt {
-	color: var(--color-white);
-	font-weight: bold;
+#sidebar .input-group {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
-.send-btn {
-	color: var(--color-white);
-	background-color: var(--color-black);
+#userList {
+    flex-grow: 1; /* Permet à la liste des utilisateurs de remplir l'espace restant */
+    overflow-y: auto; /* Activer le défilement si nécessaire */
+    padding: 10px;
+}
+
+/* Zone de chat */
+#chat-area {
+    width: 75%; /* Largeur de la zone principale */
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff; /* Couleur de fond */
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1); /* Ombre légère à gauche */
+}
+
+/* En-tête de la zone de chat */
+.chat-header {
+    padding: 15px;
+    background-color: #007bff; /* Couleur bleue */
+    color: #ffffff; /* Texte blanc */
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-header img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: #e9ecef;
+}
+
+.chat-header .contact-details {
+    font-size: 1rem;
+}
+
+/* Conteneur des messages */
+.messages-container {
+    flex-grow: 1; /* Occuper tout l'espace disponible */
+    overflow-y: auto; /* Permettre le défilement des messages */
+    padding: 15px;
+    background-color: #f1f1f1; /* Fond clair pour la zone des messages */
+}
+
+/* Pied de page (footer) pour l'entrée des messages */
+.chat-footer {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background-color: #ffffff;
+}
+
+.chat-footer form {
+    display: flex;
+    align-items: center;
+}
+
+.chat-footer textarea {
+    resize: none; /* Désactiver le redimensionnement */
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    flex-grow: 1; /* Remplir l'espace disponible */
+    font-size: 1rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre interne légère */
+}
+
+.chat-footer button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+.chat-footer button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Déroulement automatique pour la zone de messages */
+.messages-container::-webkit-scrollbar,
+#sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-thumb,
+#sidebar::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover,
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: #888;
 }

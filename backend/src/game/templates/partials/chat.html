@@ -1,17 +1,44 @@
 {% load i18n %}
-<div class="chat-box my-2 flex-grow-1" id="chatBox">
-	<div class="d-flex justify-content-between align-items-center overflow-auto header-chat">
-		<a class="btn ms-1 btn-header-chat" style="font-size: 1.5vw;">{%trans 'Global' %}</a>
-		<a class="btn btn-header-chat" style="font-size: 1.5vw;">{%trans 'Lobby' %}</a>
-		<a class="btn me-1 btn-header-chat" style="font-size: 1.5vw;">
-			<i class="bi bi-plus icon"></i>
-		</a>
-	</div>
-	<p class="mx-1 my-1 chat-txt">Robert: je suis robert et j'aime le chocolat</p>
-	<p class="mx-1 my-1 chat-txt">Jack: hi</p>
-</div>
+{% load static %}
+<div class="d-flex" style="height: calc(100vh - 80px); min-height: 450px;">
+	<div class="mb-3 mx-2 my-2 w-75 flex-grow-1 d-flex align-items-center justify-content-center">
+		<div id="container-chat" class="mx-3 border rounded">
+			<div id="sidebar" class="p-3 border rounded">
+				
+				<form class="mb-4">
+					<div class="input-group border rounded">
+						<input type="text" class="form-control" id="userSearchInput" placeholder="Rechercher un utilisateur..." aria-label="Recherche">
+						<span class="input-group-text">
+							<i class="bi bi-search"></i> 
+						</span>
+					</div>
+				</form>
+			
+				
+				<div id="userList">
+					
+				</div>
+			</div>
+			<div id="chat-area" class="border rounded">
+				<div class="chat-header d-flex align-items-center border rounded">
+					
+					<img src="" alt="" class="rounded-circle me-3"> 
+					<div class="contact-details">
+						<strong>Start a chat with someone</strong>
+					</div>
+				</div>
+				<div class="messages-container">
 
-<div class="chat-input d-flex align-items-center">
-	<textarea id="chatMessageInput" class="form-control me-2" placeholder="Type your message..."></textarea>
-	<button class="btn btn-primary send-btn h-100" type="button">{%trans 'Send' %}</button>
+				</div>
+				<div class="chat-footer">
+					<form id="message-form" class="d-flex">
+						<textarea type="text" id="message-input" class="form-control me-2" placeholder="Write your best win 😈" autocomplete="off" required></textarea>
+						<button type="button" class="btn btn-primary" id="sendMSG">
+							<img src="{% static 'chat/img/envoyer.png' %}" alt="Envoyer">
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

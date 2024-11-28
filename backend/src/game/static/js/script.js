@@ -1,19 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-	const themeLinks = document.querySelectorAll('.dropdown-item-color');
-
-	themeLinks.forEach(link => {
-		link.addEventListener('click', function (event) {
-			event.preventDefault();
-
-			// Retirer les classes de thème existantes
-			document.body.classList.remove('theme-default', 'theme-light', 'theme-dark');
-			
-			// Ajouter la nouvelle classe de thème sélectionnée
-			const selectedTheme = this.getAttribute('data-theme');
-			document.body.classList.add(`theme-${selectedTheme}`);
-		});
-	});
-
     loadheader();
 });
 
@@ -58,10 +43,6 @@ function checkScriptPresence(src) {
 
 function loadscript(file, func) {
     if (!checkScriptPresence(file)) {
-<<<<<<< HEAD
-=======
-        console.log("load file and function", file, func);
->>>>>>> origin/scely
         const script = document.createElement('script');
         script.src = "/static/js/" + file;
         document.body.appendChild(script);
@@ -70,10 +51,6 @@ function loadscript(file, func) {
         }
     }
     else {
-<<<<<<< HEAD
-        if (func) {
-            func();
-=======
         console.log("load function only", func);
         if (func) {
             if (document.readyState === 'loading') {
@@ -81,7 +58,6 @@ function loadscript(file, func) {
             } else {
                 func();
             }
->>>>>>> origin/scely
         }
     }
 }
@@ -172,7 +148,7 @@ function loadMyPage() {
                         const state = { page: 'mypage' };
                         history.pushState(state, '', "/mypage");
                     }
-                    loadscript('loadelement.js', () => loadchat());
+                    loadscript('language-switch.js', () => selectLanguage());
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération de mypage :', error);
@@ -191,10 +167,7 @@ function loadStats() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
-<<<<<<< HEAD
-=======
     console.log("loadstats");
->>>>>>> origin/scely
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -209,10 +182,7 @@ function loadStats() {
                     }
                 })
                 .then(response => {
-<<<<<<< HEAD
-=======
                     console.log(response);
->>>>>>> origin/scely
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -226,7 +196,6 @@ function loadStats() {
                         history.pushState(state, '', "/stats");
                     }
                     loadscript('camenbert.js', () => drawCamembert());
-                    loadscript('loadelement.js', () => loadchat());
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -244,31 +213,6 @@ function loadStats() {
 function loadFriends() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-<<<<<<< HEAD
-     
-    fetch('/check_user_status/', {
-        method: 'GET',
-        credentials: 'same-origin'  
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.authenticated) {
-                fetch('/amis/', {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    appDiv.innerHTML = html;
-
-=======
 
     console.log("Enter loadfriends");
     
@@ -294,20 +238,12 @@ function loadFriends() {
                 .then(html => {
                     appDiv.innerHTML = html;
 
->>>>>>> origin/scely
                     if (history.state?.page !== 'amis') {
                         const state = { page: 'amis' };
                         history.pushState(state, '', "/amis");
                     }
-<<<<<<< HEAD
-                    loadscript('loadelement.js', () => loadchat());
-                    loadscript('amis.js', () => loadFriendsList());
-                    loadscript('amis.js', () => get_users());
-=======
                     console.log("Load function amis");
-                    loadscript('loadelement.js', () => loadchat());
                     loadscript('amis.js', () => selectUser());
->>>>>>> origin/scely
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -353,10 +289,6 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
-<<<<<<< HEAD
-=======
-                    loadscript('language-switch.js', () => selectLanguage());
->>>>>>> origin/scely
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -394,7 +326,6 @@ function loadTournament()
                 const state = { page: 'lobby_T' };
                 history.pushState(state, '', "/lobby_T");
             }
-            loadscript('loadelement.js', () => loadchat());
             loadscript('lobby_tournament.js', () => tournament());
         })
         .catch(error => {
@@ -424,7 +355,6 @@ function loadPublic() {
                 const state = { page: 'lobby_Pu' };
                 history.pushState(state, '', "/lobby_Pu");
             }
-            loadscript('loadelement.js', () => loadchat());
             loadscript('lobby.js', () => lobby());
         })
         .catch(error => {
@@ -454,7 +384,6 @@ function loadPrivate() {
                 const state = { page: 'lobby_Pr' };
                 history.pushState(state, '', "/lobby_Pr");
             }
-            loadscript('loadelement.js', () => loadchat());
             loadscript('lobby_private.js', () => lobby_private());
         })
         .catch(error => {
@@ -484,11 +413,56 @@ function loadGame() {
                 const state = { page: 'game' };
                 history.pushState(state, '', "/game");
             }
-            loadscript('loadelement.js', () => loadchat());
             loadscript('game.js', () => lauchgame());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function loadChat() {
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    
+    fetch('/check_user_status/', {
+        method: 'GET',
+        credentials: 'same-origin'  
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                fetch('/chat/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    appDiv.innerHTML = html;
+
+                    if (history.state?.page !== 'chat') {
+                        const state = { page: 'chat' };
+                        history.pushState(state, '', "/chat");
+                    }
+
+                    loadscript('chat.js', () => handleChat());
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+            }
+            else {
+                loadConnectPage();
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
 
@@ -527,6 +501,9 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (pageType === 'connect') {
                 loadConnectPage();
             }
+            else if (pageType === 'chat') {
+                loadChat();
+            }
             else {
                 console.log("Page not found", pageType);
                 loadMyPage();
@@ -544,10 +521,7 @@ document.addEventListener('DOMContentLoaded', loadConnectPage);
 document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener("keydown", function(event) {
         if (event.key === "F5") {
-<<<<<<< HEAD
-=======
             console.log("refresh");
->>>>>>> origin/scely
             event.preventDefault();
             const path = window.location.pathname;
             const lastPart = path.split('/').filter(Boolean).pop();
@@ -582,6 +556,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if (lastPart === 'connect') {
                 loadConnectPage();
+            }
+            else if (lastPart === 'chat') {
+                loadChat();
             }
             else {
                 console.log("Page not found", lastPart);
