@@ -1,8 +1,9 @@
 function handleChat(){
+	console.log("enter script");
 	let current_user = null 
     
     fetch(`/chat2/get_current_user`)
-    .then(response => response.json())  // Correction ici, ajout de la parenthèse fermante
+    .then(response => response.json())
     .then(data => {
         if (data) {
             current_user = data.current_user;  // Stocker les données dans current_user
@@ -15,134 +16,132 @@ function handleChat(){
         console.error("Error fetching data:", error);
     });
 
-        document.addEventListener("DOMContentLoaded", () => {
-    const chatArea = document.querySelector(".messages-container");
-    const messageForm = document.getElementById("message-form");
-    const messageInput = document.getElementById("message-input");
-    const userSearchInput = document.getElementById("userSearchInput");
-    const userList = document.getElementById("userList");
-    const chatHeader = document.querySelector(".contact-details strong");
+	const chatArea = document.querySelector(".messages-container");
+	const messageForm = document.getElementById("message-form");
+	const messageInput = document.getElementById("message-input");
+	const userSearchInput = document.getElementById("userSearchInput");
+	const userList = document.getElementById("userList");
+	const chatHeader = document.querySelector(".contact-details strong");
 
-    let currentChannelId = null;
-    let chatSocket = null;
+	let currentChannelId = null;
+	let chatSocket = null;
 
-    // Fonction pour initialiser WebSocket pour le canal spécifié
-    function initWebSocket(channelId) {
-        if (chatSocket) {
-            chatSocket.close(); // Fermer la connexion précédente si elle existe
-        }
+	
+	// Fonction pour initialiser WebSocket pour le canal spécifié
+	function initWebSocket(channelId) {
+		if (chatSocket) {
+			chatSocket.close(); // Fermer la connexion précédente si elle existe
+		}
 
-        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-        const wsUrl = `${wsScheme}://${window.location.host}/ws/chat2/chat/private_${channelId}/`;
-        chatSocket = new WebSocket(wsUrl);
-        console.log(chatSocket);
+		const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+		const wsUrl = `${wsScheme}://${window.location.host}/ws/chat2/chat/private_${channelId}/`;
+		chatSocket = new WebSocket(wsUrl);
+		console.log(chatSocket);
 
-        chatSocket.onopen = function () {
-            console.log("WebSocket connected to channel:", channelId);
-        };
+		chatSocket.onopen = function () {
+			console.log("WebSocket connected to channel:", channelId);
+		};
 
-        chatSocket.onclose = function () {
-            console.log("WebSocket closed for channel:", channelId);
-        };
+		chatSocket.onclose = function () {
+			console.log("WebSocket closed for channel:", channelId);
+		};
 
-        chatSocket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            const messageElement = document.createElement("p");
-            messageElement.textContent = `${data.sender}: ${data.message}`;
-            messageElement.classList.add(data.sender === current_user ? "send" : "receive");
-            console.log(data.sender);
-            console.log(current_user);
-            chatArea.appendChild(messageElement);
-            chatArea.scrollTop = chatArea.scrollHeight;
-        };
-    }
+		chatSocket.onmessage = function (e) {
+			const data = JSON.parse(e.data);
+			const messageElement = document.createElement("p");
+			messageElement.textContent = `${data.sender}: ${data.message}`;
+			messageElement.classList.add(data.sender === current_user ? "send" : "receive");
+			console.log(data.sender);
+			console.log(current_user);
+			chatArea.appendChild(messageElement);
+			chatArea.scrollTop = chatArea.scrollHeight;
+		};
+	}
 
-    window.addEventListener('beforeunload', () => {
-        if (chatSocket) {
-            chatSocket.close();  // Fermer proprement la connexion WebSocket
-            console.log('Connexion WebSocket fermée avant de quitter la page');
-        }
-    });
+	window.addEventListener('beforeunload', () => {
+		if (chatSocket) {
+			chatSocket.close();  // Fermer proprement la connexion WebSocket
+			console.log('Connexion WebSocket fermée avant de quitter la page');
+		}
+	});
 
-    // Fonction pour charger les messages d'un canal
-    function loadMessages(channelId) {
-        console.log("Chargement des messages pour le canal:", channelId);
-        fetch(`/chat2/load_messages?query=${channelId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to load messages");
-                }
-                return response.json();
-            })
-            .then(data => {
-                chatArea.innerHTML = "";  // Réinitialiser la zone de messages
-                console.log(data.messages);
-                data.messages.forEach(msg => {
-                    const messageElement = document.createElement("p");
-                    messageElement.textContent = `${msg.sender__username}: ${msg.content}`;
-                    messageElement.classList.add(msg.sender__username === current_user ? "send" : "receive");
-                    
-                    chatArea.appendChild(messageElement);
-                });
-                chatArea.scrollTop = chatArea.scrollHeight;
-            })
-            .catch(error => {
-            console.error("Erreur lors du chargement des messages :", error);
-            chatArea.innerHTML = "<p>Impossible de charger les messages. Essayez plus tard.</p>";
-        });
-    }
+	// Fonction pour charger les messages d'un canal
+	function loadMessages(channelId) {
+		console.log("Chargement des messages pour le canal:", channelId);
+		fetch(`/chat2/load_messages?query=${channelId}`)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Failed to load messages");
+				}
+				return response.json();
+			})
+			.then(data => {
+				chatArea.innerHTML = "";  // Réinitialiser la zone de messages
+				console.log(data.messages);
+				data.messages.forEach(msg => {
+					const messageElement = document.createElement("p");
+					messageElement.textContent = `${msg.sender__username}: ${msg.content}`;
+					messageElement.classList.add(msg.sender__username === current_user ? "send" : "receive");
+					
+					chatArea.appendChild(messageElement);
+				});
+				chatArea.scrollTop = chatArea.scrollHeight;
+			})
+			.catch(error => {
+			console.error("Erreur lors du chargement des messages :", error);
+			chatArea.innerHTML = "<p>Impossible de charger les messages. Essayez plus tard.</p>";
+		});
+	}
 
-    // Fonction pour gérer le clic sur un utilisateur de la liste
-    function handleUserClick(user) {
-        const user2Id = user.id; // ID de l'utilisateur sélectionné
-        // Mettre à jour le nom du contact dans le chat header
-        chatHeader.textContent = user.username;
+	// Fonction pour gérer le clic sur un utilisateur de la liste
+	function handleUserClick(user) {
+		const user2Id = user.id; // ID de l'utilisateur sélectionné
+		// Mettre à jour le nom du contact dans le chat header
+		chatHeader.textContent = user.username;
 
-        // Charger les anciens messages et établir la connexion WebSocket pour le nouveau canal
-        loadMessages(user.id);
-        initWebSocket(user.id);
-    }
+		// Charger les anciens messages et établir la connexion WebSocket pour le nouveau canal
+		loadMessages(user.id);
+		initWebSocket(user.id);
+	}
 
-    // Envoi de messages via le WebSocket
-    messageForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const message = messageInput.value.trim();
-        if (message && chatSocket) {
-            chatSocket.send(JSON.stringify({
-                "message": message
-            }));
-            messageInput.value = "";
-        }
-    });
+	// Envoi de messages via le WebSocket
+	messageForm.addEventListener("submit", function (e) {
+		e.preventDefault();
+		const message = messageInput.value.trim();
+		if (message && chatSocket) {
+			chatSocket.send(JSON.stringify({
+				"message": message
+			}));
+			messageInput.value = "";
+		}
+	});
 // ==============================================================================================
-    // Recherche d'utilisateurs
-    userSearchInput.addEventListener("input", function () {
-        const query = userSearchInput.value.trim();
-        if (query.length >= 2) {
-            fetch(`/chat2/search_users?query=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    userList.innerHTML = "";
-                    data.results.forEach(user => {
-                        const userEntry = document.createElement("div");
-                        userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
-                        userEntry.innerHTML = `
-                            <img src="" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
-                            <div data_user_id='${user.id}'>
-                                <div class="user-details"><strong>${user.username}</strong></div>
-                                <div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
-                            </div>
-                        `;
-                        userEntry.addEventListener("click", () => handleUserClick(user)); // Attacher l'événement clic
-                        userList.appendChild(userEntry);
-                    });
-                });
-        } else {
-            userList.innerHTML = ""; // Effacer la liste si la recherche est vide
-        }
-    });
-});
-
+	// Recherche d'utilisateurs
+	userSearchInput.addEventListener("input", function () {
+		const query = userSearchInput.value.trim();
+		if (query.length >= 2) {
+			fetch(`/chat2/search_users?query=${query}`)
+				.then(response => response.json())
+				.then(data => {
+					userList.innerHTML = "";
+					data.results.forEach(user => {
+						const userEntry = document.createElement("div");
+						userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
+						userEntry.innerHTML = `
+							<img src="" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
+							<div data_user_id='${user.id}'>
+								<div class="user-details"><strong>${user.username}</strong></div>
+								<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
+							</div>
+						`;
+						userEntry.addEventListener("click", () => handleUserClick(user)); // Attacher l'événement clic
+						userList.appendChild(userEntry);
+					});
+				});
+		} else {
+			userList.innerHTML = ""; // Effacer la liste si la recherche est vide
+		}
+	});
 
 //=========================================
     // function fetchUserConversations() {

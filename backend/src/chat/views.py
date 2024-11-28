@@ -43,12 +43,10 @@ async def load_messages(request):
         return JsonResponse({'messages': channel_id})
 
 def get_current_user(request):
-    return JsonResponse({'current_user': request.user.username})
-
-
-def index(request):
-    return render(request, 'chat/chat-room.html')
-
+    if request.user.is_authenticated:
+        return JsonResponse({'current_user': request.user.username})
+    else:
+        return JsonResponse({'error': 'User not authenticated'}, status=401)
 
 
 def search_users(request):
