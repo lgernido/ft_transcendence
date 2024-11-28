@@ -1,21 +1,3 @@
-// /* permet d'adapter la couleur du texte en fonction de ce qui est ecris */
-// document.addEventListener('DOMContentLoaded', function() {
-// 	const results = document.querySelectorAll('.result');
-
-// 	results.forEach(result => {
-// 		const text = result.textContent.trim();
-// 		if (text === "Win") {
-// 			result.classList.add('win-color');
-// 		}
-// 		else if (text === "Lose") {
-// 			result.classList.add('lose-color');
-// 		}
-// 		else if (text === "Draw") {
-// 			result.classList.add('draw-color');
-// 		}
-// 	});
-// });
-
 document.addEventListener('DOMContentLoaded', function () {
 	const themeLinks = document.querySelectorAll('.dropdown-item-color');
 
@@ -76,6 +58,7 @@ function checkScriptPresence(src) {
 
 function loadscript(file, func) {
     if (!checkScriptPresence(file)) {
+        console.log("load file and function", file, func);
         const script = document.createElement('script');
         script.src = "/static/js/" + file;
         document.body.appendChild(script);
@@ -84,8 +67,13 @@ function loadscript(file, func) {
         }
     }
     else {
+        console.log("load function only", func);
         if (func) {
-            func();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', func);
+            } else {
+                func();
+            }
         }
     }
 }
@@ -195,6 +183,7 @@ function loadStats() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
+    console.log("loadstats");
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -209,6 +198,7 @@ function loadStats() {
                     }
                 })
                 .then(response => {
+                    console.log(response);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -240,7 +230,9 @@ function loadStats() {
 function loadFriends() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-     
+
+    console.log("Enter loadfriends");
+    
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -267,9 +259,9 @@ function loadFriends() {
                         const state = { page: 'amis' };
                         history.pushState(state, '', "/amis");
                     }
+                    console.log("Load function amis");
                     loadscript('loadelement.js', () => loadchat());
-                    loadscript('amis.js', () => loadFriendsList());
-                    loadscript('amis.js', () => get_users());
+                    loadscript('amis.js', () => selectUser());
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -315,6 +307,7 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
+                    loadscript('language-switch.js', () => selectLanguage());
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -502,6 +495,7 @@ document.addEventListener('DOMContentLoaded', loadConnectPage);
 document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener("keydown", function(event) {
         if (event.key === "F5") {
+            console.log("refresh");
             event.preventDefault();
             const path = window.location.pathname;
             const lastPart = path.split('/').filter(Boolean).pop();

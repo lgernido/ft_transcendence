@@ -1,3 +1,5 @@
-document.querySelector('.language-switcher form').addEventListener('submit', function(event) {
-    window.location.reload();
-});
+function selectLanguage() {
+    document.querySelector('.language-switcher form').addEventListener('submit', function(event) {
+        window.location.reload();
+    });
+}
