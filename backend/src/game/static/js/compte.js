@@ -1,7 +1,6 @@
 function validChanges() {
 	displayError('');
 
-
     if (document.getElementById('profileImageButton'))
     {
         document.getElementById('profileImageButton').addEventListener('click', function() {

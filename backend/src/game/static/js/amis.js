@@ -1,5 +1,5 @@
-function get_users () {
-    console.log('DOM chargé');
+function getUsers () {
+    
     const search_user = document.getElementById('search_user'); // Utilisez `document.getElementById`
 
     if (!search_user) {
@@ -45,56 +45,56 @@ function get_users () {
 
 
 function createActionButtons(userId) {
-const actions = [
-	{ icon: 'bi bi-person-plus-fill', text: 'Add', action: () => inviteUser(userId) },
-	{ icon: 'bi bi-person-x-fill', text: 'Remove', action: () => deleteUser(userId) },
-	{ icon: 'bi bi-person-dash', text: 'Block', action: () => blockUser(userId) },
-	{ icon: 'bi bi-person-check', text: 'Unblock', action: () => unblockUser(userId) },
-];
+    const actions = [
+        { icon: 'bi bi-person-plus-fill', text: 'Add', action: () => inviteUser(userId) },
+        { icon: 'bi bi-person-x-fill', text: 'Remove', action: () => deleteUser(userId) },
+        { icon: 'bi bi-person-dash', text: 'Block', action: () => blockUser(userId) },
+        { icon: 'bi bi-person-check', text: 'Unblock', action: () => unblockUser(userId) },
+    ];
 
-const container = document.createElement('div');
-container.classList.add('me-3');
+    const container = document.createElement('div');
+    container.classList.add('me-3');
 
-actions.forEach(({ icon, text, action }) => {
-const button = document.createElement('a');
-button.className = 'btn btn-primary btn-add shadow hover-container';
-button.setAttribute('role', 'button');
-button.addEventListener('click', action); // Attache une action spécifique
+    actions.forEach(({ icon, text, action }) => {
+        const button = document.createElement('a');
+        button.className = 'btn btn-primary btn-add shadow hover-container';
+        button.setAttribute('role', 'button');
+        button.addEventListener('click', action); // Attache une action spécifique
 
-button.innerHTML = `
-	<i class="bi ${icon} icon"></i>
-	<div class="hover-text">${text}</div>
-`;
+        button.innerHTML = `
+            <i class="bi ${icon} icon"></i>
+            <div class="hover-text">${text}</div>
+        `;
 
-container.appendChild(button);
-});
+        container.appendChild(button);
+    });
 
-return container;
+    return container;
 }
 
 function loadFriendsList() {
-// Effectuer une requête GET vers l'API
-fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
-.then(response => {
-	if (!response.ok) {
-		throw new Error('Erreur lors de la récupération des données');
-	}
-	return response.json();
-})
-.then(data => {
-    if (data && Array.isArray(data)) {
-        displayUserList(data);
-    } else {
-        alert('Aucun utilisateur trouvé.');
-    }
-})
-.catch(error => {
-	console.error('Erreur:', error);
-	alert('Impossible de charger la liste d\'amis.');
-});
+    // Effectuer une requête GET vers l'API
+    fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erreur lors de la récupération des données');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && Array.isArray(data)) {
+            displayUserList(data);
+        } else {
+            alert('Aucun utilisateur trouvé.');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Impossible de charger la liste d\'amis.');
+    });
 }
 
-document.addEventListener('DOMContentLoaded', loadFriendsList, get_users);
+document.addEventListener('DOMContentLoaded', loadFriendsList, getUsers);
 
 const API_URL = '/users/friendship/';
 
@@ -122,7 +122,6 @@ if (!csrfToken) {
 }
 
 // Effectuer une requête API pour ajouter l'utilisateur
-console.log(csrfToken);
 fetch(API_URL, {
 	method: 'POST',
 	headers: {
@@ -327,17 +326,29 @@ function displayUserList(users) {
     });
 }
 
-document.getElementById('showAllUserBtn').addEventListener('click', () => {
-    fetchUserList('users');
-});
+function actionButton()
+{
+    console.log("Set button");
+    document.getElementById('showAllUserBtn').addEventListener('click', () => {
+        fetchUserList('users');
+    });
+    
+    document.getElementById('showFriendsBtn').addEventListener('click', () => {
+        fetchUserList('added');
+    });
+    
+    document.getElementById('showBlockedBtn').addEventListener('click', () => {
+        fetchUserList('blocked');
+    });
+}
 
-document.getElementById('showFriendsBtn').addEventListener('click', () => {
-    fetchUserList('added');
-});
+function selectUser()
+{
+    loadFriendsList();
+    getUsers();
+    actionButton();
+}
 
-document.getElementById('showBlockedBtn').addEventListener('click', () => {
-    fetchUserList('blocked');
-});
 
 
      

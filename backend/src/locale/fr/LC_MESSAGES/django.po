@@ -1,0 +1,300 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-27 15:48+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: backend/src/game/templates/partials/amis.html:6
+msgid "Afficher tous les utilisateurs"
+msgstr "Afficher tout les utilisateurs"
+
+#: backend/src/game/templates/partials/amis.html:7
+msgid "Afficher Amis"
+msgstr "Afficher Amis"
+
+#: backend/src/game/templates/partials/amis.html:8
+msgid "Afficher Bloqués"
+msgstr "Afficher Bloques"
+
+#: backend/src/game/templates/partials/chat.html:4
+msgid "Global"
+msgstr "General"
+
+#: backend/src/game/templates/partials/chat.html:5
+msgid "Lobby"
+msgstr "Lobby"
+
+#: backend/src/game/templates/partials/chat.html:16
+msgid "Send"
+msgstr "Envoyer"
+
+#: backend/src/game/templates/partials/compte.html:23
+#: backend/src/game/templates/partials/create_account.html:21
+msgid "Email address"
+msgstr "Adresse email"
+
+#: backend/src/game/templates/partials/compte.html:28
+#: backend/src/game/templates/partials/create_account.html:25
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: backend/src/game/templates/partials/compte.html:32
+#: backend/src/game/templates/partials/create_account.html:29
+msgid "Password"
+msgstr "Mot de passe"
+
+#: backend/src/game/templates/partials/compte.html:36
+#: backend/src/game/templates/partials/lobby.html:16
+#: backend/src/game/templates/partials/lobby_private.html:17
+#: backend/src/game/templates/partials/lobby_private.html:42
+msgid "Red"
+msgstr "Rouge"
+
+#: backend/src/game/templates/partials/compte.html:37
+#: backend/src/game/templates/partials/lobby.html:18
+#: backend/src/game/templates/partials/lobby_private.html:19
+#: backend/src/game/templates/partials/lobby_private.html:44
+msgid "Blue"
+msgstr "Blue"
+
+#: backend/src/game/templates/partials/compte.html:38
+#: backend/src/game/templates/partials/lobby.html:17
+#: backend/src/game/templates/partials/lobby_private.html:18
+#: backend/src/game/templates/partials/lobby_private.html:43
+msgid "Green"
+msgstr "Vert"
+
+#: backend/src/game/templates/partials/compte.html:40
+#: backend/src/game/templates/partials/lobby.html:27
+#: backend/src/game/templates/partials/lobby_private.html:28
+#: backend/src/game/templates/partials/lobby_private.html:53
+msgid "Colors :"
+msgstr "Couleurs :"
+
+#: backend/src/game/templates/partials/compte.html:44
+msgid "English"
+msgstr "Anglais"
+
+#: backend/src/game/templates/partials/compte.html:45
+msgid "French"
+msgstr "French"
+
+#: backend/src/game/templates/partials/compte.html:46
+msgid "Spanish"
+msgstr "Spanish"
+
+#: backend/src/game/templates/partials/compte.html:48
+msgid "Language :"
+msgstr "Langage"
+
+#: backend/src/game/templates/partials/connect.html:11
+msgid "Identifiant"
+msgstr "Identifiant"
+
+#: backend/src/game/templates/partials/connect.html:16
+msgid "Mot de passe"
+msgstr "Mot de passe"
+
+#: backend/src/game/templates/partials/connect.html:20
+msgid "S\\"
+msgstr "S'identifier avec 42"
+
+#: backend/src/game/templates/partials/connect.html:21
+msgid "Se connecter"
+msgstr "Se connecter"
+
+#: backend/src/game/templates/partials/connect.html:24
+msgid "Créer un compte"
+msgstr "Creer un compte"
+
+#: backend/src/game/templates/partials/create_account.html:33
+#, fuzzy
+#| msgid "Password"
+msgid "Verif Password"
+msgstr "Reecrire le mot de passe"
+
+#: backend/src/game/templates/partials/create_account.html:37
+msgid "Create account"
+msgstr "Creer un compte"
+
+#: backend/src/game/templates/partials/create_account.html:38
+msgid "Go back"
+msgstr "Retour en arriere"
+
+#: backend/src/game/templates/partials/header.html:8
+msgid "Home"
+msgstr "Accueil"
+
+#: backend/src/game/templates/partials/header.html:12
+msgid "Stats"
+msgstr "Statistiques"
+
+#: backend/src/game/templates/partials/header.html:16
+msgid "Friends"
+msgstr "Amis"
+
+#: backend/src/game/templates/partials/header.html:24
+msgid "Settings"
+msgstr "Parametres"
+
+#: backend/src/game/templates/partials/lobby.html:19
+#: backend/src/game/templates/partials/lobby_private.html:20
+#: backend/src/game/templates/partials/lobby_private.html:45
+msgid "Yellow"
+msgstr "Jaune"
+
+#: backend/src/game/templates/partials/lobby.html:20
+#: backend/src/game/templates/partials/lobby_private.html:21
+#: backend/src/game/templates/partials/lobby_private.html:46
+msgid "Cyan"
+msgstr "Cyan"
+
+#: backend/src/game/templates/partials/lobby.html:21
+#: backend/src/game/templates/partials/lobby_private.html:22
+#: backend/src/game/templates/partials/lobby_private.html:47
+msgid "Magenta"
+msgstr "Magenta"
+
+#: backend/src/game/templates/partials/lobby.html:22
+#: backend/src/game/templates/partials/lobby_private.html:23
+#: backend/src/game/templates/partials/lobby_private.html:48
+msgid "Orange"
+msgstr "Orange"
+
+#: backend/src/game/templates/partials/lobby.html:23
+#: backend/src/game/templates/partials/lobby_private.html:24
+#: backend/src/game/templates/partials/lobby_private.html:49
+msgid "Purple"
+msgstr "Violet"
+
+#: backend/src/game/templates/partials/lobby.html:24
+#: backend/src/game/templates/partials/lobby_private.html:25
+#: backend/src/game/templates/partials/lobby_private.html:50
+msgid "Pink"
+msgstr "Rose"
+
+#: backend/src/game/templates/partials/lobby.html:25
+#: backend/src/game/templates/partials/lobby_private.html:26
+#: backend/src/game/templates/partials/lobby_private.html:51
+msgid "Gray"
+msgstr "Grise"
+
+#: backend/src/game/templates/partials/lobby.html:34
+msgid "Loading..."
+msgstr "Chargement..."
+
+#: backend/src/game/templates/partials/lobby.html:38
+msgid "Waiting for player..."
+msgstr "En attente du joueur..."
+
+#: backend/src/game/templates/partials/lobby.html:43
+#, fuzzy
+#| msgid "Limite de points :"
+msgid "Limite de points : "
+msgstr "Limite de points:"
+
+#: backend/src/game/templates/partials/lobby.html:46
+#: backend/src/game/templates/partials/lobby_private.html:72
+msgid "Lancer"
+msgstr "Lancer"
+
+#: backend/src/game/templates/partials/lobby_private.html:62
+msgid "Joueur"
+msgstr "Joueur"
+
+#: backend/src/game/templates/partials/lobby_private.html:65
+msgid "Play against :"
+msgstr "Jouer contre :"
+
+#: backend/src/game/templates/partials/lobby_private.html:68
+msgid "Limite de points :"
+msgstr "Limite de points:"
+
+#: backend/src/game/templates/partials/lobby_tournament.html:7
+msgid "Tournament"
+msgstr "Tournoi"
+
+#: backend/src/game/templates/partials/lobby_tournament.html:11
+msgid "Select Number player"
+msgstr "Selectionner le nombre de joueur"
+
+#: backend/src/game/templates/partials/mypage.html:6
+msgid "Tournoi"
+msgstr "Tournoi"
+
+#: backend/src/game/templates/partials/mypage.html:7
+msgid "Partie Rapide"
+msgstr "Partie Rapide"
+
+#: backend/src/game/templates/partials/mypage.html:8
+msgid "Partie Private"
+msgstr "Partie Privee"
+
+#: backend/src/game/templates/partials/stats.html:15
+msgid "Lose"
+msgstr "Defaite"
+
+#: backend/src/game/templates/partials/stats.html:20
+msgid "Win"
+msgstr "Victoire"
+
+#: backend/src/game/templates/partials/stats.html:25
+msgid "Draw"
+msgstr "Match nul"
+
+#: backend/src/game/templates/partials/stats.html:29
+msgid "Statistiques Player"
+msgstr "Statistiques"
+
+#: backend/src/game/templates/partials/stats.html:35
+msgid "Win :"
+msgstr "Victoire :"
+
+#: backend/src/game/templates/partials/stats.html:41
+msgid "Draw :"
+msgstr "Match nul :"
+
+#: backend/src/game/templates/partials/stats.html:47
+msgid "Total Partie :"
+msgstr "Parties jouees"
+
+#: backend/src/game/templates/partials/stats.html:50
+msgid "Classement global :"
+msgstr "Classement global"
+
+#: backend/src/game/templates/partials/stats.html:51
+msgid "Classement amis : "
+msgstr "Classement amis"
+
+#: backend/src/game/templates/partials/stats.html:52
+msgid "Nb tournoi gagne :"
+msgstr "Tournois gagnes"
+
+#~ msgid "Send message"
+#~ msgstr "Envoyer un message"
+
+#~ msgid "Invite"
+#~ msgstr "Inviter"
+
+#~ msgid "Block"
+#~ msgstr "Bloquer"
+
+#~ msgid "Delete"
+#~ msgstr "Supprimer"
+
+#~ msgid "You have been invited to play by ..."
+#~ msgstr "Vous avez ete invite a jouer par ..."

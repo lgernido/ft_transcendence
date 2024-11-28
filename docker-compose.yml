@@ -1,3 +1,17 @@
+  # nginx:
+  #   container_name: nginx
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - default
+
 services:
   db:
     image: postgres:13.4
@@ -18,14 +32,19 @@ services:
       - "5432:5432"
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-      image: redis:7.4
-      container_name: redis
-      expose:
-        - 6379
-      networks:
-        - default
+    image: redis:7.4
+    container_name: redis
+    expose:
+      - 6379
+    networks:
+      - default
 
   backend:
     build:
@@ -33,13 +52,11 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/code/backend
-    ports:
-      - "8000:8000"
-    expose:
-      - "8000"
+    # ports:
+    #   - "8000:8000"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
     networks:
       - default
     env_file:
@@ -57,17 +74,27 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:80"
+      - "8443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./ssl:/etc/ssl
     depends_on:
       - backend
     networks:
       - default
+    # env_file:
+      # .env
+      # - DJANGO_SUPERUSER_USERNAME=admin
+      # - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      # - DJANGO_SUPERUSER_PASSWORD=securepassword
+
 
 volumes:
   postgres_data:
 
+
 networks:
   default:
     driver: bridge
+

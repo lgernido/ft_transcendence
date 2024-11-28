@@ -1,7 +1,8 @@
+{% load i18n %}
 <div class="chat-box my-2 flex-grow-1" id="chatBox">
 	<div class="d-flex justify-content-between align-items-center overflow-auto header-chat">
-		<a class="btn ms-1 btn-header-chat" style="font-size: 1.5vw;">Global</a>
-		<a class="btn btn-header-chat" style="font-size: 1.5vw;">Lobby</a>
+		<a class="btn ms-1 btn-header-chat" style="font-size: 1.5vw;">{%trans 'Global' %}</a>
+		<a class="btn btn-header-chat" style="font-size: 1.5vw;">{%trans 'Lobby' %}</a>
 		<a class="btn me-1 btn-header-chat" style="font-size: 1.5vw;">
 			<i class="bi bi-plus icon"></i>
 		</a>
@@ -12,5 +13,5 @@
 
 <div class="chat-input d-flex align-items-center">
 	<textarea id="chatMessageInput" class="form-control me-2" placeholder="Type your message..."></textarea>
-	<button class="btn btn-primary send-btn h-100" type="button">Send</button>
+	<button class="btn btn-primary send-btn h-100" type="button">{%trans 'Send' %}</button>
 </div>

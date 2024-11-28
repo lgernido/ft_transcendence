@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.utils.translation import activate
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import redirect
 from django.http import JsonResponse
 
 from django.contrib.auth.models import User
@@ -57,7 +59,6 @@ def log_user(request):
     return render(request, 'partials/connect.html')
 
 @csrf_protect
-@login_required
 def mypage(request):
     return render(request, 'partials/mypage.html')
 
@@ -72,7 +73,6 @@ def lobby_tournament(request):
     return render(request, 'partials/lobby_tournament.html')
 
 @csrf_protect
-@login_required
 def stats(request):
     return render(request, 'partials/stats.html')
 
@@ -128,12 +128,10 @@ def lobby(request):
     return render(request, 'partials/lobby.html')
 
 @csrf_protect
-@login_required
 def amis(request):
     return render(request, 'partials/amis.html')
 
 @csrf_protect
-@login_required
 def compte(request):
 
     try:
@@ -201,7 +199,6 @@ def header(request):
     return render(request, 'partials/header.html')
 
 @csrf_protect
-@login_required
 def logout_view(request):
     if request.method == 'POST':
         logout(request)
@@ -209,6 +206,14 @@ def logout_view(request):
     return JsonResponse({'error': 'CSRF token missing or invalid'}, status=403)
 
 def check_user_status(request):
-    return JsonResponse({'is_authenticated': request.user.is_authenticated})
+    return JsonResponse({'authenticated': request.user.is_authenticated})
     
 
+
+def set_language(request):
+    if request.method == 'POST':
+        lang = request.POST.get('language')
+        if lang:
+            activate(lang)
+            request.session[LANGUAGE_SESSION_KEY] = lang
+    return redirect(request.META.get('HTTP_REFERER', '/')) 

@@ -1,0 +1,16 @@
+.language-switcher {
+    z-index: 1000; 
+}
+
+.language-switcher button {
+    background: none; 
+    border: none;     
+    padding: 0;       
+    cursor: pointer;  
+}
+
+.language-switcher img {
+    display: block;   
+    width: 32px;
+    height: 20px;
+}
