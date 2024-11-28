@@ -1,17 +1,3 @@
-  # nginx:
-  #   container_name: nginx
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - default
-
 services:
   db:
     image: postgres:13.4
@@ -32,11 +18,6 @@ services:
       - "5432:5432"
     networks:
       - default
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   redis:
     image: redis:7.4
@@ -52,11 +33,10 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/code/backend
-    # ports:
-    #   - "8000:8000"
+    ports:
+      - "8000:8000"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - default
     env_file:
