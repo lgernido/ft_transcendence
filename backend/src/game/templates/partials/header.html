@@ -1,18 +1,19 @@
 {% load static %}
+{% load i18n %}
 <header>
 	<div class="d-flex my-2 justify-content-between overflow-hidden ">
 		<span class="fs-2 text mx-3 text-nowrap site-title" style="font-family: cursive;">PONG PING</span>
 		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadMyPage()" role="button">
 			<i class="bi bi-house-fill icon"></i>
-			<span class="text-header">Home</span>
+			<span class="text-header">{%trans 'Home' %}</span>
 		</a>
 		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadStats()" role="button">
 			<i class="bi bi-file-bar-graph-fill icon"></i>
-			<span class="text-header">Stats</span>
+			<span class="text-header">{%trans 'Stats' %}</span>
 		</a>
 		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadFriends()" role="button">
 			<i class="bi bi-people-fill icon"></i>
-			<span class="text-header">Friends</span>
+			<span class="text-header">{%trans 'Friends' %}</span>
 		</a>
 		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadAccount()" role="button">
 			<i class="bi bi-envelope-fill icon"></i>
@@ -20,12 +21,11 @@
 		</a>
 		<a class="btn btn-primary btn-header shadow icon-with-text" onclick="loadAccount()" role="button">
 			<i class="bi bi-gear-fill icon"></i>
-			<span class="text-header">Settings</span>
+			<span class="text-header">{%trans 'Settings' %}</span>
 		</a>
 		{% csrf_token %}
 		<button id="logoutButton" type="submit" class="btn btn-primary btn-exit shadow me-3">
 			<i class="bi bi-door-open icon"></i>
 		</button>
 	</div>
-	<script src="{% static 'js/logout.js' %}"></script>
 </header>

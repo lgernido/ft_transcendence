@@ -1,11 +1,28 @@
 {% load static %}
+{% load i18n %}
 <div class="alert alert-warning position-absolute" id="error-message" style="top: 20px; right: 20px; width: 25%;">
 	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
+<div class="language-switcher position-absolute bottom-0 end-0 p-3 d-flex gap-2">
+	<form action="{% url 'set_language' %}" method="post">
+		{% csrf_token %}
+		<button name="language" value="en" class="btn btn-link p-0">
+			<img src="{% static 'img/flag-en.png' %}" alt="English" style="width: 32px; height: 20px;">
+		</button>
+		<button name="language" value="fr" class="btn btn-link p-0">
+			<img src="{% static 'img/flag-fr.png' %}" alt="Français" style="width: 32px; height: 20px;">
+		</button>
+		<button name="language" value="es" class="btn btn-link p-0">
+			<img src="{% static 'img/flag-es.png' %}" alt="Español" style="width: 32px; height: 20px;">
+		</button>
+	</form>
+</div>
+
 <div class="d-flex" style="height: calc(100vh - 80px); min-height: 450px;">
 	<div class="mb-3 mx-2 my-2 w-75 flex-grow-1 d-flex align-items-center justify-content-center">
-		<form method="POST" id="edit-profile-form" class="row w-100 align-items-center border rounded mx-2" enctype="multipart/form-data">
+		<form method="POST" id="edit-profile-form" class="row w-100 align-items-center border rounded mx-2"
+			enctype="multipart/form-data">
 			{% csrf_token %}
 			<div class="col-lg d-flex justify-content-center position-relative">
 				<input type="file" id="profileImageInput" accept="image/*" style="display: none;" />
@@ -16,36 +33,38 @@
 			</div>
 			<div class="col-lg-8 my-3">
 				<div class="form-floating mb-3">
-					<input name="change_email" type="email" class="form-control" id="modifEmailAccount" placeholder="name@example.com" value="{{ user.email }}">
-					<label for="floatingInputEmail">Email address</label>
+					<input name="change_email" type="email" class="form-control" id="modifEmailAccount"
+						placeholder="name@example.com" value="{{ user.email }}">
+					<label for="floatingInputEmail">{%trans 'Email address' %}</label>
 				</div>
 				<div class="form-floating mb-3">
-					<input name="change_username" type="text" class="form-control" id="modifUsernameAccount" placeholder="Buzz" value="{{ user.username }}">
-					<label for="floatingInputUsername">Username</label>
+					<input name="change_username" type="text" class="form-control" id="modifUsernameAccount"
+						placeholder="Buzz" value="{{ user.username }}">
+					<label for="floatingInputUsername">{%trans 'Username' %}</label>
 				</div>
 				<div class="form-floating mb-3">
 					<input name="change_password" type="password" class="form-control" id="modifPasswordAccount">
-					<label for="floatingInputPassword">Password</label>
+					<label for="floatingInputPassword">{%trans 'Password' %}</label>
 				</div>
 				<div class="form-floating mb-3">
 					<select class="form-select" id="floatingSelectGridColor">
-						<option data-theme="color-red">Red</option>
-						<option data-theme="color-blue">Blue</option>
-						<option data-theme="color-green">Green</option>
+						<option data-theme="color-red">{%trans 'Red' %}</option>
+						<option data-theme="color-blue">{%trans 'Blue' %}</option>
+						<option data-theme="color-green">{%trans 'Green' %}</option>
 					</select>
-					<label for="floatingSelectGridColor">Colors :</label>
+					<label for="floatingSelectGridColor">{%trans 'Colors :' %}</label>
 				</div>
 				<div class="form-floating">
 					<select class="form-select" id="floatingSelectGridLangue">
-						<option value="language-english">English</option>
-						<option value="language-french">French</option>
-						<option value="language-spanish">Spanish</option>
+						<option value="language-english">{%trans 'English' %}</option>
+						<option value="language-french">{%trans 'French' %}</option>
+						<option value="language-spanish">{%trans 'Spanish' %}</option>
 					</select>
-					<label for="floatingSelectGridLangue">Language :</label>
+					<label for="floatingSelectGridLangue">{%trans 'Language :' %}</label>
 				</div>
 			</div>
 			<div class="d-flex align-items-center justify-content-center">
-				<button type="button" class="btn btn-primary mb-3" id="saveChangesAccount">Save changes</button>
+				<button type="submit" class="btn btn-primary mb-3" id="saveChangesAccount">{%trans 'Save changes'%}</button>
 			</div>
 		</form>
 	</div>

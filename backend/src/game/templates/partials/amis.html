@@ -1,10 +1,11 @@
+{% load i18n %}
 <div class="d-flex flex-column border border-dark m-2 rounded" style="height: calc(100vh - 80px);">
 
     <div class="d-flex justify-content-between p-2" >
         <input id='search_user' type="text" value="" placeholder="Search user">
-        <button id="showAllUserBtn" class="btn btn-primary">Afficher tous les utilisateurs</button>
-        <button id="showFriendsBtn" class="btn btn-primary">Afficher Amis</button>
-        <button id="showBlockedBtn" class="btn btn-primary">Afficher Bloqués</button>
+        <button id="showAllUserBtn" class="btn btn-primary">{%trans 'Afficher tous les utilisateurs'%}</button>
+        <button id="showFriendsBtn" class="btn btn-primary">{%trans 'Afficher Amis' %}</button>
+        <button id="showBlockedBtn" class="btn btn-primary">{%trans 'Afficher Bloqués' %}</button>
     </div>
 
     <div id="list" class="mx-2 my-2 w-100 flex-grow-1 d-flex flex-column overflow-auto">

@@ -21,13 +21,14 @@ oauth.register(
     client_kwargs={'scope': 'public'},
 )
 
-def login(request):
+def login(request):    
     redirect_uri = REDIRECT_URL
-    return oauth['42'].authorize_redirect(redirect_uri)
-
+    client = oauth.create_client('42')
+    return client.authorize_redirect(request, redirect_uri)
 
 def callback(request):
-    token = oauth['42'].authorize_access_token()
+    client = oauth.create_client('42')
+    token = client.authorize_access_token()
     if token:
         access_token = token['access_token']
         request.session['access_token'] = access_token

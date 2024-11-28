@@ -1,21 +1,3 @@
-// /* permet d'adapter la couleur du texte en fonction de ce qui est ecris */
-// document.addEventListener('DOMContentLoaded', function() {
-// 	const results = document.querySelectorAll('.result');
-
-// 	results.forEach(result => {
-// 		const text = result.textContent.trim();
-// 		if (text === "Win") {
-// 			result.classList.add('win-color');
-// 		}
-// 		else if (text === "Lose") {
-// 			result.classList.add('lose-color');
-// 		}
-// 		else if (text === "Draw") {
-// 			result.classList.add('draw-color');
-// 		}
-// 	});
-// });
-
 document.addEventListener('DOMContentLoaded', function () {
 	const themeLinks = document.querySelectorAll('.dropdown-item-color');
 
@@ -76,6 +58,10 @@ function checkScriptPresence(src) {
 
 function loadscript(file, func) {
     if (!checkScriptPresence(file)) {
+<<<<<<< HEAD
+=======
+        console.log("load file and function", file, func);
+>>>>>>> origin/scely
         const script = document.createElement('script');
         script.src = "/static/js/" + file;
         document.body.appendChild(script);
@@ -84,8 +70,18 @@ function loadscript(file, func) {
         }
     }
     else {
+<<<<<<< HEAD
         if (func) {
             func();
+=======
+        console.log("load function only", func);
+        if (func) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', func);
+            } else {
+                func();
+            }
+>>>>>>> origin/scely
         }
     }
 }
@@ -195,6 +191,10 @@ function loadStats() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
+<<<<<<< HEAD
+=======
+    console.log("loadstats");
+>>>>>>> origin/scely
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -209,6 +209,10 @@ function loadStats() {
                     }
                 })
                 .then(response => {
+<<<<<<< HEAD
+=======
+                    console.log(response);
+>>>>>>> origin/scely
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -240,6 +244,7 @@ function loadStats() {
 function loadFriends() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
+<<<<<<< HEAD
      
     fetch('/check_user_status/', {
         method: 'GET',
@@ -263,13 +268,46 @@ function loadFriends() {
                 .then(html => {
                     appDiv.innerHTML = html;
 
+=======
+
+    console.log("Enter loadfriends");
+    
+    fetch('/check_user_status/', {
+        method: 'GET',
+        credentials: 'same-origin'  
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.authenticated) {
+                fetch('/amis/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    appDiv.innerHTML = html;
+
+>>>>>>> origin/scely
                     if (history.state?.page !== 'amis') {
                         const state = { page: 'amis' };
                         history.pushState(state, '', "/amis");
                     }
+<<<<<<< HEAD
                     loadscript('loadelement.js', () => loadchat());
                     loadscript('amis.js', () => loadFriendsList());
                     loadscript('amis.js', () => get_users());
+=======
+                    console.log("Load function amis");
+                    loadscript('loadelement.js', () => loadchat());
+                    loadscript('amis.js', () => selectUser());
+>>>>>>> origin/scely
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -315,6 +353,10 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
+<<<<<<< HEAD
+=======
+                    loadscript('language-switch.js', () => selectLanguage());
+>>>>>>> origin/scely
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -502,6 +544,10 @@ document.addEventListener('DOMContentLoaded', loadConnectPage);
 document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener("keydown", function(event) {
         if (event.key === "F5") {
+<<<<<<< HEAD
+=======
+            console.log("refresh");
+>>>>>>> origin/scely
             event.preventDefault();
             const path = window.location.pathname;
             const lastPart = path.split('/').filter(Boolean).pop();

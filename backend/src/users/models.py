@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.conf import settings
 import time
 import os
+import logging
 
 # Gestion des stats
 class Profile(models.Model):
@@ -39,21 +40,28 @@ class Social(models.Model):
 
     # Gestion des amis
     def add_friend(self, other_user):
-        if other_user not in self.friends_user.all():
-            self.friends_user.add(other_user.user)
+        # if other_user not in self.friends_user.all().username:
+        self.friends_user.add(other_user.user)
 
     def remove_friend(self, other_user):
-        if other_user in self.friends_user.all():
-            self.friends_user.remove(other_user.user)
+        # if other_user in self.friends_user.all():
+        self.friends_user.remove(other_user.user)
 
     def block_user(self, other_user):
-        if other_user not in self.blocked_user.all():
-            self.blocked_user.add(other_user.user)
-            self.friends_user.remove(other_user.user)  # Supprime des amis si bloqué
+        # if other_user not in self.blocked_user.all():
+        self.blocked_user.add(other_user.user)
+        self.friends_user.remove(other_user.user)  # Supprime des amis si bloqué
 
     def unblock_user(self, other_user):
-        if other_user in self.blocked_user.all():
+    # Vérifier si l'ID de other_user est présent dans blocked_by
+        # if other_user in self.blocked_user.all():
             self.blocked_user.remove(other_user.user)
+            # logging.info(f"L'utilisateur {other_user} a été débloqué.")
+        # else:
+            # logging.warning(f"L'utilisateur {other_user} n'est pas bloqué.")
+
+
+
 
     def update_avatar(self, new_avatar):
         # Vérifier si l'avatar actuel est différent de l'avatar par défaut

@@ -39,12 +39,12 @@ services:
       retries: 5
 
   redis:
-      image: redis:7.4
-      container_name: redis
-      expose:
-        - 6379
-      networks:
-        - default
+    image: redis:7.4
+    container_name: redis
+    expose:
+      - 6379
+    networks:
+      - default
 
   backend:
     build:
@@ -54,13 +54,8 @@ services:
       - ./backend:/code/backend
     ports:
       - "8000:8000"
-    expose:
-      - "8000"
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
     networks:
       - default
     env_file:
@@ -75,9 +70,34 @@ services:
       - DJANGO_SUPERUSER_EMAIL=admin@example.com
       - DJANGO_SUPERUSER_PASSWORD=securepassword
 
+<<<<<<< HEAD
+=======
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./ssl:/etc/ssl
+    depends_on:
+      - backend
+    networks:
+      - default
+    # env_file:
+      # .env
+      # - DJANGO_SUPERUSER_USERNAME=admin
+      # - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      # - DJANGO_SUPERUSER_PASSWORD=securepassword
+
+>>>>>>> origin/scely
 
 volumes:
   postgres_data:
+
 
 networks:
   default:

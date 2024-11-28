@@ -15,20 +15,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from oauth2_provider import urls as oauth2_urls
+from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.conf.urls.static import static
+<<<<<<< HEAD
+=======
+import game
+>>>>>>> origin/scely
 
 urlpatterns = [
+	# Admin route
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('o/', include(oauth2_urls)),
-    path('auth/', include("auth.urls")),
 	path('', include('game.urls')),
+    path('auth/', include("auth.urls")),
 	
 	path('users/', include('users.urls')),
 	path('chat2/', include('chat.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
+	
+	
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+urlpatterns += [
+	# Route SPA
+    re_path(r'^(?!users/).*$', game.views.home, name='spa_home'),
+]

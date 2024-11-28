@@ -56,7 +56,7 @@ function validChanges() {
             console.log(email, username, password)
 
             const csrfToken = getCookie('csrftoken'); 
-            fetch('/compte/', {
+            fetch('compte/', {
                 method: 'POST',
                 body: JSON.stringify(formData),
                 headers: {
