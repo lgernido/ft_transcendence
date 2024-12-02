@@ -8,20 +8,20 @@
             <div class="form-floating mb-3">
                 <input type="text" name="username_connect" class="form-control" id="InputUsername" placeholder="ID"
                     required>
-                <label for="InputUsername">{% trans 'Identifiant' %}</label>
+                <label for="InputUsername">{% trans 'Login' %}</label>
             </div>
             <div class="form-floating mb-4">
                 <input type="password" name="password_connect" class="form-control" id="InputPassword"
                     placeholder="Password" required autocomplete="off">
-                <label for="InputPassword">{% trans 'Mot de passe' %}</label>
+                <label for="InputPassword">{% trans 'Password' %}</label>
             </div>
         </div>
         <div>
-            <a class="btn btn-primary me-3" href="{% url '42_login' %}" role="button">{% trans 'S\'identifier avec 42' %}</a>
-            <button type="button" class="btn btn-primary my-3" id="loginButton">{% trans 'Se connecter' %}</button>
+            <a class="btn btn-primary me-3" href="{% url '42_login' %}" role="button">{% trans 'Log in with 42' %}</a>
+            <button type="button" class="btn btn-primary my-3" id="loginButton">{% trans 'Log in' %}</button>
         </div>
         <div>
-            <button type="button" class="btn btn-primary mt-4" onclick="loadCreateAccount()">{% trans 'Créer un compte' %}</button>
+            <button type="button" class="btn btn-primary mt-4" onclick="loadCreateAccount()">{% trans 'Create an account' %}</button>
         </div>
     </form>
 </div>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-28 09:40+0100\n"
+"POT-Creation-Date: 2024-12-02 11:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,16 +20,56 @@ msgstr ""
 "1 : 2;\n"
 
 #: game/templates/partials/amis.html:6
-msgid "Afficher tous les utilisateurs"
-msgstr "Ver todos los usarios"
-
-#: game/templates/partials/amis.html:7
-msgid "Afficher Amis"
-msgstr "Ver amigos"
+msgid "Search user"
+msgstr "Buscar usuario"
 
 #: game/templates/partials/amis.html:8
-msgid "Afficher Bloqués"
-msgstr "Ver usarios bloqueados"
+msgid "Display all users"
+msgstr "Mostrar todos los usuarios"
+
+#: game/templates/partials/amis.html:9
+msgid "Display friends"
+msgstr "Mostrar amigos"
+
+#: game/templates/partials/amis.html:10
+msgid "Display blocked users"
+msgstr "Mostrar usuarios bloqueados"
+
+#: game/templates/partials/amis.html:27
+#, fuzzy
+msgid "Games Played"
+msgstr "Juegos jugados"
+
+#: game/templates/partials/amis.html:30
+#, fuzzy
+msgid "Wins"
+msgstr "Victorias"
+
+#: game/templates/partials/amis.html:35
+#, fuzzy
+msgid "Losses "
+msgstr "Derrotas"
+
+#: game/templates/partials/amis.html:38
+#, fuzzy
+msgid "Ratio "
+msgstr "Ratio"
+
+#: game/templates/partials/amis.html:53
+msgid "Add"
+msgstr "Anadir"
+
+#: game/templates/partials/amis.html:57
+msgid "Remove"
+msgstr "Eliminar"
+
+#: game/templates/partials/amis.html:61
+msgid "Block"
+msgstr "Bloquear"
+
+#: game/templates/partials/amis.html:65
+msgid "Unblock"
+msgstr "Desbloquear"
 
 #: game/templates/partials/chat.html:4
 msgid "Global"
@@ -43,83 +83,86 @@ msgstr "Lobby"
 msgid "Send"
 msgstr "Enviar"
 
-#: game/templates/partials/compte.html:23
+#: game/templates/partials/compte.html:38
 #: game/templates/partials/create_account.html:21
 msgid "Email address"
 msgstr "Correo electronico"
 
-#: game/templates/partials/compte.html:28
+#: game/templates/partials/compte.html:43
 #: game/templates/partials/create_account.html:25
 msgid "Username"
 msgstr "Usuario"
 
-#: game/templates/partials/compte.html:32
+#: game/templates/partials/compte.html:47
+#: game/templates/partials/connect.html:16
 #: game/templates/partials/create_account.html:29
 msgid "Password"
 msgstr "Contrasena"
 
-#: game/templates/partials/compte.html:36 game/templates/partials/lobby.html:16
+#: game/templates/partials/compte.html:51 game/templates/partials/lobby.html:16
 #: game/templates/partials/lobby_private.html:17
 #: game/templates/partials/lobby_private.html:42
 msgid "Red"
 msgstr "Rojo"
 
-#: game/templates/partials/compte.html:37 game/templates/partials/lobby.html:18
+#: game/templates/partials/compte.html:52 game/templates/partials/lobby.html:18
 #: game/templates/partials/lobby_private.html:19
 #: game/templates/partials/lobby_private.html:44
 msgid "Blue"
 msgstr "Azul"
 
-#: game/templates/partials/compte.html:38 game/templates/partials/lobby.html:17
+#: game/templates/partials/compte.html:53 game/templates/partials/lobby.html:17
 #: game/templates/partials/lobby_private.html:18
 #: game/templates/partials/lobby_private.html:43
 msgid "Green"
 msgstr "Verde"
 
-#: game/templates/partials/compte.html:40 game/templates/partials/lobby.html:27
+#: game/templates/partials/compte.html:55 game/templates/partials/lobby.html:27
 #: game/templates/partials/lobby_private.html:28
 #: game/templates/partials/lobby_private.html:53
 msgid "Colors :"
 msgstr "Colores"
 
-#: game/templates/partials/compte.html:44
+#: game/templates/partials/compte.html:59
 msgid "English"
 msgstr "Ingles"
 
-#: game/templates/partials/compte.html:45
+#: game/templates/partials/compte.html:60
 msgid "French"
 msgstr "Frances"
 
-#: game/templates/partials/compte.html:46
+#: game/templates/partials/compte.html:61
 msgid "Spanish"
 msgstr "Espanol"
 
-#: game/templates/partials/compte.html:48
+#: game/templates/partials/compte.html:63
 msgid "Language :"
 msgstr "Idioma"
 
+#: game/templates/partials/compte.html:67
+msgid "Save changes"
+msgstr "Guardar cambios"
+
 #: game/templates/partials/connect.html:11
-msgid "Identifiant"
+msgid "Login"
 msgstr "Identificador"
 
-#: game/templates/partials/connect.html:16
-msgid "Mot de passe"
-msgstr "Contrasena"
-
 #: game/templates/partials/connect.html:20
-msgid "S\\"
+msgid "Log in with 42"
 msgstr "Identificarse con 42"
 
 #: game/templates/partials/connect.html:21
-msgid "Se connecter"
+msgid "Log in"
 msgstr "Iniciar sesion"
 
 #: game/templates/partials/connect.html:24
-msgid "Créer un compte"
+msgid "Create an account"
 msgstr "Crear una cuenta"
 
 #: game/templates/partials/create_account.html:33
-msgid "Verif Password"
+#, fuzzy
+#| msgid "Confirm password"
+msgid "Confirm Password"
 msgstr "Reescribir contrasena"
 
 #: game/templates/partials/create_account.html:37
@@ -135,6 +178,8 @@ msgid "Home"
 msgstr "Inicio"
 
 #: game/templates/partials/header.html:12
+#, fuzzy
+#| msgid "Statistics"
 msgid "Stats"
 msgstr "Estadísticas"
 
@@ -197,16 +242,16 @@ msgid "Waiting for player..."
 msgstr "Esperando jugador..."
 
 #: game/templates/partials/lobby.html:43
-msgid "Limite de points : "
+msgid "Points limit : "
 msgstr "Límite de puntos"
 
 #: game/templates/partials/lobby.html:46
 #: game/templates/partials/lobby_private.html:72
-msgid "Lancer"
+msgid "Launch"
 msgstr "Iniciar"
 
 #: game/templates/partials/lobby_private.html:62
-msgid "Joueur"
+msgid "Player"
 msgstr "Jugador"
 
 #: game/templates/partials/lobby_private.html:65
@@ -214,7 +259,7 @@ msgid "Play against :"
 msgstr "Jugar contra :"
 
 #: game/templates/partials/lobby_private.html:68
-msgid "Limite de points :"
+msgid "Points limit :"
 msgstr "Límite de puntos"
 
 #: game/templates/partials/lobby_tournament.html:7
@@ -226,53 +271,77 @@ msgid "Select Number player"
 msgstr "Seleccione el número de jugadores"
 
 #: game/templates/partials/mypage.html:6
-msgid "Tournoi"
+#, fuzzy
+#| msgid "Tournament"
+msgid "Tournaments"
 msgstr "Torneo"
 
 #: game/templates/partials/mypage.html:7
-msgid "Partie Rapide"
+msgid "Quick Game"
 msgstr "Juego rapido"
 
 #: game/templates/partials/mypage.html:8
-msgid "Partie Private"
+msgid "Private Game"
 msgstr "Juego privado"
+
+#: game/templates/partials/stats.html:10 game/templates/partials/stats.html:20
+msgid "Win"
+msgstr "Victoria"
 
 #: game/templates/partials/stats.html:15
 msgid "Lose"
 msgstr "Derrota"
-
-#: game/templates/partials/stats.html:20
-msgid "Win"
-msgstr "Victoria"
 
 #: game/templates/partials/stats.html:25
 msgid "Draw"
 msgstr "Empate"
 
 #: game/templates/partials/stats.html:29
-msgid "Statistiques Player"
+msgid "Player Statistics"
 msgstr "Estadísticas de juego"
 
 #: game/templates/partials/stats.html:35
 msgid "Win :"
-msgstr "Victoria :"
+msgstr "Victorias :"
+
+#: game/templates/partials/stats.html:38
+msgid "Loss :"
+msgstr "Derrotas"
 
 #: game/templates/partials/stats.html:41
 msgid "Draw :"
 msgstr "Empate :"
 
 #: game/templates/partials/stats.html:47
-msgid "Total Partie :"
+#, fuzzy
+#| msgid "Games played :"
+msgid "Games played: "
 msgstr "Partidos jugados"
 
 #: game/templates/partials/stats.html:50
-msgid "Classement global :"
+#, fuzzy
+#| msgid "Global ranking :"
+msgid "Global Ranking :"
 msgstr "Clasificacion general"
 
 #: game/templates/partials/stats.html:51
-msgid "Classement amis : "
-msgstr "Clasificacion de amigos"
+#, fuzzy
+#| msgid "Global ranking :"
+msgid "Global Friends : "
+msgstr "Clasificacion general"
 
 #: game/templates/partials/stats.html:52
-msgid "Nb tournoi gagne :"
+msgid "Tournaments won :"
 msgstr "Torneos ganados"
+
+#~ msgid "Afficher tous les utilisateurs"
+#~ msgstr "Ver todos los usarios"
+
+#~ msgid "Afficher Amis"
+#~ msgstr "Ver amigos"
+
+#~ msgid "Afficher Bloqués"
+#~ msgstr "Ver usarios bloqueados"
+
+#~ msgid "Friends ranking : "
+#~ msgstr "Clasificacion de amigos"
