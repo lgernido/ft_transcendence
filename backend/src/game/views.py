@@ -81,6 +81,9 @@ def stats(request):
 def chat(request):
     return render(request, 'partials/chat.html')
 
+def mini_chat(request):
+    return render(request, 'partials/mini_chat.html')
+
 def connect(request):
     return render(request, 'partials/connect.html')
 

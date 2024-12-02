@@ -1,7 +1,6 @@
-/* permet d'inserer le header dans toutes les pages et de mettre en place le system de selection active */
 function loadheader()
 {
-	displayError("");
+	displayError('');
 	fetch('/header/')
 	.then(response => {
 		if (!response.ok) {
@@ -30,22 +29,23 @@ function loadheader()
 	});
 }
 
-/* permet d'inserer la page chat.html dans toutes les pages */
-// function loadchat()
-// {
-// 	displayError("");
-// 	fetch('/chat/')
-// 	.then(response => {
-// 		if (!response.ok) {
-// 			throw new Error('Error network response');
-// 		}
-// 		return response.text();
-// 	})
-// 	.then(data => {
-// 		if (document.getElementById('chat-placeholder'))
-// 			document.getElementById('chat-placeholder').innerHTML = data;
-// 	})
-// 	.catch(error => {
-// 		console.error('There has been a problem with your fetch operation:', error);
-// 	});
-// }
+function loadMiniChat()
+{
+	displayError('');
+	fetch('/mini_chat/')
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Error network response');
+		}
+		return response.text();
+	})
+	.then(data => {
+		if (document.getElementById('chat-placeholder')) {
+			document.getElementById('chat-placeholder').innerHTML = data;
+			loadscript('chat.js', () => handleChat());
+		}
+	})
+	.catch(error => {
+		console.error('There has been a problem with your fetch operation:', error);
+	});
+}

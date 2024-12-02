@@ -1,0 +1,37 @@
+{% load static %}
+<div class="mx-2 my-2 d-flex flex-column align-items-center" style="height: calc(100vh - 80px); min-height: 450px;">
+    <div id="container-chat" class="w-100 border rounded d-flex flex-column">
+        <div id="sidebar" class="border-bottom w-100 px-1">
+            <form class="my-1">
+                <div class="input-group border rounded">
+                    <input type="text" class="form-control" id="userSearchInput" placeholder="Rechercher un utilisateur..." aria-label="Recherche">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i> 
+                    </span>
+                </div>
+            </form>
+            <div id="userList" class="overflow-auto" style="max-height: 200px;"></div>
+        </div>
+
+        <div id="chat-area" class="border-top flex-grow-1 d-flex flex-column w-100">
+            <div class="chat-header d-flex align-items-center border-bottom">
+                <img src="" alt="Avatar" class="rounded-circle me-3"> 
+                <div class="contact-details">
+                    <strong>Start a chat with someone</strong>
+                </div>
+            </div>
+
+            <div class="messages-container flex-grow-1 overflow-auto p-3">
+            </div>
+
+            <div class="chat-footer border-top">
+                <form id="message-form" class="d-flex">
+                    <textarea type="text" id="message-input" class="form-control me-2" placeholder="Write your best win 😈" autocomplete="off" required></textarea>
+                    <button type="submit" class="btn btn-primary" id="sendMSG">
+                        <img src="{% static 'chat/img/envoyer.png' %}" alt="Envoyer">
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

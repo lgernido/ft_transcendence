@@ -10,6 +10,7 @@ urlpatterns = [
     path('lobby_tournament/', views.lobby_tournament, name='lobby_tournament'),
     path('stats/', views.stats, name='stats'),
     path('chat/', views.chat, name='chat'),
+	path('mini_chat/', views.mini_chat, name='mini_chat'),
     path('connect/', views.connect, name='connect'),
     path('game/', views.game, name='game'),
     path('lobby/', views.lobby, name='lobby'),

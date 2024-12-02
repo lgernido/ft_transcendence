@@ -51,7 +51,7 @@ def get_current_user(request):
 
 def search_users(request):
     query = request.GET.get('query', '')
-    if len(query) >= 2:
+    if len(query) >= 1:
         current_user = request.user
         users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
         results = []

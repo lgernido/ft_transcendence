@@ -42,5 +42,5 @@ urlpatterns = [
 
 urlpatterns += [
 	# Route SPA
-    re_path(r'^(?!chat2|users/).*$', game.views.home, name='spa_home'),
+    re_path(r'^(?!admin|chat2|users/).*$', game.views.home, name='spa_home'),
 ]

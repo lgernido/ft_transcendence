@@ -1,5 +1,5 @@
 function handleChat(){
-	console.log("enter script");
+	console.log("enter script chat");
 	let current_user = null 
     
     fetch(`/chat2/get_current_user`)
@@ -94,7 +94,7 @@ function handleChat(){
 	}
 
 	// Fonction pour gérer le clic sur un utilisateur de la liste
-	function handleUserClick(user) {
+	function handleUserClick(user, userList, userSearchInput) {
 		const user2Id = user.id; // ID de l'utilisateur sélectionné
 		// Mettre à jour le nom du contact dans le chat header
 		chatHeader.textContent = user.username;
@@ -102,8 +102,10 @@ function handleChat(){
 		// Charger les anciens messages et établir la connexion WebSocket pour le nouveau canal
 		loadMessages(user.id);
 		initWebSocket(user.id);
+		userList.innerHTML = "";
+		userSearchInput.value = "";
 	}
-
+	
 	// Envoi de messages via le WebSocket
 	messageForm.addEventListener("submit", function (e) {
 		e.preventDefault();
@@ -115,6 +117,7 @@ function handleChat(){
 			messageInput.value = "";
 		}
 	});
+
 // ==============================================================================================
 	// Recherche d'utilisateurs
 	userSearchInput.addEventListener("input", function () {
@@ -128,13 +131,13 @@ function handleChat(){
 						const userEntry = document.createElement("div");
 						userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
 						userEntry.innerHTML = `
-							<img src="" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
+							<img src='' alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
 							<div data_user_id='${user.id}'>
 								<div class="user-details"><strong>${user.username}</strong></div>
 								<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
 							</div>
 						`;
-						userEntry.addEventListener("click", () => handleUserClick(user)); // Attacher l'événement clic
+						userEntry.addEventListener("click", () => handleUserClick(user, userList, userSearchInput)); // Attacher l'événement clic
 						userList.appendChild(userEntry);
 					});
 				});

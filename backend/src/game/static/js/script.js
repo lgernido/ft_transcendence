@@ -327,6 +327,7 @@ function loadTournament()
                 history.pushState(state, '', "/lobby_T");
             }
             loadscript('lobby_tournament.js', () => tournament());
+            loadscript('loadelement.js', () => loadMiniChat());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -356,6 +357,7 @@ function loadPublic() {
                 history.pushState(state, '', "/lobby_Pu");
             }
             loadscript('lobby.js', () => lobby());
+            loadscript('loadelement.js', () => loadMiniChat());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -385,6 +387,7 @@ function loadPrivate() {
                 history.pushState(state, '', "/lobby_Pr");
             }
             loadscript('lobby_private.js', () => lobby_private());
+            loadscript('loadelement.js', () => loadMiniChat());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -450,7 +453,6 @@ function loadChat() {
                         const state = { page: 'chat' };
                         history.pushState(state, '', "/chat");
                     }
-
                     loadscript('chat.js', () => handleChat());
                 })
                 .catch(error => {
