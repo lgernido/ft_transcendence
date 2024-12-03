@@ -60,32 +60,50 @@ def log_user(request):
 
 @csrf_protect
 def mypage(request):
-    return render(request, 'partials/mypage.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/mypage.html')
+    else:
+        return redirect('/?next=/mypage/')
 
 @csrf_protect
 @login_required
 def lobby_private(request):
-    return render(request, 'partials/lobby_private.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/lobby_private.html')
+    else:
+        return redirect('/?next=/lobby_Pr/')
 
 @csrf_protect
 @login_required
 def lobby_tournament(request):
-    return render(request, 'partials/lobby_tournament.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/lobby_tournament.html')
+    else:
+        return redirect('/?next=/lobby_T/')
 
 @csrf_protect
 def stats(request):
-    return render(request, 'partials/stats.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/stats.html')
+    else:
+        return redirect('/?next=/stats/')
 
 @csrf_protect
 @login_required
 def chat(request):
-    return render(request, 'partials/chat.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/chat.html')
+    else:
+        return redirect('/?next=/chat/')
 
 def mini_chat(request):
     return render(request, 'partials/mini_chat.html')
 
 def connect(request):
-    return render(request, 'partials/connect.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/connect.html')
+    else:
+        return redirect('/?next=/connect/')
 
 @csrf_protect
 @login_required
@@ -128,11 +146,18 @@ def game(request):
 @csrf_protect
 @login_required
 def lobby(request):
-    return render(request, 'partials/lobby.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/lobby.html')
+    else:
+        return redirect('/?next=/lobby_Pu/')
 
 @csrf_protect
 def amis(request):
-    return render(request, 'partials/amis.html')
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/amis.html')
+    else:
+        return redirect('/?next=/amis/')
+    
 
 @csrf_protect
 def compte(request):
@@ -178,9 +203,6 @@ def compte(request):
                     # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
                     social.update_avatar(new_avatar)
 
-   
-            
-
             if password:
                 user.set_password(password)
                 user.save()
@@ -194,7 +216,11 @@ def compte(request):
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
         except Exception as e:
             return JsonResponse({'error execption': str(e)}, status=400)
-    return render(request, 'partials/compte.html', {'user': request.user})
+        
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/compte.html', {'user': request.user})
+    else:
+        return redirect('/?next=/compte/')
 
 
 @csrf_protect
@@ -219,7 +245,3 @@ def set_language(request):
             activate(lang)
             request.session[LANGUAGE_SESSION_KEY] = lang
     return redirect(request.META.get('HTTP_REFERER', '/')) 
-
-@csrf_protect
-def chat(request):
-    return render(request, 'partials/chat.html')

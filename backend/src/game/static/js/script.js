@@ -65,6 +65,8 @@ function loadscript(file, func) {
 
 function loadConnectPage() {
     const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -72,7 +74,13 @@ function loadConnectPage() {
         .then(response => response.json())
         .then(data => {
             if (!data.authenticated) {
-                fetch('/connect/')
+                fetch('/connect/', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Fetch-Request': 'true',
+                    }
+                } )
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -103,7 +111,15 @@ function loadConnectPage() {
 
 function loadCreateAccount() {
     const appDiv = document.getElementById('app');
-    fetch('/create_account/')
+    const csrfToken = getCookie('csrftoken');
+
+    fetch('/create_account/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -135,10 +151,12 @@ function loadMyPage() {
         .then(response => response.json())
         .then(data => {
             if (data.authenticated) {
+                console.log("User connecte");
                 fetch('/mypage/', {
                     method: 'GET',
                     headers: {
-                        'X-CSRFToken': csrfToken
+                        'X-CSRFToken': csrfToken,
+                        'X-Fetch-Request': 'true',
                     }
                 })
                 .then(response => response.text())
@@ -156,6 +174,7 @@ function loadMyPage() {
                 });
             }
             else {
+                console.log("User PAS connecte");
                 loadConnectPage();
             }
         })
@@ -163,6 +182,33 @@ function loadMyPage() {
             console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
+
+// function loadMyPage() {
+//     const appDiv = document.getElementById('app');
+//     const csrfToken = getCookie('csrftoken');
+
+//                 fetch('/mypage/', {
+//                     method: 'GET',
+//                     headers: {
+//                         'X-CSRFToken': csrfToken,
+//                         'X-Fetch-Request': 'true',
+//                     }
+//                 })
+//                 .then(response => response.text())
+//                 .then(html => {
+//                     appDiv.innerHTML = html;
+                    
+//                     if (history.state?.page !== 'mypage') {
+//                         const state = { page: 'mypage' };
+//                         history.pushState(state, '', "/mypage");
+//                     }
+//                     loadscript('language-switch.js', () => selectLanguage());
+//                 })
+//                 .catch(error => {
+//                     console.error('Erreur lors de la récupération de mypage :', error);
+//                 });
+
+// }
 
 function loadStats() {
     const appDiv = document.getElementById('app');
@@ -179,7 +225,8 @@ function loadStats() {
                 fetch('/stats/', {
                     method: 'GET',
                     headers: {
-                        'X-CSRFToken': csrfToken
+                        'X-CSRFToken': csrfToken,
+                        'X-Fetch-Request': 'true',
                     }
                 })
                 .then(response => {
@@ -227,7 +274,8 @@ function loadFriends() {
                 fetch('/amis/', {
                     method: 'GET',
                     headers: {
-                        'X-CSRFToken': csrfToken
+                        'X-CSRFToken': csrfToken,
+                        'X-Fetch-Request': 'true',
                     }
                 })
                 .then(response => {
@@ -273,7 +321,8 @@ function loadAccount() {
                 fetch('/compte/', {
                     method: 'GET',
                     headers: {
-                        'X-CSRFToken': csrfToken
+                        'X-CSRFToken': csrfToken,
+                        'X-Fetch-Request': 'true',
                     }
                 })
                 .then(response => {
@@ -290,7 +339,6 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
-                    loadscript('language-switch.js', () => selectLanguage());
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -312,7 +360,8 @@ function loadTournament()
     fetch('/lobby_tournament/', {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -342,7 +391,8 @@ function loadPublic() {
     fetch('/lobby/', {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -372,7 +422,8 @@ function loadPrivate() {
     fetch('/lobby_private/', {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -402,7 +453,8 @@ function loadGame() {
     fetch('/game/', {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -439,7 +491,8 @@ function loadChat() {
                 fetch('/chat/', {
                     method: 'GET',
                     headers: {
-                        'X-CSRFToken': csrfToken
+                        'X-CSRFToken': csrfToken,
+                        'X-Fetch-Request': 'true',
                     }
                 })
                 .then(response => {
@@ -471,6 +524,51 @@ function loadChat() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    const path = getQueryParam('next') || window.location.pathname;
+
+    if (path === '/mypage/') {
+        loadMyPage();
+    }
+    else if (path === '/stats/') {
+        loadStats();
+    }
+    else if (path === '/game/') {
+        loadGame();
+    }
+    else if (path === '/lobby_Pr/') {
+        loadPrivate();
+    }
+    else if (path === '/lobby_Pu/') {
+        loadPublic();
+    }
+    else if (path === '/lobby_T/') {
+        loadTournament();
+    }
+    else if (path === '/compte/') {
+        loadAccount();
+    }
+    else if (path === '/amis/') {
+        loadFriends();
+    }
+    else if (path === '/create_account/') {
+        loadCreateAccount();
+    }
+    else if (path === '/connect/') {
+        loadConnectPage();
+    }
+    else if (path === '/chat/') {
+        loadChat();
+    }
+    else {
+        console.log("Page not found 1", path);
+        loadMyPage();
+    }
+
     window.addEventListener('popstate', function(event) {
         if (event.state) {
             const pageType = event.state.page;
@@ -514,13 +612,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } 
         else {
-            console.log("page not found");
+            console.log("page not found 2");
             loadConnectPage();
         }
     });
 });
 
-document.addEventListener('DOMContentLoaded', loadConnectPage);
 
 document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener("keydown", function(event) {
@@ -529,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             const path = window.location.pathname;
             const lastPart = path.split('/').filter(Boolean).pop();
-
+            
             console.log("Refresh page");
             if (lastPart === 'mypage') {
                 loadMyPage();
@@ -565,12 +662,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 loadChat();
             }
             else {
-                console.log("Page not found", lastPart);
+                console.log("Page not found 3", lastPart);
                 loadConnectPage();
             }
         }
     });
 });
+// document.addEventListener('DOMContentLoaded', loadConnectPage);
 
 window.addEventListener('load', function () {
     const initialPage = window.location.pathname.split('/').pop() || 'connect';

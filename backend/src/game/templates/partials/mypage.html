@@ -29,3 +29,18 @@
 	</div>
 	<!-- <div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div> -->
 </div>
+
+<div class="language-switcher position-absolute bottom-0 end-0 p-3 d-flex gap-2">
+	<form action="{% url 'set_language' %}" method="post">
+		{% csrf_token %}
+		<button name="language" value="en" class="btn btn-link p-0">
+			<img src="{% static 'img/flag-en.png' %}" alt="English" style="width: 32px; height: 20px;">
+		</button>
+		<button name="language" value="fr" class="btn btn-link p-0">
+			<img src="{% static 'img/flag-fr.png' %}" alt="Français" style="width: 32px; height: 20px;">
+		</button>
+		<button name="language" value="es" class="btn btn-link p-0">
+			<img src="{% static 'img/flag-es.png' %}" alt="Español" style="width: 32px; height: 20px;">
+		</button>
+	</form>
+</div>

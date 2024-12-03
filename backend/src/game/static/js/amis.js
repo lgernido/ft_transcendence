@@ -331,24 +331,4 @@ function createActionButtons(userId) {
 // Utilitaires
 // ==========================================================================
 
-// Fonction pour récupérer un cookie spécifique
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        cookies.forEach(cookie => {
-            const trimmedCookie = cookie.trim();
-            if (trimmedCookie.startsWith(`${name}=`)) {
-                cookieValue = decodeURIComponent(trimmedCookie.substring(name.length + 1));
-            }
-        });
-    }
-    return cookieValue;
-}
-
-// Fonction pour afficher une erreur
-function displayError(message) {
-    console.error(message);
-}
-
 const API_URL = '/users/friendship/';

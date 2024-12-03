@@ -4,21 +4,6 @@
 	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
-<div class="language-switcher position-absolute bottom-0 end-0 p-3 d-flex gap-2">
-	<form action="{% url 'set_language' %}" method="post">
-		{% csrf_token %}
-		<button name="language" value="en" class="btn btn-link p-0">
-			<img src="{% static 'img/flag-en.png' %}" alt="English" style="width: 32px; height: 20px;">
-		</button>
-		<button name="language" value="fr" class="btn btn-link p-0">
-			<img src="{% static 'img/flag-fr.png' %}" alt="Français" style="width: 32px; height: 20px;">
-		</button>
-		<button name="language" value="es" class="btn btn-link p-0">
-			<img src="{% static 'img/flag-es.png' %}" alt="Español" style="width: 32px; height: 20px;">
-		</button>
-	</form>
-</div>
-
 <div class="d-flex" style="height: calc(100vh - 80px); min-height: 450px;">
 	<div class="mb-3 mx-2 my-2 w-75 flex-grow-1 d-flex align-items-center justify-content-center">
 		<form method="POST" id="edit-profile-form" class="row w-100 align-items-center border rounded mx-2"

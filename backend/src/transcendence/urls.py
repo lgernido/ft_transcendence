@@ -35,15 +35,10 @@ urlpatterns = [
 	path('users/', include('users.urls')),
 	path('chat2/', include('chat.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
-<<<<<<< HEAD
-	
-	
-=======
->>>>>>> origin/lilbokit
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-urlpatterns += [
-	# Route SPA
-    re_path(r'^(?!admin|chat2|users/).*$', game.views.home, name='spa_home'),
-]
+# urlpatterns += [
+# 	# Route SPA
+#     re_path(r'^(?!admin|chat2|users/).*$', game.views.home, name='spa_home'),
+# ]
