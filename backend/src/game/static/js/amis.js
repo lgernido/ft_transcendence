@@ -304,6 +304,7 @@ function generateUserHTML(user) {
 // Afficher la liste des utilisateurs
 function displayUserList(users) {
     const userListContainer = document.getElementById('list');
+    userListContainer.innerHTML = "";
     
     users.forEach(user => {
         const userHTML = generateUserHTML(user);
