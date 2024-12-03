@@ -32,62 +32,14 @@ services:
     networks:
       - default
 
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.16.1
-  #   container_name: elasticsearch
-  #   environment:
-  #     - discovery.type=single-node
-  #     - xpack.security.enabled=false  # Désactive la sécurité pour simplifier les tests
-  #     - bootstrap.memory_lock=true   # Améliore les performances
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Limite la mémoire Java
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   volumes:
-  #     - elasticsearch-data:/usr/share/elasticsearch/data
-  #   ports:
-  #     - "9200:9200"  # Port REST pour Elasticsearch
-  #     - "9300:9300"  # Port interne pour la communication des clusters
-  #   networks:
-  #     - elk
-
-  # logstash:
-  #   image: docker.elastic.co/logstash/logstash:8.16.1
-  #   container_name: logstash
-  #   environment:
-  #     - ELASTICSEARCH_HOST=http://elasticsearch:9200
-  #   volumes:
-  #     - ./logstash/pipeline:/usr/share/logstash/pipeline
-  #   ports:
-  #     - "5044:5044"  # Port pour Beats
-  #     - "9600:9600"  # Port API de Logstash
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - elk
-
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:8.16.1
-  #   container_name: kibana
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-  #   ports:
-  #     - "5601:5601"  # Port pour accéder à Kibana
-  #   depends_on:
-  #     - elasticsearch
-  #   networks:
-  #     - elk
-    # http://localhost:5601
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
       - ./backend:/code/backend
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     depends_on:
       - db
     networks:
@@ -95,9 +47,9 @@ services:
     env_file:
       - .env
     environment:
-      - DJANGO_SUPERUSER_USERNAME=${ADMIN_NAME}
-      - DJANGO_SUPERUSER_EMAIL=${ADMIN_EMAIL}
-      - DJANGO_SUPERUSER_PASSWORD=${ADMIN_PASS}
+      # - DJANGO_SUPERUSER_USERNAME=${ADMIN_NAME}
+      # - DJANGO_SUPERUSER_EMAIL=${ADMIN_EMAIL}
+      # - DJANGO_SUPERUSER_PASSWORD=${ADMIN_PASS}
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
       - DJANGO_SUPERUSER_USERNAME=admin
@@ -121,11 +73,75 @@ services:
       - default
 
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=securepassword
+      - xpack.security.enabled=true
+      - xpack.security.authc.apiKey.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.key=certs/elasticsearch.key
+      - xpack.security.transport.ssl.certificate=certs/elasticsearch.crt
+      - xpack.security.transport.ssl.certificate_authorities=certs/ca.crt
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=certs/elasticsearch.key
+      - xpack.security.http.ssl.certificate=certs/elasticsearch.crt
+      - xpack.security.http.ssl.certificate_authorities=certs/ca.crt
+      - xpack.reporting.roles.enabled=false
+    volumes:
+      # - esdata:/usr/share/elasticsearch/data
+      - ./certs:/certs
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.7.0
+    environment:
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=bob
+      - ELASTICSEARCH_PASSWORD=securepassword
+    volumes:
+      - ./certs:/certs
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.7.0
+    depends_on:
+      - elasticsearch
+    environment:
+      - LOGSTASH_XPACK_MONITORING_ENABLED=true
+      - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
+      - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_PASSWORD=securepassword
+    volumes:
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./certs:/certs
+    networks:
+      - elk
+
+
+    # http://localhost:5601
+
+
 volumes:
   postgres_data:
+  elasticsearch-data:
+    driver: local
 
 
 networks:
   default:
+    driver: bridge
+  elk:
     driver: bridge
 

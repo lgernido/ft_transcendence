@@ -1,0 +1,6 @@
+server.ssl.enabled: true
+server.ssl.key: /certs/kibana.key
+server.ssl.certificate: /certs/kibana.crt
+server.ssl.cipherSuites:
+  - TLS_AES_128_GCM_SHA256
+  - TLS_AES_256_GCM_SHA384

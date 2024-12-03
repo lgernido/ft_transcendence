@@ -1,0 +1,9 @@
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch:9200"]
+xpack.monitoring.elasticsearch.username: "elastic"
+xpack.monitoring.elasticsearch.password: "securepassword"
+xpack.monitoring.elasticsearch.ssl.certificate_authorities: "certs/elasticsearch.crt"
+xpack.monitoring.elasticsearch.ssl.key: "certs/elasticsearch.key"
+# xpack.monitoring.elasticsearch.ssl.verificationMode: "certificate"
+
+
