@@ -35,8 +35,11 @@ urlpatterns = [
 	path('users/', include('users.urls')),
 	path('chat2/', include('chat.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
+<<<<<<< HEAD
 	
 	
+=======
+>>>>>>> origin/lilbokit
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

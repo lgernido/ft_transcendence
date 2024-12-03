@@ -1,155 +1,52 @@
-function getUsers () {
-    
-    const search_user = document.getElementById('search_user'); // Utilisez `document.getElementById`
+// ==========================================================================
+// Gestion du chargement initial
+// ==========================================================================
 
-    if (!search_user) {
-        console.error("L'élément #search_user n'a pas été trouvé dans le DOM.");
-        return;
-    }
-
-    search_user.addEventListener("input", function () {
-        const csrfToken = getCookie('csrftoken'); // Assurez-vous que `getCookie` est bien définie
-        const query = search_user.value.trim();
-        if (search_user.value.length == 0)
-        // if (query.length == 0)
-            fetchUserList('users')
-        else if (query.length > 0) {
-            fetch(`/users/get_users?query=${query}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération des utilisateurs');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && Array.isArray(data)) {
-                    displayUserList(data); // Assurez-vous que `displayUserList` est bien définie
-                } else {
-                    alert('Aucun utilisateur trouvé.');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Une erreur est survenue lors de la récupération des données.');
-            });
-        }
-    });
-};
-
-
-
-function createActionButtons(userId) {
-    const actions = [
-        { icon: 'bi bi-person-plus-fill', text: 'Add', action: () => inviteUser(userId) },
-        { icon: 'bi bi-person-x-fill', text: 'Remove', action: () => deleteUser(userId) },
-        { icon: 'bi bi-person-dash', text: 'Block', action: () => blockUser(userId) },
-        { icon: 'bi bi-person-check', text: 'Unblock', action: () => unblockUser(userId) },
-    ];
-
-    const container = document.createElement('div');
-    container.classList.add('me-3');
-
-    actions.forEach(({ icon, text, action }) => {
-        const button = document.createElement('a');
-        button.className = 'btn btn-primary btn-add shadow hover-container';
-        button.setAttribute('role', 'button');
-        button.addEventListener('click', action); // Attache une action spécifique
-
-        button.innerHTML = `
-            <i class="bi ${icon} icon"></i>
-            <div class="hover-text">${text}</div>
-        `;
-
-        container.appendChild(button);
-    });
-
-    return container;
+function selectUser() {
+    loadFriendsList();
+    getUsers();
+    actionButton();
 }
-
-function loadFriendsList() {
-    // Effectuer une requête GET vers l'API
-    fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erreur lors de la récupération des données');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data && Array.isArray(data)) {
-            displayUserList(data);
-        } else {
-            alert('Aucun utilisateur trouvé.');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        alert('Impossible de charger la liste d\'amis.');
-    });
-}
-
-document.addEventListener('DOMContentLoaded', loadFriendsList, getUsers);
-
-const API_URL = '/users/friendship/';
-
-function getCookie(name) {
-	let cookieValue = null;
-	if (document.cookie && document.cookie !== '') {
-		const cookies = document.cookie.split(';');
-		for (let i = 0; i < cookies.length; i++) {
-		const cookie = cookies[i].trim();
-		if (cookie.startsWith(name + '=')) {
-			cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-			break;
-			}
-		}
-	}
-	return cookieValue;
-}
+// ==========================================================================
+// Gestion des utilisateurs (API et interactions)
+// ==========================================================================
 
 function inviteUser(userId) {
-
-const csrfToken = getCookie('csrftoken');
-if (!csrfToken) {
-	console.log('CSRF token not found. Please refresh the page.');
-	return;
+    
+    const csrfToken = getCookie('csrftoken');
+    if (!csrfToken) {
+        console.log('CSRF token not found. Please refresh the page.');
+        return;
+    }
+    
+    // Effectuer une requête API pour ajouter l'utilisateur
+    fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Ajout du token CSRF
+        },
+        body: JSON.stringify({
+            action: 'add',
+            user_id: userId
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(`User ${userId} has been add || ${data}`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
-// Effectuer une requête API pour ajouter l'utilisateur
-fetch(API_URL, {
-	method: 'POST',
-	headers: {
-		'Content-Type': 'application/json',
-		'X-CSRFToken': csrfToken, // Ajout du token CSRF
-	},
-	body: JSON.stringify({
-		action: 'add',
-		user_id: userId
-}),
-	})
-	.then(response => response.json())
-	.then(data => {
-		alert(`User ${userId} has been add || ${data}`);
-	})
-	.catch(error => {
-	console.error('Error:', error);
-	});
-}
-
-// Fonction pour supprimer ou retirer un utilisateur
 function deleteUser(userId) {
     const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
         console.log('CSRF token not found. Please refresh the page.');
         return;
     }
-
+    
     if (confirm(`Are you sure you want to remove user ${userId} from your list?`)) {
         fetch(API_URL, {
             method: 'POST',
@@ -185,7 +82,7 @@ function blockUser(userId) {
         console.log('CSRF token not found. Please refresh the page.');
         return;
     }
-
+    
     if (confirm(`Are you sure you want to block user ${userId}?`)) {
         fetch(API_URL, {
             method: 'POST',
@@ -221,7 +118,7 @@ function unblockUser(userId) {
         console.log('CSRF token not found. Please refresh the page.');
         return;
     }
-
+    
     if (confirm(`Are you sure you want to unblock user ${userId}?`)) {
         fetch(API_URL, {
             method: 'POST',
@@ -249,107 +146,209 @@ function unblockUser(userId) {
         });
     }
 }
+function getUsers() {
 
-// ==========================================================================
+    const search_user = document.getElementById('search_user'); // Utilisez `document.getElementById`
+    
+    if (!search_user) {
+        console.error("L'élément #search_user n'a pas été trouvé dans le DOM.");
+        return;
+    }
 
-// Fonction pour faire une requête POST et récupérer les utilisateurs
+    search_user.addEventListener("input", function () {
+        const csrfToken = getCookie('csrftoken'); // Assurez-vous que `getCookie` est bien définie
+        const query = search_user.value.trim();
+        if (search_user.value.length == 0)
+            // if (query.length == 0)
+            fetchUserList('users')
+        else if (query.length > 0) {
+            fetch(`/users/get_users?query=${query}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la récupération des utilisateurs');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && Array.isArray(data)) {
+                        displayUserList(data); // Assurez-vous que `displayUserList` est bien définie
+                    } else {
+                        alert('Aucun utilisateur trouvé.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de la récupération des données.');
+                });
+        }
+    });
+};
+
+function loadFriendsList() {
+    // Effectuer une requête GET vers l'API
+    fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors de la récupération des données');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && Array.isArray(data)) {
+                displayUserList(data);
+            } else {
+                alert('Aucun utilisateur trouvé.');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Impossible de charger la liste d\'amis.');
+        });
+}
+
 function fetchUserList(action) {
+    console.log(`Tentative de récupération des utilisateurs pour l'action : ${action}`);
     const csrfToken = getCookie('csrftoken');
+    console.log("CSRF Token utilisé :", csrfToken);
+
+    // Vérifie si le token CSRF est valide
+    if (!csrfToken) {
+        console.error("CSRF token manquant !");
+    }
+
+    // Construction de la requête fetch
     fetch(`/users/contact?action=${action}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,
+            'X-CSRFToken': csrfToken,  // En-tête du token CSRF
         },
     })
     .then(response => {
+        console.log("Réponse obtenue :", response);
+        
         if (!response.ok) {
-            throw new Error('Erreur lors de la récupération des utilisateurs');
+            throw new Error(`Erreur HTTP : ${response.status}`);
         }
+
         return response.json();
     })
     .then(data => {
-        if (data && Array.isArray(data)) {
-            displayUserList(data);
-        } else {
-            alert('Aucun utilisateur trouvé.');
-        }
+        console.log("Données JSON reçues :", data);
+        displayUserList(data);
     })
     .catch(error => {
-        console.error('Erreur:', error);
-        alert('Une erreur est survenue lors de la récupération des données.');
+        console.error("Erreur lors de la requête :", error);
+        alert("Une erreur est survenue : " + error.message);
     });
 }
 
-function displayUserList(users) {
-    console.log(users);
-    const userListContainer = document.getElementById('list');
-    userListContainer.innerHTML = '';
+// ==========================================================================
+// Gestion de l'interface utilisateur
+// ==========================================================================
 
-    users.forEach(user => {
-        const winRatio = user.games_win && user.games_lose 
-			? (user.games_win / user.games_lose).toFixed(2) 
-			: 0;
-
-		// Créer l'élément principal pour un utilisateur
-		const friendDiv = document.createElement('div');
-		friendDiv.className = "friends_info my-2 d-flex justify-content-between align-items-center border-bottom border-3";
-		friendDiv.style.marginInline = "10%";
-		friendDiv.style.minWidth = "450px";
-
-		// HTML pour les informations utilisateur
-		const userInfoHtml = `
-			<div class="d-flex mx-3 my-1">
-				<img src="${user.avatar_url || 'img/default.jpg'}" class="img-profil-60" alt="img-profil">
-					<div class="ms-5">
-						<h5 class="text fw-bold ms-5">${user.username || 'Unknown'}</h5>
-						<p class="text ms-4">
-							Games Played: ${user.games_played || 0} 🕹️
-							Wins: ${user.games_win || 0} 🏆
-							Losses: ${user.games_lose || 0} 💀
-							Ratio: ${winRatio} ⚖️
-						</p>
-					</div>
-
-
-			</div>
-		`;
-
-		friendDiv.innerHTML = userInfoHtml;
-
-		// Ajouter les boutons d'action générés dynamiquement
-		const actionButtons = createActionButtons(user.id || '');
-		friendDiv.appendChild(actionButtons);
-
-		// Ajouter cet utilisateur à la liste
-		userListContainer.appendChild(friendDiv);
-    });
-}
-
-function actionButton()
-{
+function actionButton() {
     console.log("Set button");
-    document.getElementById('showAllUserBtn').addEventListener('click', () => {
-        fetchUserList('users');
-    });
     
-    document.getElementById('showFriendsBtn').addEventListener('click', () => {
-        fetchUserList('added');
-    });
+    const showAllUserBtn = document.getElementById('showAllUserBtn');
+    const showFriendsBtn = document.getElementById('showFriendsBtn');
+    const showBlockedBtn = document.getElementById('showBlockedBtn');
     
-    document.getElementById('showBlockedBtn').addEventListener('click', () => {
-        fetchUserList('blocked');
+    if (showAllUserBtn && showFriendsBtn && showBlockedBtn) {
+        showAllUserBtn.addEventListener('click', () => {
+            console.log("Bouton 'Afficher tous les utilisateurs' cliqué");
+            fetchUserList('users');
+        });
+        
+        showFriendsBtn.addEventListener('click', () => {
+            console.log("Bouton 'Afficher les amis' cliqué");
+            fetchUserList('added');
+        });
+        
+        showBlockedBtn.addEventListener('click', () => {
+            console.log("Bouton 'Afficher les utilisateurs bloqués' cliqué");
+            fetchUserList('blocked');
+        });
+    } else {
+        console.error("Un ou plusieurs boutons n'ont pas été trouvés dans le DOM");
+    }
+}
+
+function generateUserHTML(user) {
+    const userTemplate = document.getElementById('user-template').content.cloneNode(true);
+    
+    // Remplace les valeurs dynamiques dans le template cloné
+    userTemplate.querySelector('[data-user-name]').textContent = user.username || 'Unknown';
+    userTemplate.querySelector('[data-user-avatar]').src = user.avatar || '/static/img/bob.jpg';
+    
+    const statsElement = userTemplate.querySelector('[data-user-stats]');
+    statsElement.innerHTML = statsElement.innerHTML
+    .replace('{% trans "Games Played" %}', user.games_played + ' 🕹️')
+    .replace('{% trans "Wins" %}', user.wins + ' 🏆')
+    .replace('{% trans "Losses" %}', user.losses + ' 💀')
+    .replace('{% trans "Ratio" %}', user.ratio + ' ⚖️');
+    
+    const buttonsContainer = userTemplate.querySelector('[data-action-buttons]');
+    const actionButtons = createActionButtons(user.id);
+    buttonsContainer.appendChild(actionButtons);
+    
+    return userTemplate;
+}
+
+// Afficher la liste des utilisateurs
+function displayUserList(users) {
+    const userListContainer = document.getElementById('list');
+    userListContainer.innerHTML = "";
+    
+    users.forEach(user => {
+        const userHTML = generateUserHTML(user);
+        userListContainer.appendChild(userHTML);
     });
 }
 
-function selectUser()
-{
-    loadFriendsList();
-    getUsers();
-    actionButton();
+// Générer les boutons d'action à partir du template
+function createActionButtons(userId) {
+    const container = document.createElement('div');
+    const actionButtonsTemplate = document.getElementById('action-buttons-template').content.cloneNode(true);
+    
+    // Ajoutez des écouteurs d'événements pour chaque bouton d'action
+    actionButtonsTemplate.querySelector('[data-action="add"]').addEventListener('click', () => inviteUser(userId));
+    actionButtonsTemplate.querySelector('[data-action="remove"]').addEventListener('click', () => deleteUser(userId));
+    actionButtonsTemplate.querySelector('[data-action="block"]').addEventListener('click', () => blockUser(userId));
+    actionButtonsTemplate.querySelector('[data-action="unblock"]').addEventListener('click', () => unblockUser(userId));
+    
+    container.appendChild(actionButtonsTemplate);
+    
+    return container;
+}
+// ==========================================================================
+// Utilitaires
+// ==========================================================================
+
+// Fonction pour récupérer un cookie spécifique
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        cookies.forEach(cookie => {
+            const trimmedCookie = cookie.trim();
+            if (trimmedCookie.startsWith(`${name}=`)) {
+                cookieValue = decodeURIComponent(trimmedCookie.substring(name.length + 1));
+            }
+        });
+    }
+    return cookieValue;
 }
 
+// Fonction pour afficher une erreur
+function displayError(message) {
+    console.error(message);
+}
 
-
-     
-
+const API_URL = '/users/friendship/';

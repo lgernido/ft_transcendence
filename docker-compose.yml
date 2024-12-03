@@ -41,7 +41,8 @@ services:
     # ports:
     #   - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - default
     env_file:
@@ -52,9 +53,6 @@ services:
       # - DJANGO_SUPERUSER_PASSWORD=${ADMIN_PASS}
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
-      - DJANGO_SUPERUSER_USERNAME=admin
-      - DJANGO_SUPERUSER_EMAIL=admin@example.com
-      - DJANGO_SUPERUSER_PASSWORD=securepassword
 
   nginx:
     container_name: nginx
@@ -71,6 +69,11 @@ services:
       - backend
     networks:
       - default
+    # env_file:
+      # .env
+      # - DJANGO_SUPERUSER_USERNAME=admin
+      # - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      # - DJANGO_SUPERUSER_PASSWORD=securepassword
 
 
   elasticsearch:
@@ -137,6 +140,7 @@ volumes:
   postgres_data:
   elasticsearch-data:
     driver: local
+
 
 
 networks:

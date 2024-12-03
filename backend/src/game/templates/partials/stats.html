@@ -26,7 +26,7 @@
 			</div>
 		</div>
 		<div class="w-100 my-5 stat-container">
-			<h3 class="m-4 fw-bold">{%trans 'Statistiques Player' %}</h3>
+			<h3 class="m-4 fw-bold">{%trans 'Player Statistics' %}</h3>
 			<section id="camembert">
 				<svg id="drawgraph" width="210" height="210" xmlns="http://www.w3.org/2000/svg">
 					<circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="5" />
@@ -44,14 +44,18 @@
 				</ul>
 			</section>
 			<div class="m-4 align-items-center d-flex justify-content-between">
-				<li class="d-flex fw-bold" style="list-style-type: none;">{%trans 'Total Partie :' %}<p id="nb-game"
+				<li class="d-flex fw-bold" style="list-style-type: none;">{%trans 'Games played: ' %}<p id="nb-game"
 						class="mx-2"></p>
 				</li>
-				<p class="fw-bold">{%trans 'Classement global :' %} #3</p>
-				<p class="fw-bold">{%trans 'Classement amis : '%}#3</p>
-				<p class="fw-bold">{%trans 'Nb tournoi gagne :' %} 0</p>
+				<p class="fw-bold">{%trans 'Global Ranking :' %} #3</p>
+				<p class="fw-bold">{%trans 'Global Friends : '%}#3</p>
+				<p class="fw-bold">{%trans 'Tournaments won :' %} 0</p>
 			</div>
 		</div>
+	</div>
+
+	<!-- Chat section -->
+	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);">
 	</div>
 </div>
 

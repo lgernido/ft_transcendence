@@ -43,6 +43,7 @@ function checkScriptPresence(src) {
 
 function loadscript(file, func) {
     if (!checkScriptPresence(file)) {
+        console.log("load file and function", file, func);
         const script = document.createElement('script');
         script.src = "/static/js/" + file;
         document.body.appendChild(script);
@@ -289,6 +290,7 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
+                    loadscript('language-switch.js', () => selectLanguage());
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
