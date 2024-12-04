@@ -161,6 +161,10 @@ function loadMyPage() {
                 })
                 .then(response => response.text())
                 .then(html => {
+                    if (!appDiv)
+                        console.log("app PAS present");
+                    else
+                        console.log("app present")
                     appDiv.innerHTML = html;
                     
                     if (history.state?.page !== 'mypage') {
@@ -175,6 +179,10 @@ function loadMyPage() {
             }
             else {
                 console.log("User PAS connecte");
+                if (!appDiv)
+                    console.log("app PAS present");
+                else
+                    console.log("app present")
                 loadConnectPage();
             }
         })
@@ -250,6 +258,7 @@ function loadStats() {
                 });
             }
             else {
+                console.log("User PAS connecte");
                 loadConnectPage();
             }
         })

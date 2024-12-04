@@ -211,3 +211,42 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
     # os.path.join(BASE_DIR, 'backend/src/auth/locale'),
 ]
+
+
+# Gestion des cookies
+# Sécurisation des cookies de session
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Utilise la base de données pour les sessions
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 3600  # Expire après 1 heure
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Sécurisation des cookies CSRF
+# CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_SAMESITE = 'Lax'
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'yourapp': {  # Loggez depuis une application spécifique
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     },
+# }

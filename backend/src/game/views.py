@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.utils.translation import activate
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.sessions.models import Session
 from django.shortcuts import redirect
 from django.http import JsonResponse
 
@@ -60,10 +61,13 @@ def log_user(request):
 
 @csrf_protect
 def mypage(request):
-    if request.headers.get('X-Fetch-Request') == 'true':
-        return render(request, 'partials/mypage.html')
-    else:
-        return redirect('/?next=/mypage/')
+    if request.path not in ['/login_with_42/', '/callback/']:
+        if request.headers.get('X-Fetch-Request') == 'true':
+            return render(request, 'partials/mypage.html')
+        else:
+            return redirect('/?next=/mypage/')
+    
+    return render(request, 'mypage.html')
 
 @csrf_protect
 @login_required
@@ -234,8 +238,34 @@ def logout_view(request):
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'CSRF token missing or invalid'}, status=403)
 
+# def check_user_status(request):
+#     return JsonResponse({'authenticated': request.user.is_authenticated})
+
 def check_user_status(request):
-    return JsonResponse({'authenticated': request.user.is_authenticated})
+    session_key = request.COOKIES.get('sessionid')
+    print(f"Session ID from cookie: {session_key}")
+
+    if not session_key:
+        return JsonResponse({'authenticated': False, 'message': 'No session cookie found\n\n'})
+
+    try:
+        session = Session.objects.get(session_key=session_key)
+        print(f"Session found: {session}")
+
+        session_data = session.get_decoded()
+        print(f"Session data: {session_data}")
+
+        user_id = session_data.get('_auth_user_id')
+        print(f"User ID in session: {user_id}\n\n")
+
+        if user_id:
+            user = User.objects.get(id=user_id)
+            return JsonResponse({'authenticated': True, 'username': user.username})
+        else:
+            return JsonResponse({'authenticated': False, 'message': 'No user associated with this session'})
+    except Session.DoesNotExist:
+        return JsonResponse({'authenticated': False, 'message': 'Invalid session key'})
+
     
 
 def set_language(request):
