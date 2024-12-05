@@ -3,6 +3,7 @@ from . import views
 from users.views import create_account
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import set_language
+from .views import game_room
 
 urlpatterns = [
     path('', views.home, name='home_page'),
@@ -19,11 +20,14 @@ urlpatterns = [
     path('amis/', views.amis, name='amis'),
     path('compte/', views.compte, name='compte'),
 	path('header/', views.header, name='header'),
-    path('store_colors/', views.store_colors, name='store_colors'),
+    # path('store_colors/', views.store_colors, name='store_colors'),
 	path('logout/', views.logout_view, name='logout'),
 	path('log_user/', views.log_user, name='log_user'),
     path('set_language/', set_language, name='set_language'),
 	path('check_user_status/', views.check_user_status, name='check_user_status'),
+    path('game/', views.game, name='game'),
+    path('create_room/', views.create_room, name='create_room'),
+    path('game/<str:room_name>/', views.game_room, name='game_room'),
 
 	# path('<path:path>', views.home),
 ]

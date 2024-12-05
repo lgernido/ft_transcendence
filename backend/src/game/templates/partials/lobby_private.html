@@ -13,8 +13,7 @@
 						<p class="card-lobby-text-ratio">0.5</p>
 						<div class="form-floating mb-1 w-75">
 							<select class="form-select" id="selectColorPlayer1">
-								<option value="color-player-none">--</option>
-								<option value="color-player-red">{%trans 'Red' %}</option>
+								<option value="color-player-red" selected>{%trans 'Red' %}</option>
 								<option value="color-player-green">{%trans 'Green' %}</option>
 								<option value="color-player-blue">{%trans 'Blue' %}</option>
 								<option value="color-player-yellow">{%trans 'Yellow' %}</option>
@@ -29,6 +28,7 @@
 						</div>
 					</div>
 				</div>
+				<div id="user-info" data-username="{{ user.username }}"></div>
 				<div>
 					<div class="card-lobby">
 						<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil">
@@ -38,9 +38,8 @@
 							<p class="card-lobby-text-ratio">0.5</p>
 							<div class="form-floating mb-1 w-75">
 								<select class="form-select" id="selectColorPlayer2">
-									<option value="color-player-none">--</option>
 									<option value="color-player-red">{%trans 'Red' %}</option>
-									<option value="color-player-green">{%trans 'Green' %}</option>
+									<option value="color-player-green" selected>{%trans 'Green' %}</option>
 									<option value="color-player-blue">{%trans 'Blue' %}</option>
 									<option value="color-player-yellow">{%trans 'Yellow' %}</option>
 									<option value="color-player-cyan">{%trans 'Cyan' %}</option>
@@ -57,15 +56,8 @@
 				</div>
 			</div>
 			<div class="d-flex flex-column align-items-center justify-content-center lobbySettings my-5">
-				<div class="form-floating my-2 w-100">
-					<select class="form-select" id="selectTypePlayer" style="border: transparent;">
-						<option value="player-real">{%trans 'Player'%}</option>
-						<option value="player-bot">Bot</option>
-					</select>
-					<label for="selectTypePlayer">{%trans 'Play against :' %}</label>
-				</div>
 				<div>
-					{%trans 'Points limit :'%} <input class="inputMaxPoint ms-2" id="maxPoint" max="40">
+					{%trans 'Points limit :'%} <input class="inputMaxPoint ms-2" id="maxPoint" max="40" value="5">
 				</div>
 			</div>
 			<div class="w-100 d-flex flex-column align-items-center justify-content-center">
@@ -75,7 +67,3 @@
 	</div>
 	<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
 </div>
-
-<script>
-	const gameUrl = "{% url 'game' %}";
-</script>

@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.http import HttpResponseForbidden
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,8 @@ import base64
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
+import uuid
+import logging
 
 @csrf_protect
 @login_required
@@ -275,3 +278,112 @@ def set_language(request):
             activate(lang)
             request.session[LANGUAGE_SESSION_KEY] = lang
     return redirect(request.META.get('HTTP_REFERER', '/')) 
+
+logger = logging.getLogger(__name__)
+
+@csrf_protect
+@login_required
+def create_room(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        room_name = data.get('roomName')
+        player1_color = data.get('player1Color')
+        player2_color = data.get('player2Color')
+        max_point = data.get('maxPoint')
+
+        if not all([room_name, player1_color, player2_color, max_point]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        request.session['player1_color'] = player1_color
+        request.session['player2_color'] = player2_color
+        request.session['max_point'] = max_point
+
+        return JsonResponse({'redirect': True, 'url': f'/game/{room_name}'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@csrf_protect
+@login_required
+def game_room(request, room_name):
+    if not room_name.endswith("_room"):
+        room_name += "_room"
+    if room_name != f"{request.user.username}_room":
+        return JsonResponse({"error": "You cannot access this room."})
+    
+    player1_color = request.session.get('player1_color', 'color-player-none')
+    player2_color = request.session.get('player2_color', 'color-player-none')
+    max_point = request.session.get('max_point', 10)
+
+    if request.method == "POST":
+        player1_id = request.POST.get('player1_id')
+        player2_id = request.POST.get('player2_id')
+        player1_score = int(request.POST.get('player1_score', 0))
+        player2_score = int(request.POST.get('player2_score', 0))
+
+        player1 = User.objects.get(id=player1_id)
+        player2 = User.objects.get(id=player2_id)
+
+        if player1_score >= max_point:
+            winner = player1
+        elif player2_score >= max_point:
+            winner = player2
+        else:
+            winner = None
+
+        game = Game.objects.create(
+            player1=player1,
+            player2=player2,
+            winner=winner,
+            player1_score=player1_score,
+            player2_score=player2_score
+        )
+        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
+
+    return render(request, 'partials/game.html', {
+        'room_name': room_name,
+        'player1_color': player1_color,
+        'player2_color': player2_color,
+        'max_point': max_point,
+    })
+
+
+@csrf_protect
+@login_required
+def game(request):
+    player1_color = request.session.get('player1_color', 'color-player-none')
+    player2_color = request.session.get('player2_color', 'color-player-none')
+    max_point = request.session.get('max_point', 10)
+
+    if request.method == "POST":
+        player1_id = request.POST.get('player1_id')
+        player2_id = request.POST.get('player2_id')
+        player1_score = int(request.POST.get('player1_score', 0))
+        player2_score = int(request.POST.get('player2_score', 0))
+
+        player1 = User.objects.get(id=player1_id)
+        player2 = User.objects.get(id=player2_id)
+
+        if player1_score >= max_point:
+            winner = player1
+        elif player2_score >= max_point:
+            winner = player2
+        else:
+            winner = None
+
+        game = Game.objects.create(
+            player1=player1,
+            player2=player2,
+            winner=winner,
+            player1_score=player1_score,
+            player2_score=player2_score
+        )
+        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
+
+    return render(request, 'partials/game.html', {
+        'player1_color': player1_color,
+        'player2_color': player2_color,
+        'max_point': max_point
+    })
