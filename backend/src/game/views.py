@@ -172,6 +172,7 @@ def compte(request):
         return JsonResponse({'error': 'Social profile not found.'}, status=404)
 
     if request.method == 'POST':
+        
         try:
             user = request.user
             data = json.loads(request.body)
@@ -195,17 +196,16 @@ def compte(request):
                 current_avatar_name = social.avatar.url.split('/')[-1]  # Nom du fichier actuel de l'avatar
                 new_avatar_name = new_avatar.split('/')[-1]  # Nom du fichier de l'avatar proposé
 
-                if current_avatar_name == new_avatar_name:
-                    return JsonResponse({'success': True, 'message': 'Avatar is already up-to-date.'})
-                # Vérification si l'avatar est une chaîne base64
-                if new_avatar.startswith('data:image'):
-                    format, imgstr = new_avatar.split(';base64,')
-                    ext = format.split('/')[1]
-                    image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
-                    social.update_avatar(image_data)
-                else:
-                    # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
-                    social.update_avatar(new_avatar)
+                if current_avatar_name != new_avatar_name:
+                    # Vérification si l'avatar est une chaîne base64
+                    if new_avatar.startswith('data:image'):
+                        format, imgstr = new_avatar.split(';base64,')
+                        ext = format.split('/')[1]
+                        image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
+                        social.update_avatar(image_data)
+                    else:
+                        # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
+                        social.update_avatar(new_avatar)
 
             if password:
                 user.set_password(password)
@@ -238,35 +238,35 @@ def logout_view(request):
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'CSRF token missing or invalid'}, status=403)
 
-# def check_user_status(request):
-#     return JsonResponse({'authenticated': request.user.is_authenticated})
-
+# check avec user
 def check_user_status(request):
-    session_key = request.COOKIES.get('sessionid')
-    print(f"Session ID from cookie: {session_key}")
+    return JsonResponse({'authenticated': request.user.is_authenticated})
 
-    if not session_key:
-        return JsonResponse({'authenticated': False, 'message': 'No session cookie found\n\n'})
+# check avec le cookie sessionid
+# def check_user_status(request):
+#     session_key = request.COOKIES.get('sessionid')
+#     print(f"Session ID from cookie: {session_key}")
 
-    try:
-        session = Session.objects.get(session_key=session_key)
-        print(f"Session found: {session}")
+#     if not session_key:
+#         return JsonResponse({'authenticated': False, 'message': 'No session cookie found\n\n'})
 
-        session_data = session.get_decoded()
-        print(f"Session data: {session_data}")
+#     try:
+#         session = Session.objects.get(session_key=session_key)
+#         print(f"Session found: {session}")
 
-        user_id = session_data.get('_auth_user_id')
-        print(f"User ID in session: {user_id}\n\n")
+#         session_data = session.get_decoded()
+#         print(f"Session data: {session_data}")
 
-        if user_id:
-            user = User.objects.get(id=user_id)
-            return JsonResponse({'authenticated': True, 'username': user.username})
-        else:
-            return JsonResponse({'authenticated': False, 'message': 'No user associated with this session'})
-    except Session.DoesNotExist:
-        return JsonResponse({'authenticated': False, 'message': 'Invalid session key'})
+#         user_id = session_data.get('_auth_user_id')
+#         print(f"User ID in session: {user_id}\n\n")
 
-    
+#         if user_id:
+#             user = User.objects.get(id=user_id)
+#             return JsonResponse({'authenticated': True, 'username': user.username})
+#         else:
+#             return JsonResponse({'authenticated': False, 'message': 'No user associated with this session'})
+#     except Session.DoesNotExist:
+#         return JsonResponse({'authenticated': False, 'message': 'Invalid session key'})
 
 def set_language(request):
     if request.method == 'POST':

@@ -61,11 +61,16 @@ class Social(models.Model):
             # logging.warning(f"L'utilisateur {other_user} n'est pas bloqué.")
 
 
-
+    import logging
+    logger = logging.getLogger(__name__)
 
     def update_avatar(self, new_avatar):
         # Vérifier si l'avatar actuel est différent de l'avatar par défaut
+        logging.warning("\nENTER UPDATE AVATAR\n")
+            
+        logging.warning(f"\nCurrent avatar: {self.avatar}\n")
         if self.avatar and self.avatar != 'avatars/default_avatar.png':
+            logging.warning("\nENTER FONCTION UPDATE AVATAR\n")
             # Supprimer l'ancien avatar si ce n'est pas celui par défaut
             try:
                 # Supprimer le fichier de l'ancien avatar du système de fichiers
@@ -73,8 +78,9 @@ class Social(models.Model):
                 if os.path.isfile(avatar_path):
                     os.remove(avatar_path)
             except Exception as e:
-                print(f"Erreur lors de la suppression de l'avatar : {e}")
-
+                 logging.warning("\nERROR UPDATE AVATAR\n")
+        else:
+            logging.warning("\nNOT FONCTION UPDATE AVATAR\n")
         # Remplacer l'avatar par le nouveau
         self.avatar = new_avatar
         self.save()

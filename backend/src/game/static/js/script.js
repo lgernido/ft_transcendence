@@ -178,11 +178,6 @@ function loadMyPage() {
                 });
             }
             else {
-                console.log("User PAS connecte");
-                if (!appDiv)
-                    console.log("app PAS present");
-                else
-                    console.log("app present")
                 loadConnectPage();
             }
         })
@@ -190,33 +185,6 @@ function loadMyPage() {
             console.error('Erreur lors de la vérification de l\'authentification :', error);
         });
 }
-
-// function loadMyPage() {
-//     const appDiv = document.getElementById('app');
-//     const csrfToken = getCookie('csrftoken');
-
-//                 fetch('/mypage/', {
-//                     method: 'GET',
-//                     headers: {
-//                         'X-CSRFToken': csrfToken,
-//                         'X-Fetch-Request': 'true',
-//                     }
-//                 })
-//                 .then(response => response.text())
-//                 .then(html => {
-//                     appDiv.innerHTML = html;
-                    
-//                     if (history.state?.page !== 'mypage') {
-//                         const state = { page: 'mypage' };
-//                         history.pushState(state, '', "/mypage");
-//                     }
-//                     loadscript('language-switch.js', () => selectLanguage());
-//                 })
-//                 .catch(error => {
-//                     console.error('Erreur lors de la récupération de mypage :', error);
-//                 });
-
-// }
 
 function loadStats() {
     const appDiv = document.getElementById('app');

@@ -1,13 +1,15 @@
-from django.contrib.auth import login as dj_login, logout
+from django.contrib.auth import login as dj_login
 from authlib.integrations.django_client import OAuth
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.http import HttpResponse
 import os
 from dotenv import load_dotenv
 from game.models import Profile
-from django.contrib.sessions.models import Session
+from users.models import Social
+from django.core.files.base import ContentFile
+import requests
+import base64
 
 load_dotenv()
 
@@ -26,15 +28,28 @@ oauth.register(
     client_kwargs={'scope': 'public'},
 )
 
-import logging
-logger = logging.getLogger('yourapp')
-
 def login_with_42(request):
-    logger.debug("login with 42 function called.")
     redirect_uri = REDIRECT_URL
     client = oauth.create_client('42')
     return client.authorize_redirect(request, redirect_uri)
 
+import logging
+logger = logging.getLogger(__name__)
+
+def update_avatar_from_42_api(user_info, user):
+    img_data = user_info['image']['link']  # L'URL de l'image
+    response = requests.get(img_data)
+    response.raise_for_status()  # Vérifie les erreurs HTTP
+
+    filename = os.path.basename(img_data)
+    image_file = ContentFile(response.content, name=filename)
+    
+    social = Social.objects.get(user=user)
+    social.avatar = image_file
+    social.save()
+    
+    social.refresh_from_db()
+    logging.warning(f"\nAvatar URL after update: {social.avatar.url}\n")
 
 def callback(request):
     client = oauth.create_client('42')
@@ -54,6 +69,7 @@ def callback(request):
             )
             profile = Profile.objects.create(user=user)
             profile.save()
+            update_avatar_from_42_api(user_info, user)
 
         if not request.user.is_authenticated:
             dj_login(request, user)
@@ -64,3 +80,13 @@ def callback(request):
         return redirect('/mypage')
 
     return HttpResponse('Authorization failed.', status=401)
+
+# def callback(request):
+#     client = oauth.create_client('42')
+#     token = client.authorize_access_token(request)
+#     if token:
+#         access_token = token['access_token']
+#         request.session['access_token'] = access_token
+#         return HttpResponse(f'Token: {access_token}')
+#     else:
+#         return HttpResponse('Authorization failed.')logger = logging.getLogger(name)

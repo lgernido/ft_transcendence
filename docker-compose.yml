@@ -92,10 +92,10 @@ services:
   #     - xpack.security.http.ssl.key=certs/elasticsearch.key
   #     - xpack.security.http.ssl.certificate=certs/elasticsearch.crt
   #     - xpack.security.http.ssl.certificate_authorities=certs/ca.crt
-  #     - xpack.reporting.roles.enabled=false
+  #     # - xpack.reporting.roles.enabled=false
   #   volumes:
   #     # - esdata:/usr/share/elasticsearch/data
-  #     - ./certs:/certs
+  #     - ./ELK/certs:/usr/share/elasticsearch/config/certs
   #   ports:
   #     - "9200:9200"
   #     - "9300:9300"
@@ -109,8 +109,8 @@ services:
   #     - ELASTICSEARCH_USERNAME=bob
   #     - ELASTICSEARCH_PASSWORD=securepassword
   #   volumes:
-  #     - ./certs:/certs
-  #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+  #     - ./ELK/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+  #     - ./ELK/certs:/usr/share/kibana/config/certs
   #   ports:
   #     - "5601:5601"
   #   networks:
@@ -126,12 +126,11 @@ services:
   #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
   #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_PASSWORD=securepassword
   #   volumes:
-  #     - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-  #     - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-  #     - ./certs:/certs
+  #     - ./ELK/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+  #     - ./ELK/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #     - ./ELK/certs:/usr/share/logstash/config/certs
   #   networks:
   #     - elk
-
 
     # http://localhost:5601
 
