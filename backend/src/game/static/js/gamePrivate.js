@@ -106,6 +106,7 @@ function launchGamePrivate() {
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 countdownElement.style.display = 'none';
+                document.querySelector('.ball').classList.remove('hidden'); 
                 isActive = true;
                 socket.send(JSON.stringify({ type: 'start_game' }));
             }

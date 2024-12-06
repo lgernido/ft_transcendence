@@ -66,11 +66,22 @@
 }
 
 .show-score {
-	border: solid 3px var(--color-btn);
-	border-radius: 20%;
-	background-color: var(--color-black);
-	min-width: 100px;
-	min-height: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: solid 3px var(--color-btn);
+    border-radius: 20%;
+    background-color: var(--color-black);
+    min-width: 100px;
+    min-height: 50px;
+    text-align: center;
+    padding: 10px;
+    color: white;
+}
+
+.show-score p {
+    margin: 0;
 }
 
 .game-window {
@@ -79,6 +90,11 @@
 	background-color: #dedede;
 	border: solid 2px var(--color-border-active);
 	position: relative;
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .left-barre,
