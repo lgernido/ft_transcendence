@@ -7,19 +7,18 @@ class PongGame:
         self.left_bar_pos = 50 
         self.right_bar_pos = 50
         self.ball_pos = {"x": 50, "y": 50} 
-        self.ball_speed = {"x": choice([-0.3, 0.3]), "y": uniform(-0.2, 0.2)}  # Direction initiale
+        self.ball_speed = {"x": choice([-0.3, 0.3]), "y": uniform(-0.2, 0.2)}
         self.left_score = 0
         self.right_score = 0
         self.limit_points = limit_points
         self.resetting_ball = False
+        self.isAtive = False
 
     def move_bar(self, bar, direction):
         if bar == "left":
-            print(f"Left bar moving from {self.left_bar_pos} to {self.left_bar_pos + direction}")
             self.left_bar_pos = max(7.5, min(92.5, self.left_bar_pos + direction))
         elif bar == "right":
             self.right_bar_pos = max(7.5, min(92.5, self.right_bar_pos + direction))
-            print(f"Right bar moving from {self.right_bar_pos} to {self.right_bar_pos + direction}")
 
     def reset_ball(self):
         self.ball_pos = {"x": 50, "y": 50}
@@ -27,14 +26,19 @@ class PongGame:
         self.resetting_ball = False
 
     def move_ball(self):
-        if self.resetting_ball:
+        if not self.isAtive or self.resetting_ball:
             return
 
         self.ball_pos["x"] += self.ball_speed["x"]
         self.ball_pos["y"] += self.ball_speed["y"]
 
         if self.ball_pos["y"] <= 0 or self.ball_pos["y"] >= 100:
-            self.ball_speed["y"] *= -1
+            self.ball_speed["y"] *= -1  # Rebond vertical
+
+        if self.check_collision("left", self.left_bar_pos):
+            self.handle_collision("left")
+        elif self.check_collision("right", self.right_bar_pos):
+            self.handle_collision("right")
 
         if self.ball_pos["x"] <= 0:
             self.right_score += 1
@@ -46,20 +50,39 @@ class PongGame:
             self.reset_ball()
 
     def check_collision(self, barre, barre_pos):
-        if barre == "left" and self.ball_pos["x"] <= 5:
-            return barre_pos - 7.5 <= self.ball_pos["y"] <= barre_pos + 7.5
-        elif barre == "right" and self.ball_pos["x"] >= 95:
-            return barre_pos - 7.5 <= self.ball_pos["y"] <= barre_pos + 7.5
+        ball_radius = 2.5
+        bar_width = 5
+        bar_height = 15
+
+        if barre == "left":
+            if self.ball_pos["x"] <= bar_width + ball_radius:
+                return barre_pos - (bar_height / 2) <= self.ball_pos["y"] <= barre_pos + (bar_height / 2)
+        elif barre == "right":
+            if self.ball_pos["x"] >= 100 - bar_width - ball_radius:
+                return barre_pos - (bar_height / 2) <= self.ball_pos["y"] <= barre_pos + (bar_height / 2)
         return False
     
     def handle_collision(self, barre):
         if barre == "left":
-            self.ball_speed["x"] = abs(self.ball_speed["x"]) * 1.1
+            self.ball_speed["x"] = abs(self.ball_speed["x"])
         elif barre == "right":
-            self.ball_speed["x"] = -abs(self.ball_speed["x"]) * 1.1
+            self.ball_speed["x"] = -abs(self.ball_speed["x"])
 
-        angle = self.calculate_angle(barre)
-        self.ball_speed["y"] = math.sin(angle) * 1.1
+        barre_pos = self.left_bar_pos if barre == "left" else self.right_bar_pos
+        impact_point = (self.ball_pos["y"] - barre_pos) / 15 
+        impact_point = max(-1, min(1, impact_point))
+
+        angle = impact_point * (math.pi / 4)
+        self.ball_speed["y"] = math.sin(angle) * abs(self.ball_speed["x"])
+
+        acceleration = 1.1
+        self.ball_speed["x"] *= acceleration
+        self.ball_speed["y"] *= acceleration
+
+        limit_speed = 3
+        self.ball_speed["x"] = max(-limit_speed, min(limit_speed, self.ball_speed["x"]))
+        self.ball_speed["y"] = max(-limit_speed, min(limit_speed, self.ball_speed["y"]))
+
 
     def calculate_angle(self, barre_pos):
         impact_point = (self.ball_pos["y"] - barre_pos + 7.5) / 15

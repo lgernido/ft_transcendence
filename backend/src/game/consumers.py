@@ -11,7 +11,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs'].get('room_name')
         if self.room_name is None:
             self.room_name = "default"
-            print("No room name provided, using default room name")
         self.room_group_name = f'game_{self.room_name}'
 
         self.game = PongGame(limit_points=5)
@@ -67,6 +66,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         elif text_data_json["type"] == "start_game":
             self.game.reset_ball()
+            self.game.isAtive = True
 
         await self.channel_layer.group_send(
             self.room_group_name,

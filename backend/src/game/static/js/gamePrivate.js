@@ -1,4 +1,6 @@
 function launchGamePrivate() {
+    let isActive = false;
+
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
 
@@ -17,6 +19,8 @@ function launchGamePrivate() {
     const barSpeed = 5; 
     
     document.addEventListener('keydown', (event) => {
+        if (!isActive) return;
+
         switch (event.key) {
             case 'w':
                 playerActions.left = -barSpeed;
@@ -38,6 +42,8 @@ function launchGamePrivate() {
     });
     
     document.addEventListener('keyup', (event) => {
+        if (!isActive) return;
+
         switch (event.key) {
             case 'w':
             case 's':
@@ -100,6 +106,7 @@ function launchGamePrivate() {
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 countdownElement.style.display = 'none';
+                isActive = true;
                 socket.send(JSON.stringify({ type: 'start_game' }));
             }
         }, 1000);
