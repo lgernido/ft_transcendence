@@ -43,6 +43,19 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def game_loop(self):
         while self.running:
             self.game.move_ball()
+
+            if self.game.is_game_over():
+                winner = self.game.get_winner()
+                self.running = False
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'game_over',
+                        'winner': winner
+                    }
+                )
+                break
+
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -50,6 +63,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     **serialize_game_state(self.game)
                 }
             )
+
             await sleep(0.03)
 
     async def receive(self, text_data):

@@ -20,12 +20,6 @@ function launchGamePrivate() {
     const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
     const barSpeed = 1.5; 
     
-    function stopGame() {
-        isActive = false;
-        document.removeEventListener('keydown', handleKeyDown);
-        document.removeEventListener('keyup', handleKeyUp);
-    }
-
     function updateBarPositions() {
         if (!isActive) return;
 
@@ -69,7 +63,6 @@ function launchGamePrivate() {
             keysPressed[event.key] = false;
         }
     });
-
         
     function sendMove(player, direction) {
         socket.send(JSON.stringify({
@@ -85,7 +78,6 @@ function launchGamePrivate() {
         if (data.type === "game_state" || data.type === "game_update") {
             updateGameState(data);
         } else if (data.type === "game_over") {
-            stopGame();
             displayWinner(data.winner);
         }
     };
@@ -102,6 +94,8 @@ function launchGamePrivate() {
 
         
     function displayWinner(winner) {
+        console.log("Game Over");
+        isActive = false;
         const winnerMessage = document.getElementById('winnerMessage');
         winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "Player 2 Wins!";
         winnerMessage.style.display = 'block';

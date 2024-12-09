@@ -49,6 +49,9 @@ class PongGame:
             self.resetting_ball = True
             self.reset_ball()
 
+        if self.is_game_over():
+            return
+
     def check_collision(self, barre, barre_pos):
         ball_radius = 1
         bar_width = 2
@@ -89,7 +92,10 @@ class PongGame:
         return (impact_point - 0.5) * (math.pi / 4)
 
     def is_game_over(self):
-        return self.left_score >= self.limit_points or self.right_score >= self.limit_points
+        if self.left_score >= self.limit_points or self.right_score >= self.limit_points:
+            self.isAtive = False
+            return True
+        return False
 
     def get_winner(self):
         if self.left_score >= self.limit_points:
