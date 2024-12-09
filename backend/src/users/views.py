@@ -76,8 +76,9 @@ def create_account(request):
 
 class UserProfileList(APIView):
     def get(self, request):
+        current_user = request.user
         try:
-            users = User.objects.filter(is_staff=False)
+            users = User.objects.filter(is_staff=False).exclude(id=current_user.id).order_by('username')
             if not users:
                 return Response({"error": "No users found"}, status=status.HTTP_404_NOT_FOUND)
             serializer = UserProfileSerializer(users, many=True)
@@ -137,8 +138,7 @@ class ContactActionView(APIView):
 
         # Exclusion du staff (si nécessaire) et gestion des différentes actions
         if query == 'users':
-            # Récupérer tous les utilisateurs sauf le staff et les bloqués
-            users = User.objects.filter(is_staff=False)
+            users = User.objects.filter(is_staff=False).exclude(id=current_user.id).order_by('username')
             serializer = UserProfileSerializer(users, many=True)
             return Response(serializer.data)
 

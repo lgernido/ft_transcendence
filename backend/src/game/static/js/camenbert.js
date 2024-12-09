@@ -8,9 +8,13 @@ function drawCamembert() {
 
     // updateLegend();
 
-    const gamesWin = 3;
-    const gamesLose = 2;
-    const gamesDraw = 1;
+    const gamesWin = 0;
+    const gamesLose = 0;
+    const gamesDraw = 0;
+
+    // const gamesWin = {{ games_win }};
+    // const gamesLose = {{ games_lose }};
+    // const gamesDraw = {{ games_draw }};
 
     // Fonction pour calculer les coordonnées polaires
     function polarToCartesian(cx, cy, radius, angleInDegrees) {
@@ -58,7 +62,9 @@ function drawCamembert() {
 
     for (const key in angles) {
         const endAngle = startAngle + angles[key];
-        if (angles[key] == 360) {
+        if (angles[key] == 360 || total == 0) {
+            if (total == 0)
+                colors[i] = '#909090';
             const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
             const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path1.setAttribute("d", describeArc(cx, cy, radius, 0, 180));
@@ -78,9 +84,3 @@ function drawCamembert() {
         i++;
     }
 }
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     if (window.location.pathname === "/stats/") {
-//         drawCamembert();
-//     }
-// });

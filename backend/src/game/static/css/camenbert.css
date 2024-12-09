@@ -14,10 +14,10 @@
     padding: 30px;
 }
  
-#camembert path:hover {
+/* #camembert path:hover {
     fill: var(--color-back);
     cursor: pointer;
-}
+} */
  
 #camembert ul {
     width: auto;

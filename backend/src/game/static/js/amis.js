@@ -177,7 +177,7 @@ function getUsers() {
                 })
                 .then(data => {
                     if (data && Array.isArray(data)) {
-                        displayUserList(data); // Assurez-vous que `displayUserList` est bien définie
+                        displayUserList(data, '');
                     } else {
                         alert('Aucun utilisateur trouvé.');
                     }
@@ -191,8 +191,7 @@ function getUsers() {
 };
 
 function loadFriendsList() {
-    // Effectuer une requête GET vers l'API
-    fetch('/users/user_profiles/') // Remplacez par l'URL de votre API
+    fetch('/users/user_profiles/')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur lors de la récupération des données');
@@ -201,7 +200,7 @@ function loadFriendsList() {
         })
         .then(data => {
             if (data && Array.isArray(data)) {
-                displayUserList(data);
+                displayUserList(data, 'users');
             } else {
                 alert('Aucun utilisateur trouvé.');
             }
@@ -215,19 +214,12 @@ function loadFriendsList() {
 function fetchUserList(action) {
     console.log(`Tentative de récupération des utilisateurs pour l'action : ${action}`);
     const csrfToken = getCookie('csrftoken');
-    console.log("CSRF Token utilisé :", csrfToken);
 
-    // Vérifie si le token CSRF est valide
-    if (!csrfToken) {
-        console.error("CSRF token manquant !");
-    }
-
-    // Construction de la requête fetch
     fetch(`/users/contact?action=${action}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken,  // En-tête du token CSRF
+            'X-CSRFToken': csrfToken,
         },
     })
     .then(response => {
@@ -240,8 +232,8 @@ function fetchUserList(action) {
         return response.json();
     })
     .then(data => {
-        console.log("Données JSON reçues :", data);
-        displayUserList(data);
+        console.log("Données JSON reçues user :", data);
+        displayUserList(data, action);
     })
     .catch(error => {
         console.error("Erreur lors de la requête :", error);
@@ -280,12 +272,12 @@ function actionButton() {
     }
 }
 
-function generateUserHTML(user) {
+function generateUserHTML(user, action) {
     const userTemplate = document.getElementById('user-template').content.cloneNode(true);
     
     // Remplace les valeurs dynamiques dans le template cloné
     userTemplate.querySelector('[data-user-name]').textContent = user.username || 'Unknown';
-    userTemplate.querySelector('[data-user-avatar]').src = user.avatar || '/static/img/bob.jpg';
+    userTemplate.querySelector('[data-user-avatar]').src = user.avatar_url;
     
     const statsElement = userTemplate.querySelector('[data-user-stats]');
     statsElement.innerHTML = statsElement.innerHTML
@@ -295,36 +287,62 @@ function generateUserHTML(user) {
     .replace('{% trans "Ratio" %}', user.ratio + ' ⚖️');
     
     const buttonsContainer = userTemplate.querySelector('[data-action-buttons]');
-    const actionButtons = createActionButtons(user.id);
+    const actionButtons = createActionButtons(user.id, action);
     buttonsContainer.appendChild(actionButtons);
     
     return userTemplate;
 }
 
 // Afficher la liste des utilisateurs
-function displayUserList(users) {
+function displayUserList(users, action) {
     const userListContainer = document.getElementById('list');
     userListContainer.innerHTML = "";
     
     users.forEach(user => {
-        const userHTML = generateUserHTML(user);
+        const userHTML = generateUserHTML(user, action);
         userListContainer.appendChild(userHTML);
     });
 }
 
 // Générer les boutons d'action à partir du template
-function createActionButtons(userId) {
+function createActionButtons(userId, context) {
+    const actions = [];
+
+    // Ajustez les boutons en fonction du contexte
+    if (context === 'blocked') {
+        actions.push(
+            { icon: 'bi bi-person-plus-fill', text: 'Add', action: () => inviteUser(userId) },
+            { icon: 'bi bi-person-check', text: 'Unblock', action: () => unblockUser(userId) }
+        );
+    } else if (context === 'added') {
+        actions.push(
+            { icon: 'bi bi-person-x-fill', text: 'Remove', action: () => deleteUser(userId) },
+            { icon: 'bi bi-person-dash', text: 'Block', action: () => blockUser(userId) }
+        );  
+    } else {
+        actions.push(
+            { icon: 'bi bi-person-plus-fill', text: 'Add', action: () => inviteUser(userId) },
+            { icon: 'bi bi-person-dash', text: 'Block', action: () => blockUser(userId) },
+        );
+    }
+
     const container = document.createElement('div');
-    const actionButtonsTemplate = document.getElementById('action-buttons-template').content.cloneNode(true);
-    
-    // Ajoutez des écouteurs d'événements pour chaque bouton d'action
-    actionButtonsTemplate.querySelector('[data-action="add"]').addEventListener('click', () => inviteUser(userId));
-    actionButtonsTemplate.querySelector('[data-action="remove"]').addEventListener('click', () => deleteUser(userId));
-    actionButtonsTemplate.querySelector('[data-action="block"]').addEventListener('click', () => blockUser(userId));
-    actionButtonsTemplate.querySelector('[data-action="unblock"]').addEventListener('click', () => unblockUser(userId));
-    
-    container.appendChild(actionButtonsTemplate);
-    
+    container.classList.add('me-3');
+
+    actions.forEach(({ icon, text, action }) => {
+        const button = document.createElement('a');
+        button.className = 'btn btn-primary btn-add shadow hover-container';
+        button.setAttribute('role', 'button');
+        button.addEventListener('click', action);
+
+        button.innerHTML = `
+            <i class="bi ${icon} icon"></i>
+            <div class="hover-text">${text}</div>
+        `;
+
+        container.appendChild(button);
+    });
+
     return container;
 }
 // ==========================================================================

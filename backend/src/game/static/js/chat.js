@@ -98,6 +98,8 @@ function handleChat(){
 		const user2Id = user.id; // ID de l'utilisateur sélectionné
 		// Mettre à jour le nom du contact dans le chat header
 		chatHeader.textContent = user.username;
+		image = document.getElementById('imgContact');
+        image.src = user.avatar;
 
 		// Charger les anciens messages et établir la connexion WebSocket pour le nouveau canal
 		loadMessages(user.id);
@@ -122,7 +124,7 @@ function handleChat(){
 	// Recherche d'utilisateurs
 	userSearchInput.addEventListener("input", function () {
 		const query = userSearchInput.value.trim();
-		if (query.length >= 2) {
+		if (query.length >= 1) {
 			fetch(`/chat2/search_users?query=${query}`)
 				.then(response => response.json())
 				.then(data => {
@@ -131,7 +133,7 @@ function handleChat(){
 						const userEntry = document.createElement("div");
 						userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
 						userEntry.innerHTML = `
-							<img src='' alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
+							<img src="${user.avatar}" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
 							<div data_user_id='${user.id}'>
 								<div class="user-details"><strong>${user.username}</strong></div>
 								<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>

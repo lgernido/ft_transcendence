@@ -3,7 +3,11 @@ from django.http import JsonResponse
 from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 from .models import Channel, Message
+from users.models import Social
 from django.core.exceptions import ObjectDoesNotExist
+
+import logging
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -66,9 +70,13 @@ def search_users(request):
             if channel:
                 last_message = channel.last_message  # Récupère le dernier message
 
+            social = Social.objects.get(user=user)
+            avatar_url = social.avatar.url
+
             results.append({
                 'username': user.username,
                 'id': user.id,
+                'avatar': avatar_url,
                 'last_message': last_message.content if last_message else 'Aucun message',
                 'last_message_timestamp': last_message.timestamp.isoformat() if last_message else None
             })
