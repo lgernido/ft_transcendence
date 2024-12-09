@@ -245,32 +245,6 @@ def logout_view(request):
 def check_user_status(request):
     return JsonResponse({'authenticated': request.user.is_authenticated})
 
-# check avec le cookie sessionid
-# def check_user_status(request):
-#     session_key = request.COOKIES.get('sessionid')
-#     print(f"Session ID from cookie: {session_key}")
-
-#     if not session_key:
-#         return JsonResponse({'authenticated': False, 'message': 'No session cookie found\n\n'})
-
-#     try:
-#         session = Session.objects.get(session_key=session_key)
-#         print(f"Session found: {session}")
-
-#         session_data = session.get_decoded()
-#         print(f"Session data: {session_data}")
-
-#         user_id = session_data.get('_auth_user_id')
-#         print(f"User ID in session: {user_id}\n\n")
-
-#         if user_id:
-#             user = User.objects.get(id=user_id)
-#             return JsonResponse({'authenticated': True, 'username': user.username})
-#         else:
-#             return JsonResponse({'authenticated': False, 'message': 'No user associated with this session'})
-#     except Session.DoesNotExist:
-#         return JsonResponse({'authenticated': False, 'message': 'Invalid session key'})
-
 def set_language(request):
     if request.method == 'POST':
         lang = request.POST.get('language')
