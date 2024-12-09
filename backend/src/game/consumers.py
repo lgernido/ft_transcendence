@@ -85,6 +85,18 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def move_ball(self):
         self.game.move_ball()
 
+        if self.game.is_game_over():
+            winner = self.game.get_winner()
+            self.running = False
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "game_over",
+                    "winner": winner,
+                }
+            )
+            return
+
         if self.game.check_collision("left", self.game.left_bar_pos):
             self.game.handle_collision("left")
         elif self.game.check_collision("right", self.game.right_bar_pos):
@@ -97,16 +109,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 **serialize_game_state(self.game),
             }
         )
-
-        if self.game.is_game_over():
-            winner = self.game.get_winner()
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "game_over",
-                    "winner": winner,
-                }
-            )
 
     async def game_over(self, event):
         winner = event["winner"]

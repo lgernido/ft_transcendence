@@ -7,7 +7,7 @@ class PongGame:
         self.left_bar_pos = 50 
         self.right_bar_pos = 50
         self.ball_pos = {"x": 50, "y": 50} 
-        self.ball_speed = {"x": choice([-0.3, 0.3]), "y": uniform(-0.2, 0.2)}
+        self.ball_speed = {"x": choice([-0.8, 0.8]), "y": uniform(-0.6, 0.6)}
         self.left_score = 0
         self.right_score = 0
         self.limit_points = limit_points
@@ -22,7 +22,7 @@ class PongGame:
 
     def reset_ball(self):
         self.ball_pos = {"x": 50, "y": 50}
-        self.ball_speed = {"x": choice([-0.3, 0.3]), "y": uniform(-0.2, 0.2)}
+        self.ball_speed = {"x": choice([-0.8, 0.8]), "y": uniform(-0.6, 0.6)}
         self.resetting_ball = False
 
     def move_ball(self):
@@ -33,7 +33,7 @@ class PongGame:
         self.ball_pos["y"] += self.ball_speed["y"]
 
         if self.ball_pos["y"] <= 0 or self.ball_pos["y"] >= 100:
-            self.ball_speed["y"] *= -1  # Rebond vertical
+            self.ball_speed["y"] *= -1
 
         if self.check_collision("left", self.left_bar_pos):
             self.handle_collision("left")
@@ -50,8 +50,8 @@ class PongGame:
             self.reset_ball()
 
     def check_collision(self, barre, barre_pos):
-        ball_radius = 2.5
-        bar_width = 5
+        ball_radius = 1
+        bar_width = 2
         bar_height = 15
 
         if barre == "left":
@@ -86,7 +86,7 @@ class PongGame:
 
     def calculate_angle(self, barre_pos):
         impact_point = (self.ball_pos["y"] - barre_pos + 7.5) / 15
-        return (impact_point - 0.5) * (math.pi / 4)  # Max 45°
+        return (impact_point - 0.5) * (math.pi / 4)
 
     def is_game_over(self):
         return self.left_score >= self.limit_points or self.right_score >= self.limit_points

@@ -15,46 +15,58 @@ function launchGamePrivate() {
     if (socket.readyState === WebSocket.CLOSED) {
         console.log("Socket is closed");
     }
+
     const playerActions = { left: 0, right: 0 }; 
-    const barSpeed = 5; 
+    const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
+    const barSpeed = 1.5; 
     
+    function stopGame() {
+        isActive = false;
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
+    }
+
+    function updateBarPositions() {
+        if (!isActive) return;
+
+        if (keysPressed.w) {
+            playerActions.left = -barSpeed;
+            sendMove("left", -barSpeed);
+        } else if (keysPressed.s) {
+            playerActions.left = barSpeed;
+            sendMove("left", barSpeed);
+        } else {
+            playerActions.left = 0;
+            sendMove("left", 0);
+        }
+
+        if (keysPressed.ArrowUp) {
+            playerActions.right = -barSpeed;
+            sendMove("right", -barSpeed);
+        } else if (keysPressed.ArrowDown) {
+            playerActions.right = barSpeed;
+            sendMove("right", barSpeed);
+        } else {
+            playerActions.right = 0;
+            sendMove("right", 0);
+        }
+
+        requestAnimationFrame(updateBarPositions);
+    }
+
     document.addEventListener('keydown', (event) => {
         if (!isActive) return;
 
-        switch (event.key) {
-            case 'w':
-                playerActions.left = -barSpeed;
-                sendMove("left", -barSpeed);
-                break;
-            case 's':
-                playerActions.left = barSpeed;
-                sendMove("left", barSpeed);
-                break;
-            case 'ArrowUp':
-                playerActions.right = -barSpeed;
-                sendMove("right", -barSpeed);
-                break;
-            case 'ArrowDown':
-                playerActions.right = barSpeed;
-                sendMove("right", barSpeed);
-                break;
+        if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            keysPressed[event.key] = true;
         }
     });
     
     document.addEventListener('keyup', (event) => {
         if (!isActive) return;
 
-        switch (event.key) {
-            case 'w':
-            case 's':
-                playerActions.left = 0;
-                sendMove("left", 0);
-                break;
-            case 'ArrowUp':
-            case 'ArrowDown':
-                playerActions.right = 0;
-                sendMove("right", 0);
-                break;
+        if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            keysPressed[event.key] = false;
         }
     });
 
@@ -73,6 +85,7 @@ function launchGamePrivate() {
         if (data.type === "game_state" || data.type === "game_update") {
             updateGameState(data);
         } else if (data.type === "game_over") {
+            stopGame();
             displayWinner(data.winner);
         }
     };
@@ -92,6 +105,15 @@ function launchGamePrivate() {
         const winnerMessage = document.getElementById('winnerMessage');
         winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "Player 2 Wins!";
         winnerMessage.style.display = 'block';
+        winnerMessage.style.position = 'absolute';
+        winnerMessage.style.top = '50%';
+        winnerMessage.style.left = '50%';
+        winnerMessage.style.transform = 'translate(-50%, -50%)';
+        winnerMessage.style.fontSize = '3rem';
+        winnerMessage.style.color = '#fff';
+        winnerMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        winnerMessage.style.padding = '20px';
+        winnerMessage.style.borderRadius = '10px';
     }
     
     const countdownElement = document.getElementById('countdown');
@@ -109,6 +131,7 @@ function launchGamePrivate() {
                 document.querySelector('.ball').classList.remove('hidden'); 
                 isActive = true;
                 socket.send(JSON.stringify({ type: 'start_game' }));
+                updateBarPositions();
             }
         }, 1000);
     }
