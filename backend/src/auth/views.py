@@ -36,7 +36,7 @@ def login_with_42(request):
 import logging
 logger = logging.getLogger(__name__)
 
-def update_avatar_from_42_api(user_info, user):
+def update_avatar_from_42_api(user_info, social):
     img_data = user_info['image']['link']  # L'URL de l'image
     response = requests.get(img_data)
     response.raise_for_status()  # Vérifie les erreurs HTTP
@@ -44,12 +44,9 @@ def update_avatar_from_42_api(user_info, user):
     filename = os.path.basename(img_data)
     image_file = ContentFile(response.content, name=filename)
     
-    social = Social.objects.get(user=user)
     social.avatar = image_file
-    social.save()
-    
+    social.save(update_fields=['avatar'])
     social.refresh_from_db()
-    logging.warning(f"\nAvatar URL after update: {social.avatar.url}\n")
 
 def callback(request):
     client = oauth.create_client('42')
@@ -69,24 +66,23 @@ def callback(request):
             )
             profile = Profile.objects.create(user=user)
             profile.save()
-            update_avatar_from_42_api(user_info, user)
+            
 
         if not request.user.is_authenticated:
             dj_login(request, user)
+            user = request.user
+            social = Social.objects.get(user=user)
+            if (social.avatar.name).split('/')[-1] == "default_avatar.png":
+                update_avatar_from_42_api(user_info, social)
 
         request.session['access_token'] = access_token
         request.session.save()
 
+        if user.username:
+            logging.warning(f"\n User name: {user.username}")
+            logging.warning(f" Avatar URL: {social.avatar.name}\n")
+        else:
+            logging.warning(f"\n User has no name")
+
         return redirect('/mypage')
-
     return HttpResponse('Authorization failed.', status=401)
-
-# def callback(request):
-#     client = oauth.create_client('42')
-#     token = client.authorize_access_token(request)
-#     if token:
-#         access_token = token['access_token']
-#         request.session['access_token'] = access_token
-#         return HttpResponse(f'Token: {access_token}')
-#     else:
-#         return HttpResponse('Authorization failed.')logger = logging.getLogger(name)

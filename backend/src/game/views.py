@@ -18,6 +18,9 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
+import logging
+logger = logging.getLogger(__name__)
+
 @csrf_protect
 @login_required
 def store_colors(request):
