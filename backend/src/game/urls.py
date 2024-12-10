@@ -1,6 +1,7 @@
 from django.urls import path 
 from . import views
 from users.views import create_account
+from users.views import GetUserId
 
 urlpatterns = [
     path('', views.home, name='home_page'),
@@ -22,4 +23,6 @@ urlpatterns = [
 	path('log_user/', views.log_user, name='log_user'),
     path('set_language/', views.set_language, name='set_language'),
 	path('check_user_status/', views.check_user_status, name='check_user_status'),
+	path('extractProfile/', views.extractProfile, name='extractProfile'),
+	path('GetUserId/', GetUserId, name="GetUserId"),
 ]

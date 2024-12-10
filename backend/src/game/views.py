@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Game
 from users.models import Social
+from .models import Profile
 import json
 
 import base64
@@ -241,7 +242,6 @@ def logout_view(request):
         return JsonResponse({'success': True})
     return JsonResponse({'error': 'CSRF token missing or invalid'}, status=403)
 
-# check avec user
 def check_user_status(request):
     return JsonResponse({'authenticated': request.user.is_authenticated})
 
@@ -251,4 +251,23 @@ def set_language(request):
         if lang:
             activate(lang)
             request.session[LANGUAGE_SESSION_KEY] = lang
-    return redirect(request.META.get('HTTP_REFERER', '/')) 
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def extractProfile(request):
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': 'User ID is required'}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(user=user)
+        data = {
+            'games_win': profile.games_win,
+            'games_lose': profile.games_lose,
+            'games_draw': profile.games_draw,
+        }
+        return JsonResponse({'profile': data})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+

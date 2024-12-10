@@ -1,20 +1,58 @@
-function drawCamembert() {
-    // function updateLegend() {
-    //     document.getElementById("nb-win").textContent = gamesWin;
-    //     document.getElementById("nb-loss").textContent = gamesLose;
-    //     document.getElementById("nb-draw").textContent = gamesDraw;
-    //     document.getElementById("nb-game").textContent = gamesWin + gamesLose + gamesDraw;
-    // }
+async function extractValueProfile() {
+    const csrfToken = getCookie('csrftoken');
 
-    // updateLegend();
+    try {
+        const userResponse = await fetch('/GetUserId/');
+        if (!userResponse.ok) {
+            throw new Error('Failed to fetch user ID');
+        }
+        const userData = await userResponse.json();
+        const userId = userData.user_id;
 
-    const gamesWin = 0;
-    const gamesLose = 0;
-    const gamesDraw = 0;
+        const profileResponse = await fetch(`/extractProfile/?user_id=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+        });
 
-    // const gamesWin = {{ games_win }};
-    // const gamesLose = {{ games_lose }};
-    // const gamesDraw = {{ games_draw }};
+        if (!profileResponse.ok) {
+            throw new Error('Failed to fetch profile data');
+        }
+
+        const profileData = await profileResponse.json();
+
+        return {
+            gamesWin: profileData.profile.games_win,
+            gamesLose: profileData.profile.games_lose,
+            gamesDraw: profileData.profile.games_draw,
+        };
+    } catch (error) {
+        console.error('Error:', error);
+        return { gamesWin: 0, gamesLose: 0, gamesDraw: 0 };
+    }
+}
+
+
+
+async function drawCamembert() {
+    const { gamesWin, gamesLose, gamesDraw } = await extractValueProfile();
+
+    gWin = document.getElementById("nb-win");
+    gLose = document.getElementById("nb-loss");
+    gDraw = document.getElementById("nb-draw");
+    nbGame = document.getElementById("nb-game");
+    winRate = document.getElementById("win-rate");
+
+    gWin.innerText = gamesWin;
+    gLose.innerText = gamesLose;
+    gDraw.innerText = gamesDraw;
+    nbGame.innerText = gamesWin + gamesLose + gamesDraw;
+    if (gamesLose == 0)
+        winRate.innerText = gamesWin;
+    else
+        winRate.innerText = (gamesWin / gamesLose).toFixed(2);
 
     // Fonction pour calculer les coordonnées polaires
     function polarToCartesian(cx, cy, radius, angleInDegrees) {

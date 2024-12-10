@@ -20,9 +20,6 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
-
-# Create your views here.
-
 @csrf_exempt
 def create_account(request):
     if request.method == 'POST':
@@ -180,3 +177,6 @@ class GetUsers(APIView):
         users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
         serializer = UserProfileSerializer(users, many=True)
         return Response(serializer.data)
+    
+def GetUserId(request):
+    return JsonResponse({'user_id': request.user.id})

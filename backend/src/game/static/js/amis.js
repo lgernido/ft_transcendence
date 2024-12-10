@@ -7,6 +7,7 @@ function selectUser() {
     getUsers();
     actionButton();
 }
+
 // ==========================================================================
 // Gestion des utilisateurs (API et interactions)
 // ==========================================================================
@@ -272,19 +273,62 @@ function actionButton() {
     }
 }
 
-function generateUserHTML(user, action) {
+async function extractValueProfileFriends(userId) {
+    const csrfToken = getCookie('csrftoken');
+    try {
+        const response = await fetch(`/extractProfile/?user_id=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch profile data');
+        }
+
+        const data = await response.json();
+        return {
+            gamesWin: data.profile.games_win,
+            gamesLose: data.profile.games_lose,
+            gamesDraw: data.profile.games_draw,
+        };
+    } catch (error) {
+        console.error('Error fetching profile data:', error);
+        return { gamesWin: 0, gamesLose: 0, gamesDraw: 0 };
+    }
+}
+
+async function generateUserHTML(user, action) {
     const userTemplate = document.getElementById('user-template').content.cloneNode(true);
+    // const isOnline = OnlineUsers.users.some(onlineUser => onlineUser.username === user.username);
     
-    // Remplace les valeurs dynamiques dans le template cloné
+    const { gamesWin, gamesLose, gamesDraw } = await extractValueProfileFriends(user.id);
+    const totalGame = gamesWin + gamesLose + gamesDraw;
+    
+    let ratio = 0;
+    if (gamesLose == 0) {
+        ratio = gamesWin;
+    }
+    else {
+        ratio = (gamesWin / gamesLose).toFixed(2);
+    }
+    
     userTemplate.querySelector('[data-user-name]').textContent = user.username || 'Unknown';
     userTemplate.querySelector('[data-user-avatar]').src = user.avatar_url;
+    // userTemplate.querySelector('[data-icon]').classList = `status bi bi-circle-fill ${isOnline ? 'text-success' : 'text-secondary'}`;
+    // userTemplate.querySelector('[data-icon]').setAttribute("data_name", user.username);
     
-    const statsElement = userTemplate.querySelector('[data-user-stats]');
-    statsElement.innerHTML = statsElement.innerHTML
-    .replace('{% trans "Games Played" %}', user.games_played + ' 🕹️')
-    .replace('{% trans "Wins" %}', user.wins + ' 🏆')
-    .replace('{% trans "Losses" %}', user.losses + ' 💀')
-    .replace('{% trans "Ratio" %}', user.ratio + ' ⚖️');
+    const gamesPlayedElement = userTemplate.querySelector('[data-game-played]');
+    const winsElement = userTemplate.querySelector('[data-win]');
+    const lossesElement = userTemplate.querySelector('[data-lose]');
+    const ratioElement = userTemplate.querySelector('[data-ratio]');
+
+    gamesPlayedElement.textContent = totalGame;
+    winsElement.textContent = gamesWin;
+    lossesElement.textContent = gamesLose;
+    ratioElement.textContent = ratio;
     
     const buttonsContainer = userTemplate.querySelector('[data-action-buttons]');
     const actionButtons = createActionButtons(user.id, action);
@@ -293,16 +337,16 @@ function generateUserHTML(user, action) {
     return userTemplate;
 }
 
-// Afficher la liste des utilisateurs
-function displayUserList(users, action) {
+async function displayUserList(users, action) {
     const userListContainer = document.getElementById('list');
     userListContainer.innerHTML = "";
-    
-    users.forEach(user => {
-        const userHTML = generateUserHTML(user, action);
+
+    for (const user of users) {
+        const userHTML = await generateUserHTML(user, action);
         userListContainer.appendChild(userHTML);
-    });
+    }
 }
+
 
 // Générer les boutons d'action à partir du template
 function createActionButtons(userId, context) {

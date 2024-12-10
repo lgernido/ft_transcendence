@@ -65,23 +65,13 @@ class Social(models.Model):
     logger = logging.getLogger(__name__)
 
     def update_avatar(self, new_avatar):
-        # Vérifier si l'avatar actuel est différent de l'avatar par défaut
-        logging.warning("\nENTER UPDATE AVATAR\n")
-            
-        logging.warning(f"\nCurrent avatar: {self.avatar}\n")
         if self.avatar and self.avatar != 'avatars/default_avatar.png':
-            logging.warning("\nENTER FONCTION UPDATE AVATAR\n")
-            # Supprimer l'ancien avatar si ce n'est pas celui par défaut
             try:
-                # Supprimer le fichier de l'ancien avatar du système de fichiers
                 avatar_path = os.path.join(settings.MEDIA_ROOT, self.avatar.name)
                 if os.path.isfile(avatar_path):
                     os.remove(avatar_path)
             except Exception as e:
-                 logging.warning("\nERROR UPDATE AVATAR\n")
-        else:
-            logging.warning("\nNOT FONCTION UPDATE AVATAR\n")
-        # Remplacer l'avatar par le nouveau
+                 logging.warning("\nERROR UPDATE AVATAR\n", e)
         self.avatar = new_avatar
         self.save()
 
