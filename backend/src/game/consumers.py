@@ -47,6 +47,16 @@ class GameConsumer(AsyncWebsocketConsumer):
             if self.game.is_game_over():
                 winner = self.game.get_winner()
                 self.running = False
+
+                self.game.reset_ball()
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'game_update',
+                        **serialize_game_state(self.game)
+                    }
+                )
+
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {

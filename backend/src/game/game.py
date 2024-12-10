@@ -7,7 +7,7 @@ class PongGame:
         self.left_bar_pos = 50 
         self.right_bar_pos = 50
         self.ball_pos = {"x": 50, "y": 50} 
-        self.ball_speed = {"x": choice([-0.8, 0.8]), "y": uniform(-0.6, 0.6)}
+        self.ball_speed = {"x": choice([-1, 1]), "y": uniform(-0.8, 0.8)}
         self.left_score = 0
         self.right_score = 0
         self.limit_points = limit_points
@@ -21,8 +21,10 @@ class PongGame:
             self.right_bar_pos = max(7.5, min(92.5, self.right_bar_pos + direction))
 
     def reset_ball(self):
+        if self.is_game_over():
+            return
         self.ball_pos = {"x": 50, "y": 50}
-        self.ball_speed = {"x": choice([-0.8, 0.8]), "y": uniform(-0.6, 0.6)}
+        self.ball_speed = {"x": choice([-1, 1]), "y": uniform(-0.8, 0.8)}
         self.resetting_ball = False
 
     def move_ball(self):

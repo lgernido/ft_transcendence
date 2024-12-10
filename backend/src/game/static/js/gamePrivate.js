@@ -94,8 +94,8 @@ function launchGamePrivate() {
 
         
     function displayWinner(winner) {
-        console.log("Game Over");
         isActive = false;
+        document.querySelector('.ball').classList.add('hidden');
         const winnerMessage = document.getElementById('winnerMessage');
         winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "Player 2 Wins!";
         winnerMessage.style.display = 'block';

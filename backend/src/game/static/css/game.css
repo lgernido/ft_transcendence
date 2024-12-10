@@ -41,17 +41,6 @@
     }
 }
 
-.winner-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.5s, transform 1s;
-}
-
 .show {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.2);
@@ -143,6 +132,18 @@
 	font-weight: bold;
 	color: black;
 	z-index: 10;
+}
+
+.winner-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    font-weight: bold;
+    color: black;
+    transition: opacity 0.5s, transform 1s;
+    z-index: 10;
 }
 
 .center-line {
