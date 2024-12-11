@@ -159,3 +159,51 @@ class GameConsumer(AsyncWebsocketConsumer):
             "type": "game_over",
             "winner": winner,
         }))
+
+class LobbyConsumer(AsyncWebsocketConsumer):
+    players = []
+
+    async def connect(self):
+        self.room_name = 'lobby'
+        self.room_group_name = f'lobby_{self.room_name}'
+
+        self.players.append(self.channel_name)
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        if len(self.players) >= 2:
+            await self.start_game()
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        self.players.remove(self.channel_name)
+
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+
+        if data['action'] == 'player_joined':
+            if len(self.players) == 2:
+                await self.start_game()
+
+    async def start_game(self):
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'game_start',
+                'status': 'start_game'
+            }
+        )
+
+    async def game_start(self, event):
+        await self.send(text_data=json.dumps({
+            'status': 'start_game'
+        }))
