@@ -1,4 +1,4 @@
-let socket;
+let socketGame;
 
 function launchGame(roomName, maxPoints) {
     let isActive = false;
@@ -11,28 +11,28 @@ function launchGame(roomName, maxPoints) {
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    socket = new WebSocket(
+    socketGame = new WebSocket(
         `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
     );
-    if (socket.readyState === WebSocket.CLOSED) {
+    if (socketGame.readyState === WebSocket.CLOSED) {
         console.log("Socket is closed");
     }
 
-    socket.onopen = () => {
-        console.log('Connected to the socket : ' + socket.url);
-        socket.send(JSON.stringify({
+    socketGame.onopen = () => {
+        console.log('Connected to the socket : ' + socketGame.url);
+        socketGame.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
         }));
     };
 
     window.addEventListener('beforeunload', () => {
-        socket.close();
+        socketGame.close();
     });
 
     window.addEventListener('popstate', () => {
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.close();
+        if (socketGame.readyState === WebSocket.OPEN) {
+            socketGame.close();
         }
     });
 
@@ -40,8 +40,8 @@ function launchGame(roomName, maxPoints) {
 
     const observer = new MutationObserver(() => {
         if (targetPaths.includes(window.location.pathname)) {
-            if (socket) {
-                socket.close();
+            if (socketGame) {
+                socketGame.close();
                 console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
         }
@@ -96,26 +96,26 @@ function launchGame(roomName, maxPoints) {
     });
         
     function sendMove(player, direction) {
-        socket.send(JSON.stringify({
+        socketGame.send(JSON.stringify({
             type: 'move',
             player: player,
             direction: direction
         }));
     }
     
-    socket.onmessage = (message) => {
+    socketGame.onmessage = (message) => {
         const data = JSON.parse(message.data);
     
         if (data.type === "game_state" || data.type === "game_update") {
             updateGameState(data);
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.close();
+            if (socketGame.readyState === WebSocket.OPEN) {
+                socketGame.close();
             }
         } else if (data.type === "close_socket") {
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.close();
+            if (socketGame.readyState === WebSocket.OPEN) {
+                socketGame.close();
             }
         }
     };
@@ -125,8 +125,8 @@ function launchGame(roomName, maxPoints) {
         let rightBar = document.querySelector('.right-barre');
 
         if (leftBar === null || rightBar === null) {
-            if (socket) {
-                socket.close();
+            if (socketGame) {
+                socketGame.close();
             }
         }
 
@@ -171,7 +171,7 @@ function launchGame(roomName, maxPoints) {
                 countdownElement.style.display = 'none';
                 document.querySelector('.ball').classList.remove('hidden'); 
                 isActive = true;
-                socket.send(JSON.stringify({ type: 'start_game' }));
+                socketGame.send(JSON.stringify({ type: 'start_game' }));
                 updateBarPositions();
             }
         }, 1000);

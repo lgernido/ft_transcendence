@@ -24,6 +24,7 @@ function lobby() {
 
 		if (data.status === 'start_game') {
 			const player1Color = document.getElementById('selectColorPlayerPublic1').value;
+			const player2Color = 'color-player-green';
 			const maxPoint = document.getElementById('maxPoint').value;
 			const username = playerName1_public.innerText;
 			const roomName = `${username}_room`;
@@ -37,7 +38,8 @@ function lobby() {
 				body: JSON.stringify({
 					roomName: roomName,
 					player1Color: player1Color,
-					player2Color: 'color-player-green',
+					player2Color: player2Color,
+					maxPoint: maxPoint,
 				}),
 			})
 				.then((response) => response.json().then((data) => ({ status: response.status, body: data })))

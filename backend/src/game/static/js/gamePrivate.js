@@ -1,4 +1,4 @@
-let socket;
+let socketPrivate;
 
 function launchGamePrivate(roomName, maxPoints) {
     let isActive = false;
@@ -11,28 +11,28 @@ function launchGamePrivate(roomName, maxPoints) {
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    socket = new WebSocket(
+    socketPrivate = new WebSocket(
         `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
     );
-    if (socket.readyState === WebSocket.CLOSED) {
+    if (socketPrivate.readyState === WebSocket.CLOSED) {
         console.log("Socket is closed");
     }
 
-    socket.onopen = () => {
-        console.log('Connected to the socket : ' + socket.url);
-        socket.send(JSON.stringify({
+    socketPrivate.onopen = () => {
+        console.log('Connected to the socket : ' + socketPrivate.url);
+        socketPrivate.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
         }));
     };
 
     window.addEventListener('beforeunload', () => {
-        socket.close();
+        socketPrivate.close();
     });
 
     window.addEventListener('popstate', () => {
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.close();
+        if (socketPrivate.readyState === WebSocket.OPEN) {
+            socketPrivate.close();
         }
     });
 
@@ -40,8 +40,8 @@ function launchGamePrivate(roomName, maxPoints) {
 
     const observer = new MutationObserver(() => {
         if (targetPaths.includes(window.location.pathname)) {
-            if (socket) {
-                socket.close();
+            if (socketPrivate) {
+                socketPrivate.close();
                 console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
         }
@@ -53,6 +53,15 @@ function launchGamePrivate(roomName, maxPoints) {
     
     function updateBarPositions() {
         if (!isActive) return;
+
+        const leftBar = document.querySelector('.left-barre');
+        const rightBar = document.querySelector('.right-barre');
+
+        if (leftBar === null || rightBar === null) {
+            if (socketPrivate) {
+                socketPrivate.close();
+            }
+        } 
 
         if (keysPressed.w) {
             playerActions.left = -barSpeed;
@@ -96,38 +105,47 @@ function launchGamePrivate(roomName, maxPoints) {
     });
         
     function sendMove(player, direction) {
-        socket.send(JSON.stringify({
+        if (socketPrivate.readyState !== WebSocket.OPEN) {
+            return;
+        }
+
+        socketPrivate.send(JSON.stringify({
             type: 'move',
             player: player,
             direction: direction
         }));
     }
     
-    socket.onmessage = (message) => {
+    socketPrivate.onclose = (event) => {
+        console.log('WebSocket closed:', event);
+    }
+    
+    socketPrivate.onmessage = (message) => {
         const data = JSON.parse(message.data);
     
         if (data.type === "game_state" || data.type === "game_update") {
             updateGameState(data);
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.close();
+            if (socketPrivate.readyState === WebSocket.OPEN) {
+                socketPrivate.close();
             }
         } else if (data.type === "close_socket") {
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.close();
+            if (socketPrivate.readyState === WebSocket.OPEN) {
+                socketPrivate.close();
             }
         }
     };
     
     function updateGameState(state) {
-        let leftBar = document.querySelector('.left-barre');
-        let rightBar = document.querySelector('.right-barre');
+        const leftBar = document.querySelector('.left-barre');
+        const rightBar = document.querySelector('.right-barre');
 
         if (leftBar === null || rightBar === null) {
-            if (socket) {
-                socket.close();
+            if (socketPrivate) {
+                socketPrivate.close();
             }
+            return;
         }
 
         document.querySelector('.left-barre').style.top = `${state.left_bar_pos}%`;
@@ -167,11 +185,21 @@ function launchGamePrivate(roomName, maxPoints) {
             countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
             
             if (countdown <= 0) {
+                const ball = document.querySelector('.ball');
+
+                if (ball === null) {
+                    if (socketPrivate) {
+                        socketPrivate.close();
+                    }
+
+                    return;
+                }
+
                 clearInterval(countdownInterval);
                 countdownElement.style.display = 'none';
                 document.querySelector('.ball').classList.remove('hidden'); 
                 isActive = true;
-                socket.send(JSON.stringify({ type: 'start_game' }));
+                socketPrivate.send(JSON.stringify({ type: 'start_game' }));
                 updateBarPositions();
             }
         }, 1000);
