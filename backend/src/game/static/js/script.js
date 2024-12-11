@@ -479,18 +479,18 @@ function loadGame(roomName) {
                 const state = { page:  `game-${roomName}` };
                 history.pushState(state, '', `/game/${roomName}`);
             }
-            loadscript('loadelement.js', () => loadchat());
-            // loadscript('game.js', () => lauchgame());
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('game.js', () => lauchgame());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
 
-function loadGamePrivate(maxPoints) {
+function loadGamePrivate(roomName, maxPoints) {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch('/game/', {
+    fetch(`/game/${roomName}`, {
         method: 'GET',
         headers: {
             'X-CSRFToken': csrfToken
@@ -505,12 +505,12 @@ function loadGamePrivate(maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== 'game') {
-                const state = { page: 'game' };
-                history.pushState(state, '', "/game");
+            if (history.state?.page !== `game-${roomName}`) {
+                const state = { page: `game-${roomName}` };
+                history.pushState(state, '', `/game/${roomName}`);
             }
             // loadscript('loadelement.js', () => loadchat());
-            loadscript('gamePrivate.js', () => launchGamePrivate(maxPoints));
+            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

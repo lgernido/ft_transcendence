@@ -1,4 +1,6 @@
-function launchGamePrivate(maxPoints) {
+let socket;
+
+function launchGamePrivate(roomName, maxPoints) {
     let isActive = false;
 
     const playerLeft = document.getElementById('playerLeft');
@@ -9,19 +11,41 @@ function launchGamePrivate(maxPoints) {
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    const socket = new WebSocket(
-        `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/`
+    socket = new WebSocket(
+        `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
     );
     if (socket.readyState === WebSocket.CLOSED) {
         console.log("Socket is closed");
     }
 
     socket.onopen = () => {
+        console.log('Connected to the socket : ' + socket.url);
         socket.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
         }));
     };
+
+    window.addEventListener('beforeunload', () => {
+        socket.close();
+    });
+
+    window.addEventListener('popstate', () => {
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.close();
+        }
+    });
+
+    const targetPaths = ['/mypage', '/stats', '/amis', '/chat', '/compte'];
+
+    const observer = new MutationObserver(() => {
+        if (targetPaths.includes(window.location.pathname)) {
+            if (socket) {
+                socket.close();
+                console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
+            }
+        }
+    });
 
     const playerActions = { left: 0, right: 0 }; 
     const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
@@ -86,10 +110,26 @@ function launchGamePrivate(maxPoints) {
             updateGameState(data);
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.close();
+            }
+        } else if (data.type === "close_socket") {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.close();
+            }
         }
     };
     
     function updateGameState(state) {
+        let leftBar = document.querySelector('.left-barre');
+        let rightBar = document.querySelector('.right-barre');
+
+        if (leftBar === null || rightBar === null) {
+            if (socket) {
+                socket.close();
+            }
+        }
+
         document.querySelector('.left-barre').style.top = `${state.left_bar_pos}%`;
         document.querySelector('.right-barre').style.top = `${state.right_bar_pos}%`;
         document.querySelector('.ball').style.left = `${state.ball_pos.x}%`;

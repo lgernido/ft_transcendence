@@ -32,14 +32,22 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.running = False
+
         if hasattr(self, 'game_task'):
             self.game_task.cancel
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'close_socket',
+            }
+        )
 
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
-
+        
     async def game_loop(self):
         while self.running:
             self.game.move_ball()
@@ -62,6 +70,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                     {
                         'type': 'game_over',
                         'winner': winner
+                    }
+                )
+
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'close_socket',
                     }
                 )
                 break
