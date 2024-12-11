@@ -70,7 +70,7 @@ function lobby_private() {
                 .then(({ status, body }) => {
                     if (status === 200) {
                         // loadGame(roomName);
-                        loadGamePrivate();
+                        loadGamePrivate(maxPoint);
                     } else {
                         alert(body.error || 'Failed to create room');
                     }

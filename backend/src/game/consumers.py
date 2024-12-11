@@ -79,6 +79,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
 
+        if text_data_json["type"] == "set_max_points":
+            max_points = int(text_data_json.get("max_points", 5))
+            self.game.limit_points = max_points
+
         if text_data_json["type"] == "move":
             player = text_data_json["player"]
             direction = text_data_json["direction"]

@@ -487,7 +487,7 @@ function loadGame(roomName) {
         });
 }
 
-function loadGamePrivate() {
+function loadGamePrivate(maxPoints) {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/game/', {
@@ -510,7 +510,7 @@ function loadGamePrivate() {
                 history.pushState(state, '', "/game");
             }
             // loadscript('loadelement.js', () => loadchat());
-            loadscript('gamePrivate.js', () => launchGamePrivate());
+            loadscript('gamePrivate.js', () => launchGamePrivate(maxPoints));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

@@ -1,4 +1,4 @@
-function launchGamePrivate() {
+function launchGamePrivate(maxPoints) {
     let isActive = false;
 
     const playerLeft = document.getElementById('playerLeft');
@@ -15,6 +15,13 @@ function launchGamePrivate() {
     if (socket.readyState === WebSocket.CLOSED) {
         console.log("Socket is closed");
     }
+
+    socket.onopen = () => {
+        socket.send(JSON.stringify({
+            type: 'set_max_points',
+            max_points: maxPoints
+        }));
+    };
 
     const playerActions = { left: 0, right: 0 }; 
     const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
