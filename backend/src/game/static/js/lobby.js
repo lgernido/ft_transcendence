@@ -5,7 +5,7 @@ function lobby() {
 	const playerName2_public = document.querySelector('.card-lobby-text-name-public-2');
 	const colorSelect2_public = document.getElementById('selectColorPlayerPublic2');
 
-	playerName1_public.classList.add('color-player-none');
+	playerName1_public.classList.add('color-player-red');
 	if (playerName2_public)
 		playerName2_public.classList.add('color-player-none');
 

@@ -10,6 +10,7 @@ function tournament(){
 
 	document.querySelectorAll('.dropdown-item').forEach(item => {
 		item.addEventListener('click', (event) => {
+			console.log()
 			event.preventDefault();
 			const selectedValue = event.target.getAttribute('data-nb-player');
 			localStorage.setItem('selectedValue', selectedValue);

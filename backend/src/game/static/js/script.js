@@ -386,6 +386,7 @@ function loadTournament()
                 const state = { page: 'lobby_T' };
                 history.pushState(state, '', "/lobby_T");
             }
+            console.log("loadTournament");
             loadscript('lobby_tournament.js', () => tournament());
             loadscript('loadelement.js', () => loadMiniChat());
         })
