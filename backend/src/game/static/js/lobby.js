@@ -26,8 +26,7 @@ function lobby() {
 			const player1Color = document.getElementById('selectColorPlayerPublic1').value;
 			const player2Color = 'color-player-green';
 			const maxPoint = document.getElementById('maxPoint').value;
-			const username = playerName1_public.innerText;
-			const roomName = `${username}_room`;
+			const roomName = data.roomName;
 
 			fetch("create_room/", {
 				method: 'POST',
