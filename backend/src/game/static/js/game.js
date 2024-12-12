@@ -1,4 +1,4 @@
-let socketGame;
+let socketDynamicGame;
 
 function launchGame(roomName, maxPoints) {
     let isActive = false;
@@ -11,28 +11,28 @@ function launchGame(roomName, maxPoints) {
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    socketGame = new WebSocket(
-        `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
+    socketDynamicGame = new WebSocket(
+        `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/dynamic_game/${roomName}/`
     );
-    if (socketGame.readyState === WebSocket.CLOSED) {
+    if (socketDynamicGame.readyState === WebSocket.CLOSED) {
         console.log("Socket is closed");
     }
 
-    socketGame.onopen = () => {
-        console.log('Connected to the socket : ' + socketGame.url);
-        socketGame.send(JSON.stringify({
+    socketDynamicGame.onopen = () => {
+        console.log('Connected to the socket : ' + socketDynamicGame.url);
+        socketDynamicGame.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
         }));
     };
 
     window.addEventListener('beforeunload', () => {
-        socketGame.close();
+        socketDynamicGame.close();
     });
 
     window.addEventListener('popstate', () => {
-        if (socketGame.readyState === WebSocket.OPEN) {
-            socketGame.close();
+        if (socketDynamicGame.readyState === WebSocket.OPEN) {
+            socketDynamicGame.close();
         }
     });
 
@@ -40,8 +40,8 @@ function launchGame(roomName, maxPoints) {
 
     const observer = new MutationObserver(() => {
         if (targetPaths.includes(window.location.pathname)) {
-            if (socketGame) {
-                socketGame.close();
+            if (socketDynamicGame) {
+                socketDynamicGame.close();
                 console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
         }
@@ -92,30 +92,137 @@ function launchGame(roomName, maxPoints) {
 
         if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             keysPressed[event.key] = false;
+        }let socket;
+
+        function lobby() {
+            const playerName1_public = document.querySelector('.card-lobby-text-name-public-1');
+            const colorSelect1_public = document.getElementById('selectColorPlayerPublic1');
+            const maxPointsInput = document.getElementById('maxPoint');
+        
+            playerName1_public.classList.add('color-player-red');
+        
+            socket = new WebSocket(
+                `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/lobby/`
+            );
+        
+            socket.onopen = function() {
+                console.log("WebSocket connected to the lobby");
+                socket.send(JSON.stringify({
+                    action: 'player_join',
+                    player: playerName1_public.innerText
+                }));
+            }
+        
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+        
+                if (data.status === 'start_game') {
+                    const player1Color = document.getElementById('selectColorPlayerPublic1').value;
+                    const player2Color = 'color-player-green';
+                    const maxPoint = document.getElementById('maxPoint').value;
+                    const roomName = data.room_name;
+                    
+                    fetch("create_dynamic_room/", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken'),
+                        },
+                        body: JSON.stringify({
+                            roomName: roomName,
+                            player1Color: player1Color,
+                            player2Color: player2Color,
+                            maxPoint: maxPoint,
+                        }),
+                    })
+                        .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
+                        .then(({ status, body }) => {
+                            if (status === 200) {
+                                loadGame(roomName, maxPoint);
+                            } else {
+                                alert(body.error || 'Failed to create room');
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Fetch error:', error);
+                            alert('Failed to create room');
+                    });
+                    
+                }
+            };
+        
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            }
+        
+            socket.onclose = function(event) {
+                console.log('WebSocket closed:', event);
+            }
+        
+            maxPointsInput.addEventListener('input', (event) => {
+                if (maxPointsInput.value < 1)
+                    maxPointsInput.value = 1;
+                else if (maxPointsInput.value > 40)
+                    maxPointsInput.value = 40;
+            });
+        
+            colorSelect1_public.addEventListener('change', (event) => {
+                playerName1_public.classList.remove(
+                    'color-player-red',
+                    'color-player-green',
+                    'color-player-blue',
+                    'color-player-yellow',
+                    'color-player-cyan',
+                    'color-player-magenta',
+                    'color-player-orange',
+                    'color-player-purple',
+                    'color-player-pink',
+                    'color-player-gray',
+                    'color-player-none'
+                );
+                playerName1_public.classList.add(event.target.value);
+            });
+        
+            // Fonction pour récupérer le token CSRF
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
         }
+        
     });
         
     function sendMove(player, direction) {
-        socketGame.send(JSON.stringify({
+        socketDynamicGame.send(JSON.stringify({
             type: 'move',
             player: player,
             direction: direction
         }));
     }
     
-    socketGame.onmessage = (message) => {
+    socketDynamicGame.onmessage = (message) => {
         const data = JSON.parse(message.data);
     
         if (data.type === "game_state" || data.type === "game_update") {
             updateGameState(data);
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
-            if (socketGame.readyState === WebSocket.OPEN) {
-                socketGame.close();
+            if (socketDynamicGame.readyState === WebSocket.OPEN) {
+                socketDynamicGame.close();
             }
         } else if (data.type === "close_socket") {
-            if (socketGame.readyState === WebSocket.OPEN) {
-                socketGame.close();
+            if (socketDynamicGame.readyState === WebSocket.OPEN) {
+                socketDynamicGame.close();
             }
         }
     };
@@ -125,8 +232,8 @@ function launchGame(roomName, maxPoints) {
         let rightBar = document.querySelector('.right-barre');
 
         if (leftBar === null || rightBar === null) {
-            if (socketGame) {
-                socketGame.close();
+            if (socketDynamicGame) {
+                socketDynamicGame.close();
             }
         }
 
@@ -171,7 +278,7 @@ function launchGame(roomName, maxPoints) {
                 countdownElement.style.display = 'none';
                 document.querySelector('.ball').classList.remove('hidden'); 
                 isActive = true;
-                socketGame.send(JSON.stringify({ type: 'start_game' }));
+                socketDynamicGame.send(JSON.stringify({ type: 'start_game' }));
                 updateBarPositions();
             }
         }, 1000);

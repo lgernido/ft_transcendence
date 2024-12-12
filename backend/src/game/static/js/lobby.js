@@ -26,9 +26,11 @@ function lobby() {
 			const player1Color = document.getElementById('selectColorPlayerPublic1').value;
 			const player2Color = 'color-player-green';
 			const maxPoint = document.getElementById('maxPoint').value;
-			const roomName = data.roomName;
+        	const roomName = data.room_name;
 
-			fetch("create_room/", {
+			console.log('Game starting on room:', roomName);
+
+			fetch("create_dynamic_room/", {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -44,6 +46,7 @@ function lobby() {
 				.then((response) => response.json().then((data) => ({ status: response.status, body: data })))
 				.then(({ status, body }) => {
 					if (status === 200) {
+						console.log('Game created, GO!');
 						loadGame(roomName, maxPoint);
 					} else {
 						alert(body.error || 'Failed to create room');
@@ -53,7 +56,6 @@ function lobby() {
 					console.error('Fetch error:', error);
 					alert('Failed to create room');
 			});
-			
 		}
 	};
 

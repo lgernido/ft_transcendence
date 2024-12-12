@@ -283,6 +283,69 @@ logger = logging.getLogger(__name__)
 
 @csrf_protect
 @login_required
+def create_dynamic_room(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+        room_name = data.get('roomName')
+        player1_color = data.get('player1Color')
+        player2_color = data.get('player2Color')
+        max_point = data.get('maxPoint')
+
+        if not all([room_name, player1_color, player2_color, max_point]):
+            return JsonResponse({'error': 'Missing required fields'}, status=400)
+
+        request.session['player1_color'] = player1_color
+        request.session['player2_color'] = player2_color
+        request.session['max_point'] = max_point
+
+        return JsonResponse({'redirect': True, 'url': f'/dynamic_game/{room_name}/'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_protect
+@login_required
+def dynamic_game_room(request, room_name):
+    player1_color = request.session.get('player1_color', 'color-player-none')
+    player2_color = request.session.get('player2_color', 'color-player-none')
+    max_point = request.session.get('max_point', 10)
+
+    if request.method == "POST":
+        player1_id = request.POST.get('player1_id')
+        player2_id = request.POST.get('player2_id')
+        player1_score = int(request.POST.get('player1_score', 0))
+        player2_score = int(request.POST.get('player2_score', 0))
+
+        player1 = User.objects.get(id=player1_id)
+        player2 = User.objects.get(id=player2_id)
+
+        if player1_score >= max_point:
+            winner = player1
+        elif player2_score >= max_point:
+            winner = player2
+        else:
+            winner = None
+
+        game = Game.objects.create(
+            player1=player1,
+            player2=player2,
+            winner=winner,
+            player1_score=player1_score,
+            player2_score=player2_score
+        )
+        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
+
+    return render(request, 'partials/game.html', {
+        'room_name': room_name,
+        'player1_color': player1_color,
+        'player2_color': player2_color,
+        'max_point': max_point,
+    })
+
+@csrf_protect
+@login_required
 def create_room(request):
     if request.method == 'POST':
         try:
@@ -303,7 +366,6 @@ def create_room(request):
 
         return JsonResponse({'redirect': True, 'url': f'/game/{room_name}'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
 
 @csrf_protect
 @login_required

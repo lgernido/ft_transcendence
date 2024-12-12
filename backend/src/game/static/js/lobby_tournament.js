@@ -1,42 +1,45 @@
 function tournament(){
+	const maxPointsInput = document.getElementById('inputMaxPoint');
+    const cardContainer = document.getElementById('cardContainerTournament');
+
+	document.querySelectorAll('.btn-primary').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const selectedValue = event.target.getAttribute('data-nb-player');
+            localStorage.setItem('selectedValue', selectedValue);
+            generateCards(selectedValue);
+        });
+    });
+
 	const savedValue = localStorage.getItem('selectedValue');
-	const dropdownButton = document.getElementById('dropdownButton');
-	const cardContainer = document.getElementById('cardContainerTournament');
+    if (savedValue) {
+        generateCards(savedValue);
+    }
 
-	if (savedValue) {
-		dropdownButton.textContent = `NB playeur: ${savedValue}`;
-		generateCards(savedValue);
-	}
-
-	document.querySelectorAll('.dropdown-item').forEach(item => {
-		item.addEventListener('click', (event) => {
-			console.log()
-			event.preventDefault();
-			const selectedValue = event.target.getAttribute('data-nb-player');
-			localStorage.setItem('selectedValue', selectedValue);
-			updateTournamentContent(selectedValue);
-		});
+	maxPointsInput.addEventListener('input', (event) => {
+		if (maxPointsInput.value < 1)
+			maxPointsInput.value = 1;
+		else if (maxPointsInput.value > 40)
+			maxPointsInput.value = 40;
 	});
 
 	function generateCards(count) {
-		cardContainer.innerHTML = '';
-		for (let i = 0; i < count; i++) {
-			const card = document.createElement('div');
-			card.classList.add('card-lobby-wait-tournament', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
-			
-			card.innerHTML = `
-				<div class="d-flex flex-column align-items-center">
-					<div class="spinner-border spinner-color mt-3" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-				</div>
-				<div class="card-lobby-body d-flex align-items-center justify-content-center">
-					<p class="card-lobby-text">Waiting for player...</p>
-				</div>
-			`;
-			cardContainer.appendChild(card);
-		}
-	}
+        cardContainer.innerHTML = ''; 
+
+        for (let i = 0; i < count; i++) {
+            const card = document.createElement('div');
+            card.classList.add('card-lobby-wait-tournament', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
+
+            card.innerHTML = `
+                <div class="d-flex flex-column align-items-center">
+                    <p class="player-number">Joueur ${i + 1}</p>
+                </div>
+                <div class="card-lobby-body d-flex align-items-center justify-content-center">
+                    <input type="text" class="form-control mt-3" placeholder="Enter pseudo" id="player-${i}">
+                </div>
+            `;
+            cardContainer.appendChild(card);
+        }
+    }
 }
 
 function updateTournamentContent(selectedValue) {
