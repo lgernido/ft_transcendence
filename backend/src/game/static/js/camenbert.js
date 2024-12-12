@@ -1,21 +1,8 @@
-async function extractValueProfile() {
+async function extractValueProfile(userId) {
     const csrfToken = getCookie('csrftoken');
 
     try {
-        const userResponse = await fetch('/GetUserId/');
-        if (!userResponse.ok) {
-            throw new Error('Failed to fetch user ID');
-        }
-        const userData = await userResponse.json();
-        const userId = userData.user_id;
-
-        const profileResponse = await fetch(`/extractProfile/?user_id=${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken,
-            },
-        });
+        const profileResponse = await fetch(`/extractProfile/?user_id=${userId}`);
 
         if (!profileResponse.ok) {
             throw new Error('Failed to fetch profile data');
@@ -34,10 +21,120 @@ async function extractValueProfile() {
     }
 }
 
+async function extractValueGame(userId) {
+    const csrfToken = getCookie('csrftoken');
 
+    try {
+        const profileResponse = await fetch(`/extractGame/?user_id=${userId}`);
 
-async function drawCamembert() {
-    const { gamesWin, gamesLose, gamesDraw } = await extractValueProfile();
+        if (!profileResponse.ok) {
+            throw new Error('Failed to fetch profile data');
+        }
+
+        const GameData = await profileResponse.json();
+
+        return GameData;
+    } catch (error) {
+        return [];
+    }
+}
+
+async function displayCardGame(userId) {
+    const cardGameTemplate = document.getElementById("cardGameResume").content;
+    const carouselInner = document.querySelector(".carousel-inner");
+    const notFoundTemplate = document.getElementById("gameNotFound").content;
+    const containerCardGameResume = document.getElementById("containerCardGameResume");
+
+    const allGames = await extractValueGame(userId);
+
+    function getChunkSize() {
+        const width = window.innerWidth;
+        if (width < 576) return 1;
+        if (width < 768) return 2;
+        if (width < 992) return 3;
+        if (width < 1200) return 4;
+        if (width < 1600) return 6;
+        return 8;
+    }
+
+    function updateIndicators(chunkCount) {
+        const indicatorsContainer = document.querySelector(".carousel-indicators");
+        indicatorsContainer.innerHTML = "";
+    
+        for (let i = 0; i < chunkCount; i++) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.setAttribute("data-bs-target", "#carouselExampleIndicators");
+            button.setAttribute("data-bs-slide-to", i);
+            button.setAttribute("aria-label", `Slide ${i + 1}`);
+            if (i === 0) {
+                button.classList.add("active");
+                button.setAttribute("aria-current", "true");
+            }
+            indicatorsContainer.appendChild(button);
+        }
+    }
+
+    function chunkData(data, size) {
+        const chunks = [];
+        for (let i = 0; i < data.length; i += size) {
+            chunks.push(data.slice(i, i + size));
+        }
+        return chunks;
+    }
+
+    function rebuildCarousel() {
+        carouselInner.innerHTML = "";
+        const chunkSize = getChunkSize();
+        const gameChunks = chunkData(allGames, chunkSize);
+
+        updateIndicators(gameChunks.length);
+
+        if (allGames.length === 0) {
+            containerCardGameResume.innerHTML = "";
+            containerCardGameResume.appendChild(notFoundTemplate.cloneNode(true));
+            return;
+        }
+
+        gameChunks.forEach((chunk, index) => {
+            const carouselItem = document.createElement("div");
+            carouselItem.classList.add("carousel-item");
+            if (index === 0) carouselItem.classList.add("active");
+
+            const cardContainer = document.createElement("div");
+            cardContainer.classList.add("d-flex", "justify-content-around");
+
+            chunk.forEach(game => {
+                const cardClone = cardGameTemplate.cloneNode(true);
+                const opponentElement = cardClone.querySelector("[data-opponent]");
+                
+                opponentElement.addEventListener("click", function() {
+                    localStorage.setItem('opponentName', game.opponent);
+                    localStorage.setItem('opponentId', game.opponentId);
+                    loadStats();
+                });
+                
+                cardClone.querySelector("[data-opponent]").textContent = game.opponent || 'Unknown';
+                cardClone.querySelector("[data-winner]").textContent = game.winner ? 'Win' : 'Lose'; // a faire marcher 
+                cardClone.querySelector("[data-score]").textContent = `${game.player1_score} - ${game.player2_score}`;
+                cardClone.querySelector("[data-date]").textContent = game.date_played.split("T")[0] || 'Unknown Date';
+            
+                cardContainer.appendChild(cardClone);
+            });
+            
+            carouselItem.appendChild(cardContainer);
+            carouselInner.appendChild(carouselItem);
+        });
+    }
+    rebuildCarousel();
+
+    window.addEventListener("resize", () => {
+        rebuildCarousel();
+    });
+}
+
+async function drawCamembert(userId) {
+    const { gamesWin, gamesLose, gamesDraw } = await extractValueProfile(userId);
 
     gWin = document.getElementById("nb-win");
     gLose = document.getElementById("nb-loss");
@@ -121,4 +218,40 @@ async function drawCamembert() {
         startAngle = endAngle;
         i++;
     }
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+async function func_stats() {
+    let userId;
+    const idUser = localStorage.getItem('opponentId');
+    const nameUser = localStorage.getItem('opponentName');
+    const displayName = document.getElementById("nameUserStats");
+
+    if (idUser) {
+        userId = idUser;
+        displayName.style.display = "block";
+        displayName.textContent = `Page de: ${nameUser}`;
+    }
+    else {
+        try {
+            const userResponse = await fetch('/GetUserId/');
+            if (!userResponse.ok) {
+                throw new Error('Failed to fetch user ID');
+            }
+            const userData = await userResponse.json();
+            userId = userData.user_id;
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        displayName.style.display = "none";
+    }
+
+    displayCardGame(userId);
+    drawCamembert(userId);
+    localStorage.removeItem('opponentId');
+    localStorage.removeItem('opponentName');
 }

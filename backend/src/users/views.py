@@ -180,3 +180,31 @@ class GetUsers(APIView):
     
 def GetUserId(request):
     return JsonResponse({'user_id': request.user.id})
+
+
+def GetUserByName(request):
+    user_name = request.GET.get('user_name')
+    if user_name:
+        try:
+            data_user = User.objects.get(username=user_name)
+            return JsonResponse({
+                'id': data_user.id,
+                'username': data_user.username,
+            })
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+    return JsonResponse({'error': 'Username parameter is missing'}, status=400)
+
+def GetUserById(request):
+    user_id = request.GET.get('user_id')
+    if user_id:
+        try:
+            data_user = User.objects.get(id=user_id)
+            return JsonResponse({
+                'id': data_user.id,
+                'username': data_user.username,
+            })
+        except ObjectDoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+    return JsonResponse({'error': 'Username parameter is missing'}, status=400)
+

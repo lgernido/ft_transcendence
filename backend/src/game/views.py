@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Game
 from users.models import Social
-from .models import Profile
+from .models import Profile, Game
 import json
 
 import base64
@@ -267,6 +267,35 @@ def extractProfile(request):
             'games_draw': profile.games_draw,
         }
         return JsonResponse({'profile': data})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+    
+def extractGame(request):
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': 'User ID is required'}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+
+        games_as_player1 = Game.objects.filter(player1=user)
+        games_as_player2 = Game.objects.filter(player2=user)
+
+        games_data = []
+
+        for game in games_as_player1.union(games_as_player2):
+            games_data.append({
+                "opponent": game.player2.username if game.player1 == user else game.player1.username,
+                "winner": game.winner.username if game.winner else None,
+                "player1_score": game.player1_score,
+                "player2_score": game.player2_score,
+                "date_played": game.date_played.isoformat(),
+                "duration": str(game.duration) if game.duration else None,
+                "opponentId": game.player2.id if game.player1 == user else game.player1.id,
+            })
+
+        return JsonResponse(games_data, safe=False)
+
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 

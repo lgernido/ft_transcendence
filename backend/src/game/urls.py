@@ -1,7 +1,6 @@
 from django.urls import path 
 from . import views
-from users.views import create_account
-from users.views import GetUserId
+from users.views import create_account, GetUserId, GetUserById, GetUserByName
 
 urlpatterns = [
     path('', views.home, name='home_page'),
@@ -24,5 +23,10 @@ urlpatterns = [
     path('set_language/', views.set_language, name='set_language'),
 	path('check_user_status/', views.check_user_status, name='check_user_status'),
 	path('extractProfile/', views.extractProfile, name='extractProfile'),
+	path('extractGame/', views.extractGame, name='extractGame'),
+	
+
 	path('GetUserId/', GetUserId, name="GetUserId"),
+	path('GetUserById/', GetUserById, name="GetUserById"),
+	path('GetUserByName/', GetUserByName, name="GetUserByName"),
 ]

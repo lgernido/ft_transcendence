@@ -1,29 +1,25 @@
 {% load static %}
 {% load i18n %}
 <div class="d-flex" style="height: calc(100vh - 100px);">
-	<div
-		class="border border-dark rounded m-2 w-100 px-5 flex-grow-1 d-flex flex-column align-items-center overflow-auto">
-		<div class="d-flex justify-content-between w-100">
-			<div class="d-flex flex-column align-items-center my-3 me-2 card-custom">
-				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-				<h2>Bob</h2>
-				<p class="result">{%trans 'Win' %}</p>
+	<div class="border border-dark rounded m-2 w-100 px-5 flex-grow-1 d-flex flex-column align-items-center overflow-auto">
+		<div class="fw-bold fs-2 text-light" id="nameUserStats" style="display: none; position: absolute; top: 100px; left: 50px;">Nom de l'utilisateur</div>
+		<div class="d-flex" id="containerCardGameResume">
+			<div id="carouselExampleIndicators" class="carousel slide">
+			<div class="carousel-indicators">
+
 			</div>
-			<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
-				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-				<h2>Carlos</h2>
-				<p class="result">{%trans 'Lose' %}</p>
+			<div class="carousel-inner">
+			
 			</div>
-			<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
-				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-				<h2>Jacob</h2>
-				<p class="result">{%trans 'Win' %}</p>
-			</div>
-			<div class="d-flex flex-column align-items-center my-3 mx-2 card-custom">
-				<img src="{% static 'img/bob.jpg' %}" class="rounded-circle img-profil-100" alt="img-profil">
-				<h2>Carlos</h2>
-				<p class="result">{%trans 'Draw' %}</p>
-			</div>
+			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
 		</div>
 		<div class="w-100 my-5 stat-container">
 			<h3 class="m-4 fw-bold">{%trans 'Player Statistics' %}</h3>
@@ -35,11 +31,11 @@
 					<li id="liVert" class="d-flex"><span id="vert"></span> {%trans 'Win :'%}<p id="nb-win" class="ms-2">
 						</p>
 					</li>
-					<li id="liRouge" class="d-flex"><span id="rouge"></span> {%trans 'Loss :' %}<p id="nb-loss"
-							class="ms-2"></p>
+					<li id="liRouge" class="d-flex"><span id="rouge"></span> {%trans 'Loss :' %}<p id="nb-loss" class="ms-2">
+						</p>
 					</li>
-					<li id="liOrange" class="d-flex"><span id="orange"></span> {%trans 'Draw :'%}<p id="nb-draw"
-							class="ms-2"></p>
+					<li id="liOrange" class="d-flex"><span id="orange"></span> {%trans 'Draw :'%}<p id="nb-draw" class="ms-2">
+						</p>
 					</li>
 				</ul>
 			</section>
@@ -55,3 +51,19 @@
 		</div>
 	</div>
 </div>
+
+<template id="cardGameResume">
+	<div class="card-custom m-3">
+		<img src="{% static 'img/bob.jpg' %}" class="rounded img-profil-100" alt="img-profil">
+		<h2 data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer;">Bob</h2>
+		<p class="result text-light" data-winner>{%trans 'Win' %}</p>
+		<p data-score class="text-light">0 - 0</p>
+		<p data-date class="text-light">Unknown Date</p>
+	</div>
+</template>
+
+<template id="gameNotFound">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px;">
+        <p class="fw-bold fs-1 text-warning">/!\ Game not found /!\</p>
+    </div>
+</template>
