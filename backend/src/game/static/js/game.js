@@ -66,6 +66,7 @@ function launchGameBot(roomName, maxPoints) {
 
         const leftBar = document.querySelector('.left-barre');
         const rightBar = document.querySelector('.right-barre');
+        const ball = document.querySelector('.ball');
 
         if (leftBar === null || rightBar === null) {
             if (socketBOT) {
@@ -85,13 +86,18 @@ function launchGameBot(roomName, maxPoints) {
             sendMove("left", 0);
         }
 
-        if (keysPressed.ArrowUp) {
-            playerActions.right = -barSpeed;
-            sendMove("right", -barSpeed);
-        } else if (keysPressed.ArrowDown) {
+        const ballTop = parseFloat(ball.style.top);
+        const rightBarTop = parseFloat(rightBar.style.top);
+        
+        if (ballTop > rightBarTop + 10) {
             playerActions.right = barSpeed;
             sendMove("right", barSpeed);
-        } else {
+        }
+        else if (ballTop < rightBarTop - 10) {
+            playerActions.right = -barSpeed;
+            sendMove("right", -barSpeed);
+        }
+        else {
             playerActions.right = 0;
             sendMove("right", 0);
         }
@@ -180,7 +186,7 @@ function launchGameBot(roomName, maxPoints) {
         isActive = false;
         document.querySelector('.ball').classList.add('hidden');
         const winnerMessage = document.getElementById('winnerMessage');
-        winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "Player 2 Wins!";
+        winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "OpenAI Wins!";
         winnerMessage.style.display = 'block';
         winnerMessage.style.position = 'absolute';
         winnerMessage.style.top = '50%';

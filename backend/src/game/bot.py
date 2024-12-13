@@ -52,6 +52,7 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
     async def game_loop(self):
         while self.running:
             self.game.move_ball()
+            self.control_ai()
 
             if self.game.is_game_over():
                 winner = self.game.get_winner()
@@ -91,6 +92,20 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
             )
 
             await sleep(0.03)
+
+    async def control_ai(self):
+        predicted_y = self.game.predict_ball_position()
+
+        ai_bar_pos = self.game.right_bar_pos
+
+        if predicted_y < ai_bar_pos:
+            direction = -1.5  # Monter
+        elif predicted_y > ai_bar_pos:
+            direction = 1.5  # Descendre
+        else:
+            direction = 0  # Rester immobile
+
+        self.game.move_bar("right", direction)
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)

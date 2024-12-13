@@ -14,6 +14,19 @@ class PongGameBOT:
         self.resetting_ball = False
         self.isAtive = False
 
+    def predict_ball_position(self):
+        ball_x, ball_y = self.ball_pos["x"], self.ball_pos["y"]
+        ball_speed_x, ball_speed_y = self.ball_speed["x"], self.ball_speed["y"]
+
+        while 0 < ball_x < 100:
+            ball_x += ball_speed_x
+            ball_y += ball_speed_y
+
+            if ball_y <= 0 or ball_y >= 100:
+                ball_speed_y *= -1
+
+        return ball_y  
+
     def move_bar(self, bar, direction):
         if bar == "left":
             self.left_bar_pos = max(7.5, min(92.5, self.left_bar_pos + direction))
