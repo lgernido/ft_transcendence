@@ -372,8 +372,8 @@ def create_room(request):
 def game_room(request, room_name):
     if not room_name.endswith("_room"):
         room_name += "_room"
-    if room_name != f"{request.user.username}_room":
-        return JsonResponse({"error": "You cannot access this room."})
+    # if room_name != f"{request.user.username}_room":
+        # return JsonResponse({"error": "You cannot access this room."}):
     
     player1_color = request.session.get('player1_color', 'color-player-none')
     player2_color = request.session.get('player2_color', 'color-player-none')

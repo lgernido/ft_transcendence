@@ -108,6 +108,20 @@ class GameConsumer(AsyncWebsocketConsumer):
             elif player == "right":
                 self.game.move_bar("right", direction)
 
+        elif text_data_json["type"] == "stop_game":
+            self.game.isAtive = False
+            self.running = False
+            self.game.reset_ball()
+            if hasattr(self, 'game_task'):
+                self.game_task.cancel
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'game_update',
+                    **serialize_game_state(self.game)
+                }
+            )
+
         elif text_data_json["type"] == "start_game":
             self.game.reset_ball()
             self.game.isAtive = True

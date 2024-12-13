@@ -460,13 +460,11 @@ function loadPrivate() {
 function loadGame(roomName, maxPoints) {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    
-    fetch(`/dynamic_game/${roomName}`, {
+    fetch(`/game/${roomName}`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken,
-        },
-        credentials: 'same-origin'
+            'X-CSRFToken': csrfToken
+        }
     })
         .then(response => {
             if (!response.ok) {
@@ -477,12 +475,12 @@ function loadGame(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !==  `dynamic-game-${roomName}`) {
-                const state = { page:  `dynamic-game-${roomName}` };
-                history.pushState(state, '', `/dynamic_game/${roomName}`);
+            if (history.state?.page !== `game-${roomName}`) {
+                const state = { page: `game-${roomName}` };
+                history.pushState(state, '', `/game/${roomName}`);
             }
             // loadscript('loadelement.js', () => loadchat());
-            loadscript('game.js', () => launchGame(roomName, maxPoints));
+            loadscript('game.js', () => launchGameBot(roomName, maxPoints));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

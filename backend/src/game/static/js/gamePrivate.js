@@ -26,12 +26,19 @@ function launchGamePrivate(roomName, maxPoints) {
         }));
     };
 
+    function sendStopGame() {
+        socketPrivate.send(JSON.stringify({ type: 'stop_game' }));
+        isActive = false;
+    }
+
     window.addEventListener('beforeunload', () => {
+        sendStopGame();
         socketPrivate.close();
     });
 
     window.addEventListener('popstate', () => {
         if (socketPrivate.readyState === WebSocket.OPEN) {
+            sendStopGame();
             socketPrivate.close();
         }
     });
@@ -41,6 +48,7 @@ function launchGamePrivate(roomName, maxPoints) {
     const observer = new MutationObserver(() => {
         if (targetPaths.includes(window.location.pathname)) {
             if (socketPrivate) {
+                sendStopGame();
                 socketPrivate.close();
                 console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
@@ -59,6 +67,7 @@ function launchGamePrivate(roomName, maxPoints) {
 
         if (leftBar === null || rightBar === null) {
             if (socketPrivate) {
+                sendStopGame();
                 socketPrivate.close();
             }
         } 
@@ -128,10 +137,12 @@ function launchGamePrivate(roomName, maxPoints) {
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
             if (socketPrivate.readyState === WebSocket.OPEN) {
+                sendStopGame();
                 socketPrivate.close();
             }
         } else if (data.type === "close_socket") {
             if (socketPrivate.readyState === WebSocket.OPEN) {
+                sendStopGame();
                 socketPrivate.close();
             }
         }
@@ -143,6 +154,7 @@ function launchGamePrivate(roomName, maxPoints) {
 
         if (leftBar === null || rightBar === null) {
             if (socketPrivate) {
+                sendStopGame();
                 socketPrivate.close();
             }
             return;
@@ -189,6 +201,7 @@ function launchGamePrivate(roomName, maxPoints) {
 
                 if (ball === null) {
                     if (socketPrivate) {
+                        sendStopGame();
                         socketPrivate.close();
                     }
 
