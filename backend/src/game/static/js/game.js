@@ -88,7 +88,7 @@ function launchGameBot(roomName, maxPoints) {
 
         const ballTop = parseFloat(ball.style.top);
         const rightBarTop = parseFloat(rightBar.style.top);
-        
+
         if (ballTop > rightBarTop + 10) {
             playerActions.right = barSpeed;
             sendMove("right", barSpeed);
@@ -101,7 +101,7 @@ function launchGameBot(roomName, maxPoints) {
             playerActions.right = 0;
             sendMove("right", 0);
         }
-
+    
         requestAnimationFrame(updateBarPositions);
     }
 

@@ -18,14 +18,15 @@ class PongGameBOT:
         ball_x, ball_y = self.ball_pos["x"], self.ball_pos["y"]
         ball_speed_x, ball_speed_y = self.ball_speed["x"], self.ball_speed["y"]
 
-        while 0 < ball_x < 100:
-            ball_x += ball_speed_x
-            ball_y += ball_speed_y
+        time_to_hit_right = (100 - ball_x) / abs(ball_speed_x)
+        predicted_y = (ball_y + 10) + ball_speed_y * time_to_hit_right
 
-            if ball_y <= 0 or ball_y >= 100:
-                ball_speed_y *= -1
+        if predicted_y <= 0:
+            predicted_y = -predicted_y
+        elif predicted_y >= 100:
+            predicted_y = 100 - (predicted_y - 100)
 
-        return ball_y  
+        return predicted_y 
 
     def move_bar(self, bar, direction):
         if bar == "left":
