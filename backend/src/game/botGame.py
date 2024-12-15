@@ -18,15 +18,20 @@ class PongGameBOT:
         ball_x, ball_y = self.ball_pos["x"], self.ball_pos["y"]
         ball_speed_x, ball_speed_y = self.ball_speed["x"], self.ball_speed["y"]
 
-        time_to_hit_right = (100 - ball_x) / abs(ball_speed_x)
-        predicted_y = (ball_y + 10) + ball_speed_y * time_to_hit_right
+        while 0 <= ball_x <= 100:
+            time_to_hit_wall = min(
+                abs((0 - ball_x) / ball_speed_x) if ball_speed_x < 0 else float('inf'),
+                abs((100 - ball_x) / ball_speed_x) if ball_speed_x > 0 else float('inf')
+            )
+            ball_y += ball_speed_y * time_to_hit_wall
+            ball_speed_y *= -1 if ball_y < 0 or ball_y > 100 else 1
+            ball_x += ball_speed_x * time_to_hit_wall
 
-        if predicted_y <= 0:
-            predicted_y = -predicted_y
-        elif predicted_y >= 100:
-            predicted_y = 100 - (predicted_y - 100)
+            if ball_x <= 0 or ball_x >= 100:
+                break;
 
-        return predicted_y 
+        return ball_y
+
 
     def move_bar(self, bar, direction):
         if bar == "left":

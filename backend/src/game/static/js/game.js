@@ -89,11 +89,11 @@ function launchGameBot(roomName, maxPoints) {
         const ballTop = parseFloat(ball.style.top);
         const rightBarTop = parseFloat(rightBar.style.top);
 
-        if (ballTop > rightBarTop + 10) {
+        if (ballTop > rightBarTop) {
             playerActions.right = barSpeed;
             sendMove("right", barSpeed);
         }
-        else if (ballTop < rightBarTop - 10) {
+        else if (ballTop < rightBarTop) {
             playerActions.right = -barSpeed;
             sendMove("right", -barSpeed);
         }

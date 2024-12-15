@@ -91,25 +91,23 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-            await sleep(0.015)
+            await sleep(0.01)
 
     async def control_ai(self):
         predicted_y = self.game.predict_ball_position()
-
         ai_bar_pos = self.game.right_bar_pos
 
-        distance = abs(predicted_y - ai_bar_pos)
-    
-        if distance < 5:
-            direction = 0 
+        bar_height = 30 
+        ball_radius = 1
+        bar_correction = bar_height / 2 + ball_radius
+
+        distance = predicted_y - ai_bar_pos
+        speed_factor = min(3, max(2.5, abs(distance) / 10))
+
+        if abs(distance) > bar_correction:
+            direction = speed_factor if distance > 0 else -speed_factor
         else:
-            speed_factor = 2 + (distance / 100) 
-            if predicted_y < ai_bar_pos:
-                direction = -speed_factor  # Monter
-            elif predicted_y > ai_bar_pos:
-                direction = speed_factor  # Descendre
-            else:
-                direction = 0  # Rester immobile
+            direction = 0
 
         self.game.move_bar("right", direction)
 
