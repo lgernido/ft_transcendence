@@ -33,6 +33,11 @@
 	font-size: x-large;
 }
 
+.btn-custom {
+	width: 20%;
+	font-size: x-large;
+}
+
 .card-lobby-img-top {
 	width: 100%;
 	border: solid 2px var(--color-black);

@@ -487,6 +487,36 @@ function loadGame(roomName, maxPoints) {
         });
 }
 
+function loadGamePrivateCustom(roomName, maxPoints) {
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    fetch(`/game/${roomName}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            appDiv.innerHTML = html;
+
+            if (history.state?.page !== `game-${roomName}`) {
+                const state = { page: `game-${roomName}` };
+                history.pushState(state, '', `/game/${roomName}`);
+            }
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('gameCustom.js', () => launchGamePrivateCustom(roomName, maxPoints));
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
 function loadGamePrivate(roomName, maxPoints) {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
