@@ -8,6 +8,9 @@ function launchGameBot(roomName, maxPoints) {
 
     playerRight.innerHTML = 'OpenAI';
 
+    const selectRightBar = document.querySelector('.right-barre');
+    selectRightBar.classList.add('bar-transition');
+
     setTimeout(() => {
         playerLeft.classList.add('slide-in-left');
         playerRight.classList.add('slide-in-right');
@@ -64,6 +67,7 @@ function launchGameBot(roomName, maxPoints) {
     function updateBarPositions() {
         if (!isActive) return;
 
+
         const leftBar = document.querySelector('.left-barre');
         const rightBar = document.querySelector('.right-barre');
         const ball = document.querySelector('.ball');
@@ -89,11 +93,11 @@ function launchGameBot(roomName, maxPoints) {
         const ballTop = parseFloat(ball.style.top);
         const rightBarTop = parseFloat(rightBar.style.top);
 
-        if (ballTop > rightBarTop) {
+        if (ballTop > rightBarTop + 3) {
             playerActions.right = barSpeed;
             sendMove("right", barSpeed);
         }
-        else if (ballTop < rightBarTop) {
+        else if (ballTop < rightBarTop - 3) {
             playerActions.right = -barSpeed;
             sendMove("right", -barSpeed);
         }

@@ -2,6 +2,7 @@ import json
 import asyncio
 import logging
 import uuid
+import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .botGame import PongGameBOT
 from .utils import serialize_game_state
@@ -50,9 +51,14 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
         )
         
     async def game_loop(self):
+        last_ai_move = 0
         while self.running:
             self.game.move_ball()
-            self.control_ai()
+
+            current_time = time.time()
+            if current_time - last_ai_move >= 1:
+                self.control_ai()
+                last_ai_move = current_time
 
             if self.game.is_game_over():
                 winner = self.game.get_winner()
@@ -91,7 +97,7 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-            await sleep(0.01)
+            await sleep(0.1)
 
     async def control_ai(self):
         predicted_y = self.game.predict_ball_position()

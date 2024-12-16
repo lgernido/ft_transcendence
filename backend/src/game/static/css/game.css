@@ -108,6 +108,10 @@
     transition: height 0.05s ease-in-out;
 }
 
+.bar-transition {
+    transition: top 0.1s ease-in-out;
+}
+
 .left-barre {
 	left: 0;
 	top: 50%;

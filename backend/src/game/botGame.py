@@ -103,7 +103,7 @@ class PongGameBOT:
         self.ball_speed["x"] *= acceleration
         self.ball_speed["y"] *= acceleration
 
-        limit_speed = 3
+        limit_speed = 9
         self.ball_speed["x"] = max(-limit_speed, min(limit_speed, self.ball_speed["x"]))
         self.ball_speed["y"] = max(-limit_speed, min(limit_speed, self.ball_speed["y"]))
 
