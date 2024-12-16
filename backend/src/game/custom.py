@@ -4,7 +4,7 @@ import logging
 import uuid
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .game import PongGameCustom
-from .utils import serialize_game_state
+from .utils import serialize_game_state2
 from asyncio import sleep
 
 class GameCustomConsumer(AsyncWebsocketConsumer):
@@ -26,7 +26,7 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
 
         await self.send(json.dumps({
             'type': 'game_state',
-            **serialize_game_state(self.game)
+            **serialize_game_state2(self.game)
         }))
 
         self.game_task = asyncio.create_task(self.game_loop())
@@ -62,7 +62,7 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'game_update',
-                        **serialize_game_state(self.game)
+                        **serialize_game_state2(self.game)
                     }
                 )
 
@@ -86,7 +86,7 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'game_update',
-                    **serialize_game_state(self.game)
+                    **serialize_game_state2(self.game)
                 }
             )
 
@@ -118,7 +118,7 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'game_update',
-                    **serialize_game_state(self.game)
+                    **serialize_game_state2(self.game)
                 }
             )
 
@@ -130,7 +130,7 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 "type": "game_update",
-                **serialize_game_state(self.game),
+                **serialize_game_state2(self.game),
             }
         )
     
@@ -164,7 +164,7 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 "type": "game_update",
-                **serialize_game_state(self.game),
+                **serialize_game_state2(self.game),
             }
         )
 

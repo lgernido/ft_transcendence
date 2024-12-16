@@ -161,10 +161,14 @@ function launchGamePrivateCustom(roomName, maxPoints) {
             return;
         }
 
-        document.querySelector('.left-barre').style.top = `${state.left_bar_pos}%`;
-        document.querySelector('.right-barre').style.top = `${state.right_bar_pos}%`;
-        document.querySelector('.ball').style.left = `${state.ball_pos.x}%`;
-        document.querySelector('.ball').style.top = `${state.ball_pos.y}%`;
+        leftBar.style.top = `${state.left_bar_pos}%`;
+        rightBar.style.top = `${state.right_bar_pos}%`;
+    
+        leftBar.style.height = `${state.left_bar_height}%`;
+        rightBar.style.height = `${state.right_bar_height}%`;
+    
+        document.querySelector('.ballfoot').style.left = `${state.ball_pos.x}%`;
+        document.querySelector('.ballfoot').style.top = `${state.ball_pos.y}%`;
     
         document.getElementById('scorePLeft').innerText = state.left_score;
         document.getElementById('scorePRight').innerText = state.right_score;
@@ -173,7 +177,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         
     function displayWinner(winner) {
         isActive = false;
-        document.querySelector('.ball').classList.add('hidden');
+        document.querySelector('.ballfoot').classList.add('hidden');
         const winnerMessage = document.getElementById('winnerMessage');
         winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "Player 2 Wins!";
         winnerMessage.style.display = 'block';
@@ -196,9 +200,18 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         const countdownInterval = setInterval(() => { 
             countdown -= 1;
             countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+            const ball2 = document.querySelector('.ballfoot');
+            if (ball2 === null) {
+                if (socketCustom) {
+                    sendStopGame();
+                    socketCustom.close();
+                }
+
+                return;
+            }
             
             if (countdown <= 0) {
-                const ball = document.querySelector('.ball');
+                const ball = document.querySelector('.ballfoot');
 
                 if (ball === null) {
                     if (socketCustom) {
@@ -211,7 +224,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
 
                 clearInterval(countdownInterval);
                 countdownElement.style.display = 'none';
-                document.querySelector('.ball').classList.remove('hidden'); 
+                document.querySelector('.ballfoot').classList.remove('hidden'); 
                 isActive = true;
                 socketCustom.send(JSON.stringify({ type: 'start_game' }));
                 updateBarPositions();

@@ -195,6 +195,16 @@ function launchGamePrivate(roomName, maxPoints) {
         const countdownInterval = setInterval(() => { 
             countdown -= 1;
             countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+            const ball2 = document.querySelector('.ball');
+
+                if (ball2 === null) {
+                    if (socketPrivate) {
+                        sendStopGame();
+                        socketPrivate.close();
+                    }
+
+                    return;
+                }
             
             if (countdown <= 0) {
                 const ball = document.querySelector('.ball');

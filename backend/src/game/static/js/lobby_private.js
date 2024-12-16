@@ -61,7 +61,7 @@ function lobby_private() {
         const roomName = `${username}_room`;
 
         if (player1Color !== 'color-player-none' && player2Color !== 'color-player-none' && player1Color != player2Color && maxPoint > 0 && maxPoint < 40) {
-            fetch("create_room/", {
+            fetch("create_custom/", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -113,11 +113,18 @@ class PongGameCustom:
         self.right_bar_pos = 50
         self.ball_pos = {"x": 50, "y": 50} 
         self.ball_speed = {"x": choice([-1, 1]), "y": uniform(-0.8, 0.8)}
+        self.left_bar_height = 15  
+        self.right_bar_height = 15
         self.left_score = 0
         self.right_score = 0
         self.limit_points = limit_points
         self.resetting_ball = False
         self.isAtive = False
+
+        self.left_bar_growing = False
+        self.right_bar_growing = False
+        self.growth_amount = 5
+        self.max_bar_height = 60
 
     def move_bar(self, bar, direction):
         if bar == "left":
@@ -131,6 +138,10 @@ class PongGameCustom:
         self.ball_pos = {"x": 50, "y": 50}
         self.ball_speed = {"x": choice([-1, 1]), "y": uniform(-0.8, 0.8)}
         self.resetting_ball = False
+        self.left_bar_growing = False
+        self.right_bar_growing = False
+        self.left_bar_height = 15
+        self.right_bar_height = 15
 
     def move_ball(self):
         if not self.isAtive or self.resetting_ball:
@@ -144,8 +155,17 @@ class PongGameCustom:
 
         if self.check_collision("left", self.left_bar_pos):
             self.handle_collision("left")
+            if self.left_bar_height < self.max_bar_height and not self.left_bar_growing:
+                self.left_bar_height += self.growth_amount 
+                self.left_bar_growing = True
         elif self.check_collision("right", self.right_bar_pos):
             self.handle_collision("right")
+            if self.right_bar_height < self.max_bar_height and not self.right_bar_growing:
+                self.right_bar_height += self.growth_amount
+                self.right_bar_growing = True
+
+        self.right_bar_growing = False
+        self.left_bar_growing = False
 
         if self.ball_pos["x"] <= 0:
             self.right_score += 1
@@ -162,7 +182,10 @@ class PongGameCustom:
     def check_collision(self, barre, barre_pos):
         ball_radius = 1
         bar_width = 2
-        bar_height = 15
+        if barre == "left":
+            bar_height = self.left_bar_height
+        elif barre == "right":
+            bar_height = self.right_bar_height
 
         if barre == "left":
             if self.ball_pos["x"] <= bar_width + ball_radius:
