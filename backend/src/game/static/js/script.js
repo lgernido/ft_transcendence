@@ -547,6 +547,36 @@ function loadGamePrivate(roomName, maxPoints) {
         });
 }
 
+function loadGameTournament(roomName, maxPoints, players) {
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    fetch(`/tournament/${roomName}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            appDiv.innerHTML = html;
+
+            if (history.state?.page !== `tournament-${roomName}`) {
+                const state = { page: `tournament-${roomName}` };
+                history.pushState(state, '', `/tournament/${roomName}`);
+            }
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('tournament.js', () => launchTournament(roomName, maxPoints, players));
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
 function loadChat() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');

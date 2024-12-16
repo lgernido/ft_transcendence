@@ -29,7 +29,9 @@ urlpatterns = [
     path('game/', views.game, name='game'),
     path('create_custom/', views.create_custom, name='create_custom'),
     path('create_room/', views.create_room, name='create_room'),
+    path('create_tournament/', views.create_tournament, name='create_tournament'),
     path('custom/<str:room_name>/', views.game_custom, name='game_custom'),
+    path('tournament/<str:room_name>/', views.game_tournament, name='game_tournament'),
     path('game/<str:room_name>/', views.game_room, name='game_room'),
 
 	# path('<path:path>', views.home),
