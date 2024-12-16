@@ -20,6 +20,9 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
+import logging
+logger = logging.getLogger(__name__)
+
 @csrf_exempt
 def create_account(request):
     if request.method == 'POST':
@@ -60,10 +63,12 @@ def create_account(request):
                 format, imgstr = new_avatar.split(';base64,')
                 ext = format.split('/')[1]
                 image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
+                logging.warning("New img: ", image_data)
                 social.update_avatar(image_data)
             else:
                 # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
                 social.update_avatar(new_avatar)
+                logging.warning("update img:", new_avatar)
 
         return JsonResponse({'success': True})
     return render(request, 'partials/create_account.html')

@@ -72,6 +72,13 @@ class Social(models.Model):
                     os.remove(avatar_path)
             except Exception as e:
                  logging.warning("\nERROR UPDATE AVATAR\n", e)
+        if new_avatar.startswith("http"):
+            parts = new_avatar.split('/')
+            if len(parts) > 2:
+                new_avatar = '/'.join(parts[-2:])
+        new_avatar = new_avatar
+        logging.warning("self avatar: ", self.avatar)
+        logging.warning("new_avatar: ", new_avatar)
         self.avatar = new_avatar
         self.save()
 
