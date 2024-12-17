@@ -1,41 +1,120 @@
 function tournament(){
-	const savedValue = localStorage.getItem('selectedValue');
-	const dropdownButton = document.getElementById('dropdownButton');
-	const cardContainer = document.getElementById('cardContainerTournament');
+	const maxPointsInput = document.getElementById('inputMaxPoint');
+    const cardContainer = document.getElementById('cardContainerTournament');
+    const btnStart = document.getElementById('btn-ready');
+    let selectedNumber = 0;
 
-	if (savedValue) {
-		dropdownButton.textContent = `NB playeur: ${savedValue}`;
-		generateCards(savedValue);
+    function generateRandomString(length = 8) {
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		let result = '';
+		for (let i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * characters.length));
+		}
+		return result;
 	}
 
-	document.querySelectorAll('.dropdown-item').forEach(item => {
-		item.addEventListener('click', (event) => {
-			event.preventDefault();
-			const selectedValue = event.target.getAttribute('data-nb-player');
-			localStorage.setItem('selectedValue', selectedValue);
-			updateTournamentContent(selectedValue);
-		});
+    btnStart.addEventListener('click', (event) => {
+        const players = [];
+
+        console.log(selectedNumber );
+
+        if (selectedNumber === 0 || selectedNumber === null) {
+            alert('Veuillez sélectionner un nombre de joueurs');
+            return;
+        }
+        
+        for (let i = 0; i < cardContainer.children.length; i++) {
+            const playerInput = document.getElementById(`player-${i}`);
+            
+            if (playerInput.value === '') {
+                alert('Veuillez renseigner tous les champs');
+                selectedNumber = 0;
+                return;
+            }
+            
+            players.push(playerInput.value);
+        }
+
+        for (let i = 0; i < players.length; i++) {
+            for (let j = i + 1; j < players.length; j++) {
+                if (players[i] === players[j]) {
+                    alert('Veuillez renseigner des pseudos différents');
+                    selectedNumber = 0;
+                    return;
+                }
+            }
+        };
+
+        const generateUUID = generateRandomString(8);
+		const roomName = `${generateUUID}_room`;
+        const maxPoint = maxPointsInput.value;
+
+        fetch("create_tournament/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({
+                roomName: roomName,
+                player1Color: 'color-player-red',
+                player2Color: 'color-player-blue',
+                maxPoint: maxPoint,
+            }),
+        })
+            .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                if (status === 200) {
+                    loadGameTournament(roomName, maxPoint, players);
+                } else {
+                    alert(body.error || 'Failed to create room');
+                }
+            })
+            .catch((error) => {
+                console.error('Fetch error:', error);
+                alert('Failed to create room');
+        });
+    });
+
+	document.querySelectorAll('.btn-primary').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const selectedValue = event.target.getAttribute('data-nb-player');
+            selectedNumber = selectedValue;
+            localStorage.setItem('selectedValue', selectedValue);
+            generateCards(selectedValue);
+        });
+    });
+
+	const savedValue = localStorage.getItem('selectedValue');
+    if (savedValue) {
+        generateCards(savedValue);
+    }
+
+	maxPointsInput.addEventListener('input', (event) => {
+		if (maxPointsInput.value < 1)
+			maxPointsInput.value = 1;
+		else if (maxPointsInput.value > 40)
+			maxPointsInput.value = 40;
 	});
 
 	function generateCards(count) {
-		cardContainer.innerHTML = '';
-		for (let i = 0; i < count; i++) {
-			const card = document.createElement('div');
-			card.classList.add('card-lobby-wait-tournament', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
-			
-			card.innerHTML = `
-				<div class="d-flex flex-column align-items-center">
-					<div class="spinner-border spinner-color mt-3" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-				</div>
-				<div class="card-lobby-body d-flex align-items-center justify-content-center">
-					<p class="card-lobby-text">Waiting for player...</p>
-				</div>
-			`;
-			cardContainer.appendChild(card);
-		}
-	}
+        cardContainer.innerHTML = ''; 
+
+        for (let i = 0; i < count; i++) {
+            const card = document.createElement('div');
+            card.classList.add('card-lobby-wait-tournament', 'd-flex', 'flex-column', 'align-items-center', 'justify-content-center', 'm-4');
+
+            card.innerHTML = `
+                <div class="d-flex flex-column align-items-center">
+                    <p class="player-number">Joueur ${i + 1}</p>
+                </div>
+                <div class="card-lobby-body d-flex align-items-center justify-content-center">
+                    <input type="text" class="form-control mt-3" placeholder="Enter pseudo" id="player-${i}">
+                </div>
+            `;
+            cardContainer.appendChild(card);
+        }
+    }
 }
 
 function updateTournamentContent(selectedValue) {

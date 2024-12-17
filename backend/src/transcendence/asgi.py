@@ -13,13 +13,13 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from django.urls import path
 from chat.routing import websocket_urlpatterns as chat_urlpatterns
-# from game.routing import websocket_urlpatterns as game_urlpatterns
+from game.routing import websocket_urlpatterns as game_urlpatterns
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'transcendence.settings')
 
 django_asgi_app = get_asgi_application()
 
-websocket_urlpatterns = chat_urlpatterns
+websocket_urlpatterns = chat_urlpatterns + game_urlpatterns
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),

@@ -41,17 +41,6 @@
     }
 }
 
-.winner-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.5s, transform 1s;
-}
-
 .show {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.2);
@@ -66,11 +55,22 @@
 }
 
 .show-score {
-	border: solid 3px var(--color-btn);
-	border-radius: 20%;
-	background-color: var(--color-black);
-	min-width: 100px;
-	min-height: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border: solid 3px var(--color-btn);
+    border-radius: 20%;
+    background-color: var(--color-black);
+    min-width: 100px;
+    min-height: 50px;
+    text-align: center;
+    padding: 10px;
+    color: white;
+}
+
+.show-score p {
+    margin: 0;
 }
 
 .game-window {
@@ -81,11 +81,50 @@
 	position: relative;
 }
 
+.ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: black;
+    z-index: 5; 
+    visibility: visible; 
+    opacity: 1;
+} 
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
 .left-barre,
 .right-barre {
 	width: 10px;
 	height: 15%;
 	border: solid 1px black;
+    transition: height 0.05s ease-in-out;
+}
+
+.bar-transition {
+    transition: top 0.1s ease-in-out;
+}
+
+.round-announcement {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 10;
 }
 
 .left-barre {
@@ -104,6 +143,23 @@
 	margin-right: 3px;
 }
 
+.center-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgb(139, 139, 139) 0px,
+        rgb(139, 139, 139) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
 .countdown {
 	position: absolute;
 	top: 50%;
@@ -115,7 +171,100 @@
 	z-index: 10;
 }
 
+.winner-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    font-weight: bold;
+    color: black;
+    transition: opacity 0.5s, transform 1s;
+    z-index: 10;
+}
 
+.ballfoot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background-image: url('../img/ball.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+    animation: spin 2s linear infinite; 
+}
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.football-field {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/football.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 0;
+    border: solid 2px #ffffff; 
+}
+
+.center-line-foot {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: #ffffff;
+    z-index: 1;
+    transform: translateX(-50%);
+}
+
+.center-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10%; 
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border: 2px solid white; 
+    border-radius: 50%; 
+    background-color: transparent;
+    z-index: 2;
+}
+
+.penalty-area {
+    position: absolute;
+    width: 5%;
+    height: 30%;
+    border: 2px solid white;
+    background-color: transparent;
+    z-index: 1; 
+}
+
+.left-penalty {
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.right-penalty {
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 .color-player-red {
     background-color: #FF0000;

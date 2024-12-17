@@ -18,4 +18,5 @@ class Game(models.Model):
 
     def __str__(self):
         return f"Game between {self.player1.username} and {self.player2.username} - Winner: {self.winner.username if self.winner else 'Draw'}"
+    
 

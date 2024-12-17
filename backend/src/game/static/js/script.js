@@ -171,7 +171,7 @@ function loadMyPage() {
                         const state = { page: 'mypage' };
                         history.pushState(state, '', "/mypage");
                     }
-                    loadscript('language-switch.js', () => selectLanguage());
+                    // loadscript('language-switch.js', () => selectLanguage());
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération de mypage :', error);
@@ -353,6 +353,7 @@ function loadTournament()
                 const state = { page: 'lobby_T' };
                 history.pushState(state, '', "/lobby_T");
             }
+            console.log("loadTournament");
             loadscript('lobby_tournament.js', () => tournament());
             loadscript('loadelement.js', () => loadMiniChat());
         })
@@ -423,14 +424,13 @@ function loadPrivate() {
         });
 }
 
-function loadGame() {
+function loadGame(roomName, maxPoints) {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch('/game/', {
+    fetch(`/game/${roomName}`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken,
-            'X-Fetch-Request': 'true',
+            'X-CSRFToken': csrfToken
         }
     })
         .then(response => {
@@ -442,11 +442,102 @@ function loadGame() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== 'game') {
-                const state = { page: 'game' };
-                history.pushState(state, '', "/game");
+            if (history.state?.page !== `game-${roomName}`) {
+                const state = { page: `game-${roomName}` };
+                history.pushState(state, '', `/game/${roomName}`);
             }
-            loadscript('game.js', () => lauchgame());
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('game.js', () => launchGameBot(roomName, maxPoints));
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function loadGamePrivateCustom(roomName, maxPoints) {
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    fetch(`/custom/${roomName}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            appDiv.innerHTML = html;
+
+            if (history.state?.page !== `custom-${roomName}`) {
+                const state = { page: `custom-${roomName}` };
+                history.pushState(state, '', `/custom/${roomName}`);
+            }
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('gameCustom.js', () => launchGamePrivateCustom(roomName, maxPoints));
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function loadGamePrivate(roomName, maxPoints) {
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    fetch(`/game/${roomName}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            appDiv.innerHTML = html;
+
+            if (history.state?.page !== `game-${roomName}`) {
+                const state = { page: `game-${roomName}` };
+                history.pushState(state, '', `/game/${roomName}`);
+            }
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints));
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function loadGameTournament(roomName, maxPoints, players) {
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    fetch(`/tournament/${roomName}`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            appDiv.innerHTML = html;
+
+            if (history.state?.page !== `tournament-${roomName}`) {
+                const state = { page: `tournament-${roomName}` };
+                history.pushState(state, '', `/tournament/${roomName}`);
+            }
+            // loadscript('loadelement.js', () => loadchat());
+            loadscript('tournament.js', () => launchTournament(roomName, maxPoints, players));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -651,4 +742,6 @@ window.addEventListener('load', function () {
     const initialState = { page: initialPage };
     history.replaceState(initialState, '', window.location.pathname);
 });
+
+
 
