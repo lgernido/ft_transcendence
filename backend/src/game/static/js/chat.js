@@ -77,7 +77,7 @@ function handleChat(){
 				return response.json();
 			})
 			.then(data => {
-				chatArea.innerHTML = "";  // Réinitialiser la zone de messages
+				chatArea.innerHTML = "";
 				console.log(data.messages);
 				data.messages.forEach(msg => {
 					const messageElement = document.createElement("p");

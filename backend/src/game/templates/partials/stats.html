@@ -58,12 +58,12 @@
 		<h2 data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer;">Bob</h2>
 		<p class="result text-light" data-winner>{%trans 'Win' %}</p>
 		<p data-score class="text-light">0 - 0</p>
-		<p data-date class="text-light">Unknown Date</p>
+		<p data-date class="text-light">{%trans 'Unknown Date' %}</p>
 	</div>
 </template>
 
 <template id="gameNotFound">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px;">
-        <p class="fw-bold fs-1 text-warning">/!\ Game not found /!\</p>
+        <p class="fw-bold fs-1 text-warning">{% trans 'Game not found' %}</p>
     </div>
 </template>

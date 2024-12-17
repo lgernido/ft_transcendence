@@ -7,7 +7,7 @@
 				
 				<form class="mb-4">
 					<div class="input-group border rounded">
-						<input type="text" class="form-control" id="userSearchInput" placeholder="Rechercher un utilisateur..." aria-label="Recherche">
+						<input type="text" class="form-control" id="userSearchInput" placeholder="{% trans 'Search a user...' %}" aria-label="Recherche">
 						<span class="input-group-text">
 							<i class="bi bi-search"></i> 
 						</span>
@@ -32,7 +32,7 @@
 				</div>
 				<div class="chat-footer">
 					<form id="message-form" class="d-flex">
-						<textarea type="text" id="message-input" class="form-control me-2" placeholder="Write your best win 😈" autocomplete="off" required></textarea>
+						<textarea type="text" id="message-input" class="form-control me-2" placeholder="{% trans 'Write your best win 😈' %}" autocomplete="off" required></textarea>
 						<button type="submit" class="btn btn-primary" id="sendMSG">
 							<img src="{% static 'chat/img/envoyer.png' %}" alt="Envoyer">
 						</button>

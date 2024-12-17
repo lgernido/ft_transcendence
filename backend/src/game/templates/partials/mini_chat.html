@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load static %}
 <div class="mx-2 my-2 d-flex flex-column align-items-center" style="height: calc(100vh - 80px); min-height: 450px;">
     <div id="container-chat" class="w-100 border rounded d-flex flex-column">
@@ -17,7 +18,7 @@
             <div class="chat-header d-flex align-items-center border-bottom">
                 <img src="" alt="Avatar" class="rounded-circle me-3"> 
                 <div class="contact-details">
-                    <strong>Start a chat with someone</strong>
+                    <strong>{%trans 'Start a chat with someone' %}</strong>
                 </div>
             </div>
 
