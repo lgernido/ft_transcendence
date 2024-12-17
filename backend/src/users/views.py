@@ -208,3 +208,13 @@ def GetUserById(request):
             return JsonResponse({'error': 'User not found'}, status=404)
     return JsonResponse({'error': 'Username parameter is missing'}, status=400)
 
+def GetUser42(request):
+    if request.user.is_authenticated:
+        try:
+            current_user = Social.objects.get(id=request.user.id)
+            return JsonResponse({"is_42": current_user.user42})
+        except Social.DoesNotExist:
+            return JsonResponse({"error": "L'utilisateur n'existe pas dans Social"}, status=404)
+    else:
+        return JsonResponse({"error": "Utilisateur non authentifié"}, status=401)
+

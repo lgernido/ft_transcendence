@@ -4,7 +4,7 @@ from users.views import create_account
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import set_language
 from .views import game_room
-from users.views import create_account, GetUserId, GetUserById, GetUserByName
+from users.views import create_account, GetUserId, GetUserById, GetUserByName, GetUser42
 
 urlpatterns = [
     path('', views.home, name='home_page'),
@@ -35,7 +35,6 @@ urlpatterns = [
     path('tournament/<str:room_name>/', views.game_tournament, name='game_tournament'),
     path('game/<str:room_name>/', views.game_room, name='game_room'),
 
-	# path('<path:path>', views.home),
     path('set_language/', views.set_language, name='set_language'),
 	path('check_user_status/', views.check_user_status, name='check_user_status'),
 	path('extractProfile/', views.extractProfile, name='extractProfile'),
@@ -45,4 +44,5 @@ urlpatterns = [
 	path('GetUserId/', GetUserId, name="GetUserId"),
 	path('GetUserById/', GetUserById, name="GetUserById"),
 	path('GetUserByName/', GetUserByName, name="GetUserByName"),
+	path('GetUser42/', GetUser42, name='GetUser42'),
 ]

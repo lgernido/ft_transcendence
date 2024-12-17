@@ -1,7 +1,31 @@
-function validChanges() {
-    displayError('');
+async function getIsActive() {
+    try {
+        const response = await fetch('/GetUser42/');
 
-    if (document.getElementById('profileImageButton')) {
+        if (!response.ok) {
+            console.error(`Erreur HTTP : ${response.status}`);
+            return false;
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            console.error('Erreur dans la réponse :', data.error);
+            return false;
+        }
+
+        return data.is_42;
+    } catch (error) {
+        console.error('Erreur lors de la requête :', error);
+        return false;
+    }
+}
+
+async function validChanges() {
+    displayError('');
+    const user42 = await getIsActive();
+    console.log("User42: ", user42);
+    if (document.getElementById('profileImageButton') && !user42) {
         document.getElementById('profileImageButton').addEventListener('click', function() {
             document.getElementById('profileImageInput').click();
         });
@@ -23,6 +47,12 @@ function validChanges() {
             reader.readAsDataURL(file);
         }
     });
+
+    if (user42) {
+        document.getElementById("modifEmailAccount").disabled = true;
+        document.getElementById("modifUsernameAccount").disabled = true;
+        document.getElementById("modifPasswordAccount").disabled = true;
+    }
 
     const validChangesAccount = document.getElementById('saveChangesAccount');
     if (validChangesAccount) {

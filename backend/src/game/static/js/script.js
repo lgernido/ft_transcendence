@@ -141,6 +141,7 @@ function loadCreateAccount() {
 }
 
 function loadMyPage() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -187,6 +188,7 @@ function loadMyPage() {
 }
 
 function loadStats() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -235,6 +237,7 @@ function loadStats() {
 }
 
 function loadFriends() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -284,6 +287,7 @@ function loadFriends() {
 }
 
 function loadAccount() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     
@@ -331,6 +335,7 @@ function loadAccount() {
 
 function loadTournament()
 {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/lobby_tournament/', {
@@ -363,6 +368,7 @@ function loadTournament()
 }
 
 function loadPublic() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/lobby/', {
@@ -394,6 +400,7 @@ function loadPublic() {
 }
 
 function loadPrivate() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/lobby_private/', {
@@ -425,6 +432,7 @@ function loadPrivate() {
 }
 
 function loadGame(roomName, maxPoints) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/game/${roomName}`, {
@@ -455,6 +463,7 @@ function loadGame(roomName, maxPoints) {
 }
 
 function loadGamePrivateCustom(roomName, maxPoints) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/custom/${roomName}`, {
@@ -485,6 +494,7 @@ function loadGamePrivateCustom(roomName, maxPoints) {
 }
 
 function loadGamePrivate(roomName, maxPoints) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/game/${roomName}`, {
@@ -515,6 +525,7 @@ function loadGamePrivate(roomName, maxPoints) {
 }
 
 function loadGameTournament(roomName, maxPoints, players) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/tournament/${roomName}`, {
@@ -545,6 +556,7 @@ function loadGameTournament(roomName, maxPoints, players) {
 }
 
 function loadChat() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     
