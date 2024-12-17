@@ -110,3 +110,7 @@ def user_conversations(request):
             })
 
     return JsonResponse({'conversations': conversations}, safe=False)
+
+def check_user_block(request):
+    current_user = request.user
+    return ()

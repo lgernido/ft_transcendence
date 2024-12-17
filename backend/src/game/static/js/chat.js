@@ -34,7 +34,7 @@ function handleChat(){
 		}
 
 		const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-		const wsUrl = `${wsScheme}://${window.location.host}/wss/chat2/chat/private_${channelId}/`;
+		const wsUrl = `${wsScheme}://${window.location.host}/chat2/chat/private_${channelId}/`;
 		chatSocket = new WebSocket(wsUrl);
 		chatSocket.onerror = function(event){console.log(event)}
 		console.log(chatSocket);
@@ -77,7 +77,7 @@ function handleChat(){
 				return response.json();
 			})
 			.then(data => {
-				chatArea.innerHTML = "";  // Réinitialiser la zone de messages
+				chatArea.innerHTML = "";
 				console.log(data.messages);
 				data.messages.forEach(msg => {
 					const messageElement = document.createElement("p");

@@ -28,24 +28,3 @@ function loadheader()
 		console.error('There has been a problem with your fetch operation:', error);
 	});
 }
-
-function loadMiniChat()
-{
-	displayError('');
-	fetch('/mini_chat/')
-	.then(response => {
-		if (!response.ok) {
-			throw new Error('Error network response');
-		}
-		return response.text();
-	})
-	.then(data => {
-		if (document.getElementById('chat-placeholder')) {
-			document.getElementById('chat-placeholder').innerHTML = data;
-			loadscript('chat.js', () => handleChat());
-		}
-	})
-	.catch(error => {
-		console.error('There has been a problem with your fetch operation:', error);
-	});
-}

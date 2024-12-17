@@ -107,9 +107,6 @@ def chat(request):
     else:
         return redirect('/?next=/chat/')
 
-def mini_chat(request):
-    return render(request, 'partials/mini_chat.html')
-
 def connect(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/connect.html')

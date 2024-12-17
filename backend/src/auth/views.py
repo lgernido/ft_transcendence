@@ -75,6 +75,9 @@ def callback(request):
             if (social.avatar.name).split('/')[-1] == "default_avatar.png":
                 update_avatar_from_42_api(user_info, social)
 
+        social.user42 = True
+        social.save(update_fields=['user42'])
+
         request.session['access_token'] = access_token
         request.session.save()
 

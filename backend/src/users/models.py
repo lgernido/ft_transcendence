@@ -36,6 +36,7 @@ class Social(models.Model):
     )
     friends_user = models.ManyToManyField(User, related_name='friends', blank=True)
     blocked_user = models.ManyToManyField(User, related_name='blocked_by', blank=True)
+    user42 = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}'s Social"
