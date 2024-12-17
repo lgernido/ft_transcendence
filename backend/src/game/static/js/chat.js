@@ -34,8 +34,9 @@ function handleChat(){
 		}
 
 		const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-		const wsUrl = `${wsScheme}://${window.location.host}/ws/chat2/chat/private_${channelId}/`;
+		const wsUrl = `${wsScheme}://${window.location.host}/wss/chat2/chat/private_${channelId}/`;
 		chatSocket = new WebSocket(wsUrl);
+		chatSocket.onerror = function(event){console.log(event)}
 		console.log(chatSocket);
 
 		chatSocket.onopen = function () {

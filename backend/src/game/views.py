@@ -199,13 +199,16 @@ def compte(request):
             if new_avatar:
                 current_avatar_name = social.avatar.url.split('/')[-1]  # Nom du fichier actuel de l'avatar
                 new_avatar_name = new_avatar.split('/')[-1]  # Nom du fichier de l'avatar proposé
+                logging.warning("NEW avatar: ", current_avatar_name, " ", new_avatar_name, new_avatar)
 
                 if current_avatar_name != new_avatar_name:
+                    # logging.warning("Avatar name: ", new_avatar_name, " ", current_avatar_name)
                     # Vérification si l'avatar est une chaîne base64
                     if new_avatar.startswith('data:image'):
                         format, imgstr = new_avatar.split(';base64,')
                         ext = format.split('/')[1]
                         image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
+                        logging.warning("Different", image_data)
                         social.update_avatar(image_data)
                     else:
                         # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
@@ -284,14 +287,22 @@ def extractGame(request):
         games_data = []
 
         for game in games_as_player1.union(games_as_player2):
+            opponent = game.player2 if game.player1 == user else game.player1
+
+            avatar_url = (
+                opponent.social.avatar.url
+                if hasattr(opponent, 'social') and opponent.social.avatar.url
+                else '/media/avatars/default_avatar.png'
+            )
             games_data.append({
-                "opponent": game.player2.username if game.player1 == user else game.player1.username,
-                "winner": game.winner.username if game.winner else None,
+                "opponent": opponent.username,
+                "winner": game.winner.username if game.winner.username != opponent.username else None,
                 "player1_score": game.player1_score,
                 "player2_score": game.player2_score,
                 "date_played": game.date_played.isoformat(),
                 "duration": str(game.duration) if game.duration else None,
-                "opponentId": game.player2.id if game.player1 == user else game.player1.id,
+                "opponentId": opponent.id,
+                "avatar": avatar_url,
             })
 
         return JsonResponse(games_data, safe=False)

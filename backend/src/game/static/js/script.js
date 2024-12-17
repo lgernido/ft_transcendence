@@ -315,7 +315,6 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
-                    loadscript('language-switch.js', () => selectLanguage());
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);

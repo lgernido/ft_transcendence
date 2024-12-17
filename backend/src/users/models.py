@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.core.files.base import ContentFile
+import requests
 import time
 import os
 import logging
@@ -65,21 +67,37 @@ class Social(models.Model):
     logger = logging.getLogger(__name__)
 
     def update_avatar(self, new_avatar):
-        if self.avatar and self.avatar != 'avatars/default_avatar.png':
+        # Supprimer l'ancien avatar si ce n'est pas le défaut
+        if self.avatar and self.avatar.name != 'avatars/default_avatar.png':
             try:
                 avatar_path = os.path.join(settings.MEDIA_ROOT, self.avatar.name)
                 if os.path.isfile(avatar_path):
                     os.remove(avatar_path)
             except Exception as e:
-                 logging.warning("\nERROR UPDATE AVATAR\n", e)
-        if new_avatar.startswith("http"):
-            parts = new_avatar.split('/')
-            if len(parts) > 2:
-                new_avatar = '/'.join(parts[-2:])
-        new_avatar = new_avatar
-        logging.warning("self avatar: ", self.avatar)
-        logging.warning("new_avatar: ", new_avatar)
-        self.avatar = new_avatar
+                logging.warning(f"ERROR DELETING OLD AVATAR: {e}")
+
+        # Cas où l'avatar est un lien HTTP
+        if isinstance(new_avatar, str) and new_avatar.startswith("http"):
+            try:
+                response = requests.get(new_avatar, stream=True)
+                if response.status_code == 200:
+                    filename = new_avatar.split("/")[-1]
+                    self.avatar.save(filename, ContentFile(response.content), save=False)
+                else:
+                    logging.warning(f"Failed to download avatar from URL: {new_avatar}")
+            except Exception as e:
+                logging.error(f"Error downloading avatar from URL: {e}")
+
+        # Cas où l'avatar est un fichier téléchargé (InMemoryUploadedFile ou similaire)
+        elif hasattr(new_avatar, 'read'):
+            try:
+                filename = new_avatar.name
+                self.avatar.save(filename, new_avatar, save=False)
+            except Exception as e:
+                logging.error(f"Error saving uploaded avatar: {e}")
+
+        else:
+            logging.warning(f"Unsupported avatar format: {new_avatar}")
         self.save()
 
 

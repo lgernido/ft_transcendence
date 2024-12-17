@@ -88,13 +88,13 @@ async function displayCardGame(userId) {
         const chunkSize = getChunkSize();
         const gameChunks = chunkData(allGames, chunkSize);
 
-        updateIndicators(gameChunks.length);
-
+        
         if (allGames.length === 0) {
             containerCardGameResume.innerHTML = "";
             containerCardGameResume.appendChild(notFoundTemplate.cloneNode(true));
             return;
         }
+        updateIndicators(gameChunks.length);
 
         gameChunks.forEach((chunk, index) => {
             const carouselItem = document.createElement("div");
@@ -114,8 +114,9 @@ async function displayCardGame(userId) {
                     loadStats();
                 });
                 
+                cardClone.querySelector("[data-img-opponent]").src = game.avatar;
                 cardClone.querySelector("[data-opponent]").textContent = game.opponent || 'Unknown';
-                cardClone.querySelector("[data-winner]").textContent = game.winner ? 'Win' : 'Lose'; // a faire marcher 
+                cardClone.querySelector("[data-winner]").textContent = game.winner ? 'Win' : 'Lose';
                 cardClone.querySelector("[data-score]").textContent = `${game.player1_score} - ${game.player2_score}`;
                 cardClone.querySelector("[data-date]").textContent = game.date_played.split("T")[0] || 'Unknown Date';
             

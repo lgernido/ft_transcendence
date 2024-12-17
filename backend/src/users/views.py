@@ -58,17 +58,13 @@ def create_account(request):
         except Social.DoesNotExist:
             return JsonResponse({'error': 'Social profile not found.'}, status=404)
         if new_avatar:
-            # Vérification si l'avatar est une chaîne base64
             if new_avatar.startswith('data:image'):
                 format, imgstr = new_avatar.split(';base64,')
                 ext = format.split('/')[1]
                 image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
-                logging.warning("New img: ", image_data)
                 social.update_avatar(image_data)
             else:
-                # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
                 social.update_avatar(new_avatar)
-                logging.warning("update img:", new_avatar)
 
         return JsonResponse({'success': True})
     return render(request, 'partials/create_account.html')
@@ -117,7 +113,6 @@ class FriendshipActionView(APIView):
                 return Response({"message": f"User {target_user.user.username} unblocked."}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 
 class ContactActionView(APIView):
     def get(self, request):
