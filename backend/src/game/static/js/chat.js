@@ -1,5 +1,4 @@
 function handleChat(){
-	console.log("enter script chat");
 	let current_user = null 
     
     fetch(`/chat2/get_current_user`)
@@ -7,9 +6,7 @@ function handleChat(){
     .then(data => {
         if (data) {
             current_user = data.current_user;  // Stocker les données dans current_user
-            console.log(current_user);  // Afficher current_user
         } else {
-            console.log("No data");
         }
     })
     .catch(error => {
@@ -37,14 +34,11 @@ function handleChat(){
 		const wsUrl = `${wsScheme}://${window.location.host}/chat2/chat/private_${channelId}/`;
 		chatSocket = new WebSocket(wsUrl);
 		chatSocket.onerror = function(event){console.log(event)}
-		console.log(chatSocket);
 
 		chatSocket.onopen = function () {
-			console.log("WebSocket connected to channel:", channelId);
 		};
 
 		chatSocket.onclose = function () {
-			console.log("WebSocket closed for channel:", channelId);
 		};
 
 		chatSocket.onmessage = function (e) {
@@ -52,8 +46,6 @@ function handleChat(){
 			const messageElement = document.createElement("p");
 			messageElement.textContent = `${data.sender}: ${data.message}`;
 			messageElement.classList.add(data.sender === current_user ? "send" : "receive");
-			console.log(data.sender);
-			console.log(current_user);
 			chatArea.appendChild(messageElement);
 			chatArea.scrollTop = chatArea.scrollHeight;
 		};
@@ -62,13 +54,11 @@ function handleChat(){
 	window.addEventListener('beforeunload', () => {
 		if (chatSocket) {
 			chatSocket.close();  // Fermer proprement la connexion WebSocket
-			console.log('Connexion WebSocket fermée avant de quitter la page');
 		}
 	});
 
 	// Fonction pour charger les messages d'un canal
 	function loadMessages(channelId) {
-		console.log("Chargement des messages pour le canal:", channelId);
 		fetch(`/chat2/load_messages?query=${channelId}`)
 			.then(response => {
 				if (!response.ok) {
@@ -78,7 +68,6 @@ function handleChat(){
 			})
 			.then(data => {
 				chatArea.innerHTML = "";
-				console.log(data.messages);
 				data.messages.forEach(msg => {
 					const messageElement = document.createElement("p");
 					messageElement.textContent = `${msg.sender__username}: ${msg.content}`;

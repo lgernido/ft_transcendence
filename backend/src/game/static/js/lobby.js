@@ -72,7 +72,6 @@ function lobby() {
 		const generateUUID = generateRandomString(8);
 		const roomName = `${generateUUID}_room`;
 
-		console.log('Room name:', roomName);
 
         if (player1Color !== 'color-player-none' && player2Color !== 'color-player-none' && player1Color != player2Color && maxPoint > 0 && maxPoint < 40) {
             fetch("create_room/", {

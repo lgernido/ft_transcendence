@@ -20,11 +20,9 @@ function launchGameBot(roomName, maxPoints) {
         `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
     );
     if (socketBOT.readyState === WebSocket.CLOSED) {
-        console.log("Socket is closed");
     }
 
     socketBOT.onopen = () => {
-        console.log('Connected to the socket : ' + socketBOT.url);
         socketBOT.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
@@ -55,7 +53,6 @@ function launchGameBot(roomName, maxPoints) {
             if (socketBOT) {
                 sendStopGame();
                 socketBOT.close();
-                console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
         }
     });
@@ -112,7 +109,6 @@ function launchGameBot(roomName, maxPoints) {
     document.addEventListener('keydown', (event) => {
         if (!isActive) return;
 
-        console.log("Key up pressed");
 
         if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             keysPressed[event.key] = true;
@@ -122,7 +118,6 @@ function launchGameBot(roomName, maxPoints) {
     document.addEventListener('keyup', (event) => {
         if (!isActive) return;
 
-        console.log("Key up released");
 
         if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             keysPressed[event.key] = false;
@@ -142,7 +137,6 @@ function launchGameBot(roomName, maxPoints) {
     }
     
     socketBOT.onclose = (event) => {
-        console.log('WebSocket closed:', event);
     }
     
     socketBOT.onmessage = (message) => {

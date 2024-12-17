@@ -16,7 +16,6 @@ function inviteUser(userId) {
     
     const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
-        console.log('CSRF token not found. Please refresh the page.');
         return;
     }
     
@@ -44,7 +43,6 @@ function inviteUser(userId) {
 function deleteUser(userId) {
     const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
-        console.log('CSRF token not found. Please refresh the page.');
         return;
     }
     
@@ -80,7 +78,6 @@ function deleteUser(userId) {
 function blockUser(userId) {
     const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
-        console.log('CSRF token not found. Please refresh the page.');
         return;
     }
     
@@ -116,7 +113,6 @@ function blockUser(userId) {
 function unblockUser(userId) {
     const csrfToken = getCookie('csrftoken');
     if (!csrfToken) {
-        console.log('CSRF token not found. Please refresh the page.');
         return;
     }
     
@@ -213,7 +209,6 @@ function loadFriendsList() {
 }
 
 function fetchUserList(action) {
-    console.log(`Tentative de récupération des utilisateurs pour l'action : ${action}`);
     const csrfToken = getCookie('csrftoken');
 
     fetch(`/users/contact?action=${action}`, {
@@ -224,7 +219,6 @@ function fetchUserList(action) {
         },
     })
     .then(response => {
-        console.log("Réponse obtenue :", response);
         
         if (!response.ok) {
             throw new Error(`Erreur HTTP : ${response.status}`);
@@ -233,7 +227,6 @@ function fetchUserList(action) {
         return response.json();
     })
     .then(data => {
-        console.log("Données JSON reçues user :", data);
         displayUserList(data, action);
     })
     .catch(error => {
@@ -247,7 +240,6 @@ function fetchUserList(action) {
 // ==========================================================================
 
 function actionButton() {
-    console.log("Set button");
     
     const showAllUserBtn = document.getElementById('showAllUserBtn');
     const showFriendsBtn = document.getElementById('showFriendsBtn');
@@ -255,17 +247,14 @@ function actionButton() {
     
     if (showAllUserBtn && showFriendsBtn && showBlockedBtn) {
         showAllUserBtn.addEventListener('click', () => {
-            console.log("Bouton 'Afficher tous les utilisateurs' cliqué");
             fetchUserList('users');
         });
         
         showFriendsBtn.addEventListener('click', () => {
-            console.log("Bouton 'Afficher les amis' cliqué");
             fetchUserList('added');
         });
         
         showBlockedBtn.addEventListener('click', () => {
-            console.log("Bouton 'Afficher les utilisateurs bloqués' cliqué");
             fetchUserList('blocked');
         });
     } else {

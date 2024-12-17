@@ -15,11 +15,9 @@ function launchGamePrivate(roomName, maxPoints) {
         `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
     );
     if (socketPrivate.readyState === WebSocket.CLOSED) {
-        console.log("Socket is closed");
     }
 
     socketPrivate.onopen = () => {
-        console.log('Connected to the socket : ' + socketPrivate.url);
         socketPrivate.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
@@ -50,7 +48,6 @@ function launchGamePrivate(roomName, maxPoints) {
             if (socketPrivate) {
                 sendStopGame();
                 socketPrivate.close();
-                console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
         }
     });
@@ -126,7 +123,6 @@ function launchGamePrivate(roomName, maxPoints) {
     }
     
     socketPrivate.onclose = (event) => {
-        console.log('WebSocket closed:', event);
     }
     
     socketPrivate.onmessage = (message) => {

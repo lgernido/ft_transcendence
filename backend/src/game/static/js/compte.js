@@ -24,7 +24,6 @@ async function getIsActive() {
 async function validChanges() {
     displayError('');
     const user42 = await getIsActive();
-    console.log("User42: ", user42);
     if (document.getElementById('profileImageButton') && !user42) {
         document.getElementById('profileImageButton').addEventListener('click', function() {
             document.getElementById('profileImageInput').click();

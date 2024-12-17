@@ -43,7 +43,6 @@ function checkScriptPresence(src) {
 
 function loadscript(file, func) {
     if (!checkScriptPresence(file)) {
-        console.log("load file and function", file, func);
         const script = document.createElement('script');
         script.src = "/static/js/" + file;
         document.body.appendChild(script);
@@ -52,7 +51,6 @@ function loadscript(file, func) {
         }
     }
     else {
-        console.log("load function only", func);
         if (func) {
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', func);
@@ -152,7 +150,6 @@ function loadMyPage() {
         .then(response => response.json())
         .then(data => {
             if (data.authenticated) {
-                console.log("User connecte");
                 fetch('/mypage/', {
                     method: 'GET',
                     headers: {
@@ -162,10 +159,6 @@ function loadMyPage() {
                 })
                 .then(response => response.text())
                 .then(html => {
-                    if (!appDiv)
-                        console.log("app PAS present");
-                    else
-                        console.log("app present")
                     appDiv.innerHTML = html;
                     
                     if (history.state?.page !== 'mypage') {
@@ -192,7 +185,6 @@ function loadStats() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
-    console.log("loadstats");
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -227,7 +219,6 @@ function loadStats() {
                 });
             }
             else {
-                console.log("User PAS connecte");
                 loadConnectPage();
             }
         })
@@ -241,7 +232,6 @@ function loadFriends() {
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
-    console.log("Enter loadfriends");
     
     fetch('/check_user_status/', {
         method: 'GET',
@@ -270,7 +260,6 @@ function loadFriends() {
                         const state = { page: 'amis' };
                         history.pushState(state, '', "/amis");
                     }
-                    console.log("Load function amis");
                     loadscript('amis.js', () => selectUser());
                 })
                 .catch(error => {
@@ -358,7 +347,6 @@ function loadTournament()
                 const state = { page: 'lobby_T' };
                 history.pushState(state, '', "/lobby_T");
             }
-            console.log("loadTournament");
             loadscript('lobby_tournament.js', () => tournament());
         })
         .catch(error => {
@@ -641,7 +629,6 @@ document.addEventListener('DOMContentLoaded', function () {
         loadChat();
     }
     else {
-        console.log("Page not found 1", path);
         loadMyPage();
     }
 
@@ -683,12 +670,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 loadChat();
             }
             else {
-                console.log("Page not found", pageType);
                 loadMyPage();
             }
         } 
         else {
-            console.log("page not found 2");
             loadConnectPage();
         }
     });
@@ -698,12 +683,10 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener("keydown", function(event) {
         if (event.key === "F5") {
-            console.log("refresh");
             event.preventDefault();
             const path = window.location.pathname;
             const lastPart = path.split('/').filter(Boolean).pop();
             
-            console.log("Refresh page");
             if (lastPart === 'mypage') {
                 loadMyPage();
             }
@@ -738,7 +721,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 loadChat();
             }
             else {
-                console.log("Page not found 3", lastPart);
                 loadConnectPage();
             }
         }

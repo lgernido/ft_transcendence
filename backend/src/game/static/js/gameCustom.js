@@ -1,7 +1,6 @@
 let socketCustom;
 
 function launchGamePrivateCustom(roomName, maxPoints) {
-    console.log("laucnh game custom");
     let isActive = false;
 
     const playerLeft = document.getElementById('playerLeft');
@@ -16,11 +15,9 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/gameCustom/${roomName}/`
     );
     if (socketCustom.readyState === WebSocket.CLOSED) {
-        console.log("Socket is closed");
     }
 
     socketCustom.onopen = () => {
-        console.log('Connected to the socket : ' + socketCustom.url);
         socketCustom.send(JSON.stringify({
             type: 'set_max_points',
             max_points: maxPoints
@@ -51,7 +48,6 @@ function launchGamePrivateCustom(roomName, maxPoints) {
             if (socketCustom) {
                 sendStopGame();
                 socketCustom.close();
-                console.log(`WebSocket fermé car l’utilisateur est sur ${window.location.pathname}`);
             }
         }
     });
@@ -127,7 +123,6 @@ function launchGamePrivateCustom(roomName, maxPoints) {
     }
     
     socketCustom.onclose = (event) => {
-        console.log('WebSocket closed:', event);
     }
     
     socketCustom.onmessage = (message) => {

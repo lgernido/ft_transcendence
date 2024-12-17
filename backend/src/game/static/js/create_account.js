@@ -46,7 +46,6 @@ function ValidFormCreateAccount() {
 
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(emailInput.value)) {
-            console.log("Adresse mail invalide");
             displayError('Veuillez entrer une adresse email valide !');
             return;
         }

@@ -16,7 +16,6 @@ function tournament(){
     btnStart.addEventListener('click', (event) => {
         const players = [];
 
-        console.log(selectedNumber );
 
         if (selectedNumber === 0 || selectedNumber === null) {
             alert('Veuillez sélectionner un nombre de joueurs');
