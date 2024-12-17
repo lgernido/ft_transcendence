@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-04 14:12+0000\n"
+"POT-Creation-Date: 2024-12-17 14:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,109 +34,122 @@ msgstr "Display friends"
 msgid "Display blocked users"
 msgstr "Display blocked users"
 
-#: game/templates/partials/amis.html:29
+#: game/templates/partials/amis.html:28
 #, fuzzy
 #| msgid "Games Played"
 msgid "Games Played"
 msgstr "Partie Jouees"
 
-#: game/templates/partials/amis.html:32
+#: game/templates/partials/amis.html:31
 #, fuzzy
 #| msgid "Wins"
 msgid "Wins"
 msgstr "Wins"
 
-#: game/templates/partials/amis.html:37
+#: game/templates/partials/amis.html:36
 #, fuzzy
 #| msgid "Losses"
 msgid "Losses "
 msgstr "Losses"
 
-#: game/templates/partials/amis.html:40
+#: game/templates/partials/amis.html:39
 #, fuzzy
 #| msgid "Ratio"
 msgid "Ratio "
 msgstr "Ratio"
 
-#: game/templates/partials/amis.html:55
+#: game/templates/partials/amis.html:54
 msgid "Add"
 msgstr "Add"
 
-#: game/templates/partials/amis.html:59
+#: game/templates/partials/amis.html:58
 msgid "Remove"
 msgstr "Remove"
 
-#: game/templates/partials/amis.html:63
+#: game/templates/partials/amis.html:62
 msgid "Block"
 msgstr "Block"
 
-#: game/templates/partials/amis.html:67
+#: game/templates/partials/amis.html:66
 #, fuzzy
 #| msgid "Block"
 msgid "Unblock"
 msgstr "Unblock"
 
+#: game/templates/partials/chat.html:10
+msgid "Search a user..."
+msgstr "Search a user..."
+
 #: game/templates/partials/chat.html:27
+#: game/templates/partials/mini_chat.html:20
 msgid "Start a chat with someone"
 msgstr "Start a chat with someone"
 
-#: game/templates/partials/compte.html:23
+#: game/templates/partials/chat.html:35
+msgid "Write your best win 😈"
+msgstr "Write your best win 😈"
+
+#: game/templates/partials/compte.html:22
 #: game/templates/partials/create_account.html:21
 msgid "Email address"
 msgstr "Email address"
 
-#: game/templates/partials/compte.html:28
+#: game/templates/partials/compte.html:27
 #: game/templates/partials/create_account.html:25
 msgid "Username"
 msgstr "Username"
 
-#: game/templates/partials/compte.html:32
+#: game/templates/partials/compte.html:31
 #: game/templates/partials/connect.html:16
 #: game/templates/partials/create_account.html:29
 msgid "Password"
 msgstr "Password"
 
-#: game/templates/partials/compte.html:36 game/templates/partials/lobby.html:16
-#: game/templates/partials/lobby_private.html:17
-#: game/templates/partials/lobby_private.html:42
+#: game/templates/partials/compte.html:35 game/templates/partials/lobby.html:14
+#: game/templates/partials/lobby.html:37 game/templates/partials/lobby.html:81
+#: game/templates/partials/lobby_private.html:14
+#: game/templates/partials/lobby_private.html:37
 msgid "Red"
 msgstr "Red"
 
-#: game/templates/partials/compte.html:37 game/templates/partials/lobby.html:18
-#: game/templates/partials/lobby_private.html:19
-#: game/templates/partials/lobby_private.html:44
+#: game/templates/partials/compte.html:36 game/templates/partials/lobby.html:16
+#: game/templates/partials/lobby.html:39 game/templates/partials/lobby.html:83
+#: game/templates/partials/lobby_private.html:16
+#: game/templates/partials/lobby_private.html:39
 msgid "Blue"
 msgstr "Blue"
 
-#: game/templates/partials/compte.html:38 game/templates/partials/lobby.html:17
-#: game/templates/partials/lobby_private.html:18
-#: game/templates/partials/lobby_private.html:43
+#: game/templates/partials/compte.html:37 game/templates/partials/lobby.html:15
+#: game/templates/partials/lobby.html:38 game/templates/partials/lobby.html:82
+#: game/templates/partials/lobby_private.html:15
+#: game/templates/partials/lobby_private.html:38
 msgid "Green"
 msgstr "Green"
 
-#: game/templates/partials/compte.html:40 game/templates/partials/lobby.html:27
-#: game/templates/partials/lobby_private.html:28
-#: game/templates/partials/lobby_private.html:53
+#: game/templates/partials/compte.html:39 game/templates/partials/lobby.html:25
+#: game/templates/partials/lobby.html:48 game/templates/partials/lobby.html:92
+#: game/templates/partials/lobby_private.html:25
+#: game/templates/partials/lobby_private.html:48
 msgid "Colors :"
 msgstr "Colors :"
 
-#: game/templates/partials/compte.html:44
+#: game/templates/partials/compte.html:43
 msgid "English"
 msgstr "English"
 
-#: game/templates/partials/compte.html:45
+#: game/templates/partials/compte.html:44
 msgid "French"
 msgstr "French"
 
-#: game/templates/partials/compte.html:46
+#: game/templates/partials/compte.html:45
 msgid "Spanish"
 msgstr "Spanish"
 
-#: game/templates/partials/compte.html:48
+#: game/templates/partials/compte.html:47
 msgid "Language :"
 msgstr "Language :"
 
-#: game/templates/partials/compte.html:52
+#: game/templates/partials/compte.html:51
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -172,6 +185,13 @@ msgstr "Create account"
 msgid "Go back"
 msgstr "Go back"
 
+#: game/templates/partials/game.html:7
+#: game/templates/partials/gameCustom.html:7
+#: game/templates/partials/lobby_private.html:34
+#: game/templates/partials/tournament.html:7
+msgid "Guest"
+msgstr "Guest"
+
 #: game/templates/partials/header.html:8
 msgid "Home"
 msgstr "Home"
@@ -188,88 +208,85 @@ msgstr "Friends"
 msgid "Settings"
 msgstr "Settings"
 
-#: game/templates/partials/lobby.html:19
-#: game/templates/partials/lobby_private.html:20
-#: game/templates/partials/lobby_private.html:45
+#: game/templates/partials/lobby.html:17 game/templates/partials/lobby.html:40
+#: game/templates/partials/lobby.html:84
+#: game/templates/partials/lobby_private.html:17
+#: game/templates/partials/lobby_private.html:40
 msgid "Yellow"
 msgstr "Yellow"
 
-#: game/templates/partials/lobby.html:20
-#: game/templates/partials/lobby_private.html:21
-#: game/templates/partials/lobby_private.html:46
+#: game/templates/partials/lobby.html:18 game/templates/partials/lobby.html:41
+#: game/templates/partials/lobby.html:85
+#: game/templates/partials/lobby_private.html:18
+#: game/templates/partials/lobby_private.html:41
 msgid "Cyan"
 msgstr "Cyan"
 
-#: game/templates/partials/lobby.html:21
-#: game/templates/partials/lobby_private.html:22
-#: game/templates/partials/lobby_private.html:47
+#: game/templates/partials/lobby.html:19 game/templates/partials/lobby.html:42
+#: game/templates/partials/lobby.html:86
+#: game/templates/partials/lobby_private.html:19
+#: game/templates/partials/lobby_private.html:42
 msgid "Magenta"
 msgstr "Magenta"
 
-#: game/templates/partials/lobby.html:22
-#: game/templates/partials/lobby_private.html:23
-#: game/templates/partials/lobby_private.html:48
+#: game/templates/partials/lobby.html:20 game/templates/partials/lobby.html:43
+#: game/templates/partials/lobby.html:87
+#: game/templates/partials/lobby_private.html:20
+#: game/templates/partials/lobby_private.html:43
 msgid "Orange"
 msgstr "Orange"
 
-#: game/templates/partials/lobby.html:23
-#: game/templates/partials/lobby_private.html:24
-#: game/templates/partials/lobby_private.html:49
+#: game/templates/partials/lobby.html:21 game/templates/partials/lobby.html:44
+#: game/templates/partials/lobby.html:88
+#: game/templates/partials/lobby_private.html:21
+#: game/templates/partials/lobby_private.html:44
 msgid "Purple"
 msgstr "Purple"
 
-#: game/templates/partials/lobby.html:24
-#: game/templates/partials/lobby_private.html:25
-#: game/templates/partials/lobby_private.html:50
+#: game/templates/partials/lobby.html:22 game/templates/partials/lobby.html:45
+#: game/templates/partials/lobby.html:89
+#: game/templates/partials/lobby_private.html:22
+#: game/templates/partials/lobby_private.html:45
 msgid "Pink"
 msgstr "Pink"
 
-#: game/templates/partials/lobby.html:25
-#: game/templates/partials/lobby_private.html:26
-#: game/templates/partials/lobby_private.html:51
+#: game/templates/partials/lobby.html:23 game/templates/partials/lobby.html:46
+#: game/templates/partials/lobby.html:90
+#: game/templates/partials/lobby_private.html:23
+#: game/templates/partials/lobby_private.html:46
 msgid "Gray"
 msgstr "Gray"
 
-#: game/templates/partials/lobby.html:34
-msgid "Loading..."
-msgstr "Loading..."
-
-#: game/templates/partials/lobby.html:38
-msgid "Waiting for player..."
-msgstr "Waiting for player..."
-
-#: game/templates/partials/lobby.html:43
-#, fuzzy
-#| msgid "Points limit :"
-msgid "Points limit : "
+#: game/templates/partials/lobby.html:56
+#: game/templates/partials/lobby_private.html:56
+#: game/templates/partials/lobby_tournament.html:26
+msgid "Points limit :"
 msgstr "Points limit :"
 
-#: game/templates/partials/lobby.html:46
-#: game/templates/partials/lobby_private.html:72
+#: game/templates/partials/lobby.html:60 game/templates/partials/lobby.html:111
+#: game/templates/partials/lobby_private.html:60
+#: game/templates/partials/lobby_tournament.html:30
 msgid "Launch"
 msgstr "Launch"
 
-#: game/templates/partials/lobby_private.html:62
+#: game/templates/partials/lobby.html:99
+msgid "Loading..."
+msgstr "Loading..."
+
+#: game/templates/partials/lobby.html:103
+msgid "Waiting for player..."
+msgstr "Waiting for player..."
+
+#: game/templates/partials/lobby.html:108
 #, fuzzy
-msgid "Player"
-msgstr "Player"
-
-#: game/templates/partials/lobby_private.html:65
-msgid "Play against :"
-msgstr "Play against :"
-
-#: game/templates/partials/lobby_private.html:68
-msgid "Points limit :"
+#| msgid "Points limit :"
+msgid "Points limit : "
 msgstr "Points limit :"
 
 #: game/templates/partials/lobby_tournament.html:7
 #: game/templates/partials/mypage.html:6
 msgid "Tournament"
 msgstr "Tournament"
-
-#: game/templates/partials/lobby_tournament.html:11
-msgid "Select Number player"
-msgstr "Select Number player"
 
 #: game/templates/partials/mypage.html:7
 msgid "Quick Game"
@@ -279,53 +296,77 @@ msgstr "Quick Game"
 msgid "Private Game"
 msgstr "Private Game"
 
-#: game/templates/partials/stats.html:10 game/templates/partials/stats.html:20
-msgid "Win"
-msgstr "Win"
-
-#: game/templates/partials/stats.html:15
-msgid "Lose"
-msgstr "Lose"
-
 #: game/templates/partials/stats.html:25
-msgid "Draw"
-msgstr "Draw"
-
-#: game/templates/partials/stats.html:29
 #, fuzzy
 msgid "Player Statistics"
 msgstr "Player Statistics"
 
-#: game/templates/partials/stats.html:35
+#: game/templates/partials/stats.html:31
 msgid "Win :"
 msgstr "Win :"
 
-#: game/templates/partials/stats.html:38
+#: game/templates/partials/stats.html:34
 msgid "Loss :"
 msgstr "Loss :"
 
-#: game/templates/partials/stats.html:41
+#: game/templates/partials/stats.html:37
 msgid "Draw :"
 msgstr "Draw :"
 
-#: game/templates/partials/stats.html:47
+#: game/templates/partials/stats.html:43
 msgid "Games played: "
 msgstr "Games played :"
 
-#: game/templates/partials/stats.html:50
+#: game/templates/partials/stats.html:46
+msgid "Win rate :"
+msgstr "Win rate :"
+
+#: game/templates/partials/stats.html:47
 #, fuzzy
 msgid "Global Ranking :"
 msgstr "Global Ranking :"
 
-#: game/templates/partials/stats.html:51
-#, fuzzy
-#| msgid "Friends Ranking "
+#: game/templates/partials/stats.html:48
 msgid "Friends Ranking : "
 msgstr "Friends Ranking :"
 
-#: game/templates/partials/stats.html:52
+#: game/templates/partials/stats.html:49
 msgid "Tournaments won :"
 msgstr "Tournaments won :"
+
+#: game/templates/partials/stats.html:59
+msgid "Win"
+msgstr "Win"
+
+#: game/templates/partials/stats.html:61
+msgid "Unknown Date"
+msgstr "Unknown Date"
+
+#: game/templates/partials/stats.html:67
+
+msgid "Game not found"
+msgstr "Game not found"
+
+#, fuzzy
+#~| msgid "Afficher tous les utilisateurs"
+#~ msgid "Rechercher un utilisateur..."
+#~ msgstr "Display all users"
+
+#, fuzzy
+#~ msgid "Player"
+#~ msgstr "Player"
+
+#~ msgid "Play against :"
+#~ msgstr "Play against :"
+
+#~ msgid "Select Number player"
+#~ msgstr "Select Number player"
+
+#~ msgid "Lose"
+#~ msgstr "Lose"
+
+#~ msgid "Draw"
+#~ msgstr "Draw"
 
 #~ msgid "Global Friends : "
 #~ msgstr "Friends Ranking"
@@ -338,9 +379,6 @@ msgstr "Tournaments won :"
 
 #~ msgid "Send"
 #~ msgstr "Send"
-
-#~ msgid "Afficher tous les utilisateurs"
-#~ msgstr "Display all users"
 
 #~ msgid "Afficher Amis"
 #~ msgstr "Display friends"
