@@ -63,7 +63,6 @@ msgid "Block"
 msgstr "Bloquer"
 
 #: game/templates/partials/amis.html:66
-#, fuzzy
 msgid "Unblock"
 msgstr "Débloquer"
 
@@ -356,10 +355,6 @@ msgstr "Pas de partie trouvée"
 #~ msgid "Send"
 #~ msgstr "Envoyer"
 
-#, fuzzy
-#~| msgid "Block"
-#~ msgid "Débloquer"
-#~ msgstr "Débloquer"
 
 #, fuzzy
 #~| msgid "Limite de points :"
