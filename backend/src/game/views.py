@@ -11,11 +11,12 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import Game
-from users.models import Social
-from .models import Profile, Game
+from users.models import Social, Profile
+from .models import Game
 import json
 
 import base64
+import time
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
@@ -311,6 +312,43 @@ def extractGame(request):
 
 
     return redirect(request.META.get('HTTP_REFERER', '/')) 
+
+@csrf_exempt
+def game_results(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            player_left_name = data.get('playerLeft')
+            player_right_name = data.get('playerRight')
+            winner_name = data.get('winner')
+            left_score = data.get('leftScore')
+            right_score = data.get('rightScore')
+
+            user=User.objects.get(username=player_left_name)
+            profile = Profile.objects.get(user=user)
+            profile.games_played += 1
+            if winner_name == player_left_name:
+                profile.games_win += 1
+            else:
+                profile.games_lose += 1
+            
+            profile.save()
+
+            game = Game.objects.create(
+                player1=user,
+                player2=User.objects.get(username="invite"),
+                winner=user if winner_name == player_left_name else User.objects.get(username="invite"),
+                player1_score=left_score,
+                player2_score=right_score,
+                date_played=time.strftime('%Y-%m-%d %H:%M:%S')
+            )
+
+            return JsonResponse({'message': 'Game results saved successfully'}, status=201)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 logger = logging.getLogger(__name__)
 

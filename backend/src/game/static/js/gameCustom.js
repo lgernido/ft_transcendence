@@ -1,183 +1,138 @@
-let socketCustom;
-
 function launchGamePrivateCustom(roomName, maxPoints) {
     let isActive = false;
 
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
+    const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
+    const barSpeed = 1.5;
+
+    const gameState = {
+        leftBarPos: 50,
+        rightBarPos: 50,
+        ball: { x: 50, y: 50, speedX: 0.8, speedY: 0.8 },
+        leftScore: 0,
+        rightScore: 0,
+        leftBarHeight: 10,
+        rightBarHeight: 10,
+    };
 
     setTimeout(() => {
         playerLeft.classList.add('slide-in-left');
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    socketCustom = new WebSocket(
-        `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/gameCustom/${roomName}/`
-    );
-    if (socketCustom.readyState === WebSocket.CLOSED) {
+    function resetGameState() {
+        const initialSpeed = 0.8;
+        gameState.leftBarPos = 50;
+        gameState.rightBarPos = 50;
+        gameState.leftBarHeight = 10;
+        gameState.rightBarHeight = 10;
+        gameState.ball = {
+            x: 50,
+            y: 50,
+            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed,
+            speedY: Math.random() * 1.5 - 0.75,
+        };
+        gameState.leftScore = 0;
+        gameState.rightScore = 0;
+
+        updateUI();
+        document.querySelector('.ballfoot').classList.add('hidden');
     }
 
-    socketCustom.onopen = () => {
-        socketCustom.send(JSON.stringify({
-            type: 'set_max_points',
-            max_points: maxPoints
-        }));
-    };
+    function updateUI() {
+        const leftBar = document.querySelector('.left-barre');
+        const rightBar = document.querySelector('.right-barre');
+        const ball = document.querySelector('.ballfoot');
 
-    function sendStopGame() {
-        if (socketCustom.readyState !== WebSocket.OPEN) {
-            return;
+        if (leftBar && rightBar && ball) {
+            leftBar.style.top = `${gameState.leftBarPos}%`;
+            leftBar.style.height = `${gameState.leftBarHeight}%`;
+            rightBar.style.top = `${gameState.rightBarPos}%`;
+            rightBar.style.height = `${gameState.rightBarHeight}%`;
+            ball.style.left = `${gameState.ball.x}%`;
+            ball.style.top = `${gameState.ball.y}%`;
+
+            document.getElementById('scorePLeft').innerText = gameState.leftScore;
+            document.getElementById('scorePRight').innerText = gameState.rightScore;
         }
-        socketCustom.send(JSON.stringify({ type: 'stop_game' }));
-        isActive = false;
     }
 
-    window.addEventListener('beforeunload', () => {
-        sendStopGame();
-        socketCustom.close();
-    });
-
-    window.addEventListener('popstate', () => {
-        if (socketCustom.readyState === WebSocket.OPEN) {
-            sendStopGame();
-            socketCustom.close();
-        }
-    });
-
-    const targetPaths = ['/mypage', '/stats', '/amis', '/chat', '/compte'];
-
-    const observer = new MutationObserver(() => {
-        if (targetPaths.includes(window.location.pathname)) {
-            if (socketCustom) {
-                sendStopGame();
-                socketCustom.close();
-            }
-        }
-    });
-
-    const playerActions = { left: 0, right: 0 }; 
-    const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
-    const barSpeed = 1.5; 
-    
-    function updateBarPositions() {
+    function updateGame() {
         if (!isActive) return;
 
         const leftBar = document.querySelector('.left-barre');
         const rightBar = document.querySelector('.right-barre');
 
-        if (leftBar === null || rightBar === null) {
-            if (socketCustom) {
-                sendStopGame();
-                socketCustom.close();
-            }
-        } 
-
-        if (keysPressed.w) {
-            playerActions.left = -barSpeed;
-            sendMove("left", -barSpeed);
-        } else if (keysPressed.s) {
-            playerActions.left = barSpeed;
-            sendMove("left", barSpeed);
-        } else {
-            playerActions.left = 0;
-            sendMove("left", 0);
-        }
-
-        if (keysPressed.ArrowUp) {
-            playerActions.right = -barSpeed;
-            sendMove("right", -barSpeed);
-        } else if (keysPressed.ArrowDown) {
-            playerActions.right = barSpeed;
-            sendMove("right", barSpeed);
-        } else {
-            playerActions.right = 0;
-            sendMove("right", 0);
-        }
-
-        requestAnimationFrame(updateBarPositions);
-    }
-
-    document.addEventListener('keydown', (event) => {
-        if (!isActive) return;
-
-        if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            keysPressed[event.key] = true;
-        }
-    });
-    
-    document.addEventListener('keyup', (event) => {
-        if (!isActive) return;
-
-        if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            keysPressed[event.key] = false;
-        }
-    });
-        
-    function sendMove(player, direction) {
-        if (socketCustom.readyState !== WebSocket.OPEN) {
+        if (!leftBar || !rightBar) {
+            isActive = false;
             return;
         }
 
-        socketCustom.send(JSON.stringify({
-            type: 'move',
-            player: player,
-            direction: direction
-        }));
-    }
-    
-    socketCustom.onmessage = (message) => {
-        const data = JSON.parse(message.data);
-    
-        if (data.type === "game_state" || data.type === "game_update") {
-            updateGameState(data);
-        } else if (data.type === "game_over") {
-            displayWinner(data.winner);
-            if (socketCustom.readyState === WebSocket.OPEN) {
-                socketCustom.send(JSON.stringify({ type: 'over_game', winner: data.winner, user1: playerLeft.innerText, user2: playerRight.innerText }));
-                setTimeout(() => {
-                    sendStopGame();
-                    socketCustom.close();
-                }, 5000);
-            }
-        } else if (data.type === "close_socket") {
-            if (socketCustom.readyState === WebSocket.OPEN) {
-                sendStopGame();
-                socketCustom.close();
-            }
-        }
-    };
-    
-    function updateGameState(state) {
-        const leftBar = document.querySelector('.left-barre');
-        const rightBar = document.querySelector('.right-barre');
+        if (keysPressed.w) gameState.leftBarPos = Math.max(8, gameState.leftBarPos - barSpeed);
+        if (keysPressed.s) gameState.leftBarPos = Math.min(92, gameState.leftBarPos + barSpeed);
+        if (keysPressed.ArrowUp) gameState.rightBarPos = Math.max(8, gameState.rightBarPos - barSpeed);
+        if (keysPressed.ArrowDown) gameState.rightBarPos = Math.min(92, gameState.rightBarPos + barSpeed);
 
-        if (leftBar === null || rightBar === null) {
-            if (socketCustom) {
-                sendStopGame();
-                socketCustom.close();
-            }
-            return;
+        gameState.ball.x += gameState.ball.speedX;
+        gameState.ball.y += gameState.ball.speedY;
+
+        if (gameState.ball.y <= 2 || gameState.ball.y >= 98) {
+            gameState.ball.speedY *= -1;
         }
 
-        leftBar.style.top = `${state.left_bar_pos}%`;
-        rightBar.style.top = `${state.right_bar_pos}%`;
-    
-        leftBar.style.height = `${Math.min(100, state.left_bar_height)}%`;
-        rightBar.style.height = `${Math.min(100, state.right_bar_height)}%`;
-    
-        document.querySelector('.ballfoot').style.left = `${state.ball_pos.x}%`;
-        document.querySelector('.ballfoot').style.top = `${state.ball_pos.y}%`;
-    
-        document.getElementById('scorePLeft').innerText = state.left_score;
-        document.getElementById('scorePRight').innerText = state.right_score;
+        // Ball collision with paddles
+        if (gameState.ball.x <= 2 && Math.abs(gameState.leftBarPos - gameState.ball.y) < 10) {
+            gameState.ball.speedX *= -1;
+            gameState.leftBarHeight = Math.min(gameState.leftBarHeight + 2, 30);
+        }
+        if (gameState.ball.x >= 98 && Math.abs(gameState.rightBarPos - gameState.ball.y) < 10) {
+            gameState.ball.speedX *= -1;
+            gameState.rightBarHeight = Math.min(gameState.rightBarHeight + 2, 30);
+        }
+
+        if (gameState.ball.x <= 0) {
+            gameState.rightScore++;
+            resetBall();
+        } else if (gameState.ball.x >= 100) {
+            gameState.leftScore++;
+            resetBall();
+        }
+
+        updateUI();
+
+        if (gameState.leftScore >= maxPoints || gameState.rightScore >= maxPoints) {
+            const winner = gameState.leftScore >= maxPoints ? "left" : "right";
+            displayWinner(winner);
+            isActive = false;
+        } else {
+            requestAnimationFrame(updateGame);
+        }
     }
 
-        
+    function resetBall() {
+        const initialSpeed = 0.8;
+        gameState.ball = {
+            x: 50,
+            y: 50,
+            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed,
+            speedY: Math.random() * 1.5 - 0.75,
+        };
+
+        gameState.leftBarHeight = 10;
+        gameState.rightBarHeight = 10;
+
+        updateUI();
+    }
+
     function displayWinner(winner) {
         isActive = false;
         document.querySelector('.ballfoot').classList.add('hidden');
+
+        const winnerName = winner === "left" ? playerLeft.innerText : playerRight.innerText;
+
         const winnerMessage = document.getElementById('winnerMessage');
-        winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "Player 2 Wins!";
+        winnerMessage.innerText = `${winnerName} Wins!`;
         winnerMessage.style.display = 'block';
         winnerMessage.style.position = 'absolute';
         winnerMessage.style.top = '50%';
@@ -188,50 +143,73 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         winnerMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
         winnerMessage.style.padding = '20px';
         winnerMessage.style.borderRadius = '10px';
+
+        sendGameResults(winnerName);
     }
-    
+
+    function sendGameResults(winnerName) {
+        const data = {
+            winner: winnerName,
+            playerLeft: playerLeft.innerText,
+            playerRight: playerRight.innerText,
+            leftScore: gameState.leftScore,
+            rightScore: gameState.rightScore,
+        };
+
+        fetch('/api/game-results/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(), // Ensure CSRF handling is in place
+            },
+            body: JSON.stringify(data),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log('Game results successfully sent to the backend:', data);
+        })
+        .catch((error) => {
+            console.error('Error sending game results to the backend:', error);
+        });
+    }
+
+    function getCSRFToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        return csrfToken;
+    }
+
     const countdownElement = document.getElementById('countdown');
-    let countdown = 5;
     function startCountdown() {
+        let countdown = 5;
         countdownElement.textContent = countdown;
         countdownElement.style.display = 'block';
-        const countdownInterval = setInterval(() => { 
-            countdown -= 1;
+
+        const interval = setInterval(() => {
+            countdown--;
             countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
-            const ball2 = document.querySelector('.ballfoot');
-            if (ball2 === null) {
-                if (socketCustom) {
-                    sendStopGame();
-                    socketCustom.close();
-                }
-                clearInterval(countdownInterval);
-
-                return;
-            }
-            
             if (countdown <= 0) {
-                const ball = document.querySelector('.ballfoot');
-
-                if (ball === null) {
-                    if (socketCustom) {
-                        sendStopGame();
-                        socketCustom.close();
-                    }
-
-                    clearInterval(countdownInterval);
-
-                    return;
-                }
-
-                clearInterval(countdownInterval);
+                clearInterval(interval);
                 countdownElement.style.display = 'none';
-                document.querySelector('.ballfoot').classList.remove('hidden'); 
+                document.querySelector('.ballfoot').classList.remove('hidden');
                 isActive = true;
-                socketCustom.send(JSON.stringify({ type: 'start_game' }));
-                updateBarPositions();
+                updateGame();
             }
         }, 1000);
     }
-    
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key in keysPressed) keysPressed[event.key] = true;
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.key in keysPressed) keysPressed[event.key] = false;
+    });
+
+    resetGameState();
     startCountdown();
 }

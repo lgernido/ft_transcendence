@@ -27,6 +27,7 @@ urlpatterns = [
 	path('create_dynamic_room/', views.create_dynamic_room, name='create_dynamic_room'),
     path('dynamic_game/<str:room_name>/', views.dynamic_game_room, name='dynamic_game_room'),
     path('game/', views.game, name='game'),
+    path('api/game-results/', views.game_results, name='game_results'),
     path('create_custom/', views.create_custom, name='create_custom'),
     path('create_room/', views.create_room, name='create_room'),
     path('create_tournament/', views.create_tournament, name='create_tournament'),
