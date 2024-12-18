@@ -6,7 +6,7 @@
 		<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
 			<div class="d-flex align-items-center">
 				<div class="card-lobby">
-					<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil">
+					<img src="{{ social.avatar.url }}" class="card-lobby-img-top" alt="img-profil" style="width: 100%; height: auto;">
 					<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
 						<p class="card-lobby-text-name1" id="playerName1">{{ user.username }}</p>
 						<div class="form-floating mb-1 w-75">

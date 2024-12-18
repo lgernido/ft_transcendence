@@ -20,7 +20,7 @@ function launchGamePrivate(roomName, maxPoints) {
     }, 500);
 
     function resetGameState() {
-        const initialSpeed = 0.8;
+        const initialSpeed = 0.2;
         gameState.leftBarPos = 50;
         gameState.rightBarPos = 50;
         gameState.ball = { 
@@ -98,7 +98,7 @@ function launchGamePrivate(roomName, maxPoints) {
     }
 
     function resetBall() {
-        const initialSpeed = 0.8;
+        const initialSpeed = 0.2;
         gameState.ball = { 
             x: 50, 
             y: 50, 
