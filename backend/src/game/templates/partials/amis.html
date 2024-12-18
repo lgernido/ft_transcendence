@@ -19,9 +19,10 @@
     <div class="friends_info my-2 d-flex justify-content-between align-items-center border-bottom border-3"
         style="margin-inline: 10%; min-width: 450px;">
         <div class="d-flex mx-3 my-1">
+            <i data-icon data_name="" class="status bi bi-circle-fill ${isOnline ? 'text-success' : 'text-secondary'}"></i>
             <img src="" class="img-profil-60" alt="img-profil" data-user-avatar>
             <div class="ms-5">
-                <h5 class="text fw-bold ms-5" data-user-name style="color: white;">{{ user.username }}</h5>
+                <h5 class="text fw-bold ms-5" data-user-name style="color: white; cursor: pointer;">{{ user.username }}</h5>
                 <p class="text ms-4" data-user-stats>
                 <div class="d-flex flex-wrap">
                     <span class="me-3" style="color: white;">

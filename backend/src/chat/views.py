@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from .models import Channel, Message
 from users.models import Social
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 import logging
 logger = logging.getLogger(__name__)
@@ -51,35 +52,52 @@ def get_current_user(request):
         return JsonResponse({'current_user': request.user.username})
     else:
         return JsonResponse({'error': 'User not authenticated'}, status=401)
-
-
+    
 def search_users(request):
     query = request.GET.get('query', '')
     if len(query) >= 1:
         current_user = request.user
-        users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
+        
+        # Recherche des utilisateurs correspondants
+        if query == 'all':
+            users = set()
+            channels = Channel.objects.filter(users=current_user)
+            for channel in channels:
+                if channel.messages.exists():
+                    other_users = channel.users.exclude(id=current_user.id, is_staff=False)
+                    users.update(other_users)
+        else:
+            users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
+        
         results = []
         for user in users:
+            # Générer l'identifiant unique pour le canal
             user1_id, user2_id = sorted([current_user.id, user.id])
-            unique_identifier = f"{user1_id}:{user2_id}"
+            unique_identifier = f"private_{user1_id}-{user2_id}"
 
-            # Rechercher ou créer le canal avec `unique_identifier` pour les messages privés
+            # Rechercher le canal correspondant
             channel = Channel.objects.filter(unique_identifier=unique_identifier, mode=1).first()
 
-            last_message = None
             if channel:
-                last_message = channel.last_message  # Récupère le dernier message
-
-            social = Social.objects.get(user=user)
-            avatar_url = social.avatar.url
-
-            results.append({
-                'username': user.username,
-                'id': user.id,
-                'avatar': avatar_url,
-                'last_message': last_message.content if last_message else 'Aucun message',
-                'last_message_timestamp': last_message.timestamp.isoformat() if last_message else None
-            })
+                # Récupérer le dernier message via une sous-requête ou directement
+                last_message = channel.messages.order_by('-timestamp').first()
+                results.append({
+                    'avatar': user.social.avatar.url,
+                    'username': user.username,
+                    'id': user.id,
+                    'last_message': last_message.content if last_message else 'Aucun message',
+                    'last_message_timestamp': last_message.timestamp.isoformat() if last_message else None
+                })
+            else:
+                # Pas de canal trouvé
+                results.append({
+                    'avatar': user.social.avatar.url,
+                    'username': user.username,
+                    'id': user.id,
+                    'last_message': 'Aucun message',
+                    'last_message_timestamp': None
+                })
+        results.sort(key=lambda x: (x['last_message_timestamp'] is None, x['last_message_timestamp']), reverse=True)
         return JsonResponse({'results': results})
     return JsonResponse({'results': []})
 

@@ -154,7 +154,7 @@ function launchGameBot(roomName, maxPoints) {
                 setTimeout(() => {
                     sendStopGame();
                     socketBOT.close();
-                }, 1000);
+                }, 5000);
             }
         } else if (data.type === "close_socket") {
             if (socketBOT.readyState === WebSocket.OPEN) {

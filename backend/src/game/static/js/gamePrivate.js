@@ -138,7 +138,7 @@ function launchGamePrivate(roomName, maxPoints) {
                 setTimeout(() => {
                     sendStopGame();
                     socketPrivate.close();
-                }, 500);
+                }, 5000);
             }
         } else if (data.type === "close_socket") {
             if (socketPrivate.readyState === WebSocket.OPEN) {

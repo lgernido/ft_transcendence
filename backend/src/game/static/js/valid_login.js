@@ -31,6 +31,7 @@ function ValidConnection() {
         .then(data => {
             if (data.success) {
                 loadMyPage();
+                checkStatus()
             } else if (data.error) {
                 displayError(data.error);
             }
