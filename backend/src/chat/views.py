@@ -29,7 +29,7 @@ def get_user_id(request):
 def get_channel_name(channel_id, user_id_str):
     if not channel_id.isdigit():
         return channel_id
-    if channel_id > user_id_str:
+    if int(channel_id) > int(user_id_str):
         channel_id = f"private_{user_id_str}-{channel_id}"
     else:
         channel_id = f"private_{channel_id}-{user_id_str}"
