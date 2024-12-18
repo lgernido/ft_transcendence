@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:13.4
+    # image: postgres:13.4
     container_name: db
     build:
       context: ./db
@@ -13,7 +13,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
@@ -75,75 +75,11 @@ services:
       # - DJANGO_SUPERUSER_EMAIL=admin@example.com
       # - DJANGO_SUPERUSER_PASSWORD=securepassword
 
-
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
-  #   environment:
-  #     - discovery.type=single-node
-  #     - ELASTIC_PASSWORD=securepassword
-  #     - xpack.security.enabled=true
-  #     - xpack.security.authc.apiKey.enabled=true
-  #     - xpack.security.transport.ssl.enabled=true
-  #     - xpack.security.transport.ssl.verification_mode=certificate
-  #     - xpack.security.transport.ssl.key=certs/elasticsearch.key
-  #     - xpack.security.transport.ssl.certificate=certs/elasticsearch.crt
-  #     - xpack.security.transport.ssl.certificate_authorities=certs/ca.crt
-  #     - xpack.security.http.ssl.enabled=true
-  #     - xpack.security.http.ssl.key=certs/elasticsearch.key
-  #     - xpack.security.http.ssl.certificate=certs/elasticsearch.crt
-  #     - xpack.security.http.ssl.certificate_authorities=certs/ca.crt
-  #     # - xpack.reporting.roles.enabled=false
-  #   volumes:
-  #     # - esdata:/usr/share/elasticsearch/data
-  #     - ./ELK/certs:/usr/share/elasticsearch/config/certs
-  #   ports:
-  #     - "9200:9200"
-  #     - "9300:9300"
-  #   networks:
-  #     - elk
-
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:8.7.0
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-  #     - ELASTICSEARCH_USERNAME=bob
-  #     - ELASTICSEARCH_PASSWORD=securepassword
-  #   volumes:
-  #     - ./ELK/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-  #     - ./ELK/certs:/usr/share/kibana/config/certs
-  #   ports:
-  #     - "5601:5601"
-  #   networks:
-  #     - elk
-
-  # logstash:
-  #   image: docker.elastic.co/logstash/logstash:8.7.0
-  #   depends_on:
-  #     - elasticsearch
-  #   environment:
-  #     - LOGSTASH_XPACK_MONITORING_ENABLED=true
-  #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-  #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
-  #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_PASSWORD=securepassword
-  #   volumes:
-  #     - ./ELK/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-  #     - ./ELK/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-  #     - ./ELK/certs:/usr/share/logstash/config/certs
-  #   networks:
-  #     - elk
-
-    # http://localhost:5601
-
-
 volumes:
   postgres_data:
-  # elasticsearch-data:
-  #   driver: local
 
 
 networks:
   default:
     driver: bridge
-  # elk:
-  #   driver: bridge
 
