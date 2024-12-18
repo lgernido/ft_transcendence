@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from asyncio import sleep
 from asgiref.sync import sync_to_async
 import logging
+from django.db import transaction
 
 logger = logging.getLogger('game')
 

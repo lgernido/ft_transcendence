@@ -1,5 +1,6 @@
 import json
 import asyncio
+import time
 import logging
 import uuid
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -200,3 +201,6 @@ class GameCustomConsumer(AsyncWebsocketConsumer):
             "type": "game_over",
             "winner": winner,
         }))
+    
+    async def close_socket(self, event):
+        await self.close()

@@ -140,7 +140,7 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
 
             await sync_to_async(profile.save)()
 
-            player2 = await sync_to_async(User.objects.get)(username="invite")
+            player2 = await sync_to_async(User.objects.get)(username="bot")
             game = await sync_to_async(Game.objects.create)(
                 player1=user,
                 player2=player2,
@@ -225,3 +225,6 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
             "type": "game_over",
             "winner": winner,
         }))
+
+    async def close_socket(self, event):
+        await self.close()

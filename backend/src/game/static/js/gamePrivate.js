@@ -136,10 +136,11 @@ function launchGamePrivate(roomName, maxPoints) {
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
             if (socketPrivate.readyState === WebSocket.OPEN) {
-                console.log("finish");
                 socketPrivate.send(JSON.stringify({ type: 'over_game', winner: data.winner, user1: playerLeft.innerText, user2: playerRight.innerText }));
-                sendStopGame();
-                socketPrivate.close();
+                setTimeout(() => {
+                    sendStopGame();
+                    socketPrivate.close();
+                }, 500);
             }
         } else if (data.type === "close_socket") {
             if (socketPrivate.readyState === WebSocket.OPEN) {

@@ -151,8 +151,10 @@ function launchGameBot(roomName, maxPoints) {
             displayWinner(data.winner);
             if (socketBOT.readyState === WebSocket.OPEN) {
                 socketBOT.send(JSON.stringify({ type: 'over_game', winner: data.winner, user1: playerLeft.innerText, user2: playerRight.innerText }));
-                sendStopGame();
-                socketBOT.close();
+                setTimeout(() => {
+                    sendStopGame();
+                    socketBOT.close();
+                }, 1000);
             }
         } else if (data.type === "close_socket") {
             if (socketBOT.readyState === WebSocket.OPEN) {
