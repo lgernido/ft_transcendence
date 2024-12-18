@@ -167,7 +167,7 @@ function loadMyPage() {
                         const state = { page: 'mypage' };
                         history.pushState(state, '', "/mypage");
                     }
-                    // loadscript('language-switch.js', () => selectLanguage());
+                    checkStatus();
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération de mypage :', error);
@@ -215,6 +215,7 @@ function loadStats() {
                         history.pushState(state, '', "/stats");
                     }
                     loadscript('camenbert.js', () => func_stats());
+                    checkStatus();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -311,6 +312,7 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
+                    checkStatus();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
