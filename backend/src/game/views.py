@@ -20,10 +20,6 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
-from django.http import HttpResponseRedirect
-from django.utils.translation import activate
-from django.conf import settings
-
 import logging
 logger = logging.getLogger(__name__)
 import uuid
@@ -255,13 +251,10 @@ def check_user_status(request):
 def set_language(request):
     if request.method == 'POST':
         lang = request.POST.get('language')
-        if lang and lang in dict(settings.LANGUAGES):
+        if lang:
             activate(lang)
-            response = HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)
-            return response
+            request.session[LANGUAGE_SESSION_KEY] = lang
     return redirect(request.META.get('HTTP_REFERER', '/'))
-
 
 def extractProfile(request):
     user_id = request.GET.get('user_id')

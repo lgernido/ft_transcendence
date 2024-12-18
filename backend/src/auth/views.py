@@ -86,6 +86,5 @@ def callback(request):
             logging.warning(f" Avatar URL: {social.avatar.name}\n")
         else:
             logging.warning(f"\n User has no name")
-
         return redirect('/mypage')
     return HttpResponse('Authorization failed.', status=401)
