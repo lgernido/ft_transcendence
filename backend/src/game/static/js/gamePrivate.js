@@ -1,15 +1,19 @@
 function launchGamePrivate(roomName, maxPoints) {
     let isActive = false;
+    const paddleWidth = 2;
+    const ballRadius = 1;  
 
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
     const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
     const barSpeed = 1.5;
 
+    const paddleHeight = 20;
+
     const gameState = {
         leftBarPos: 50,
         rightBarPos: 50,
-        ball: { x: 50, y: 50, speedX: 0.8, speedY: 0.8 },
+        ball: { x: 50, y: 50, speedX: 0.5, speedY: 0.5 },
         leftScore: 0,
         rightScore: 0
     };
@@ -20,14 +24,14 @@ function launchGamePrivate(roomName, maxPoints) {
     }, 500);
 
     function resetGameState() {
-        const initialSpeed = 0.2;
+        const initialSpeed = 0.5;
         gameState.leftBarPos = 50;
         gameState.rightBarPos = 50;
         gameState.ball = { 
             x: 50, 
             y: 50, 
-            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed,
-            speedY: Math.random() * 1.5 - 0.75
+            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed, 
+            speedY: Math.random() * 1.5 - 0.75 
         };
         gameState.leftScore = 0;
         gameState.rightScore = 0;
@@ -42,16 +46,50 @@ function launchGamePrivate(roomName, maxPoints) {
         document.querySelector('.ball').classList.add('hidden');
     }
 
+    function handleBallCollision() {
+        const ball = gameState.ball;
+    
+        if (ball.y - ballRadius <= 0 || ball.y + ballRadius >= 100) {
+            ball.speedY *= -1;
+            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius;
+        }
+    
+        if (ball.x - ballRadius <= paddleWidth) {
+            const distanceFromCenter = Math.abs(gameState.leftBarPos - ball.y);
+            if (distanceFromCenter <= paddleHeight / 2) {
+                ball.speedX *= -1.1; 
+                ball.speedY += (ball.y - gameState.leftBarPos) * 0.05;
+                ball.x = paddleWidth + ballRadius;
+            } else {
+                gameState.rightScore++;
+                resetBall();
+            }
+        }
+    
+        if (ball.x + ballRadius >= 100 - paddleWidth) {
+            const distanceFromCenter = Math.abs(gameState.rightBarPos - ball.y);
+            if (distanceFromCenter <= paddleHeight / 2) {
+                ball.speedX *= -1.1;
+                ball.speedY += (ball.y - gameState.rightBarPos) * 0.05;
+                ball.x = 100 - paddleWidth - ballRadius;
+            } else {
+                gameState.leftScore++;
+                resetBall();
+            }
+        }
+    }
+    
+
     function updateGame() {
         if (!isActive) return;
 
         const leftBar = document.querySelector('.left-barre');
         const rightBar = document.querySelector('.right-barre');
 
-        if (leftBar === null || rightBar === null) {
+        if (!leftBar || !rightBar) {
             isActive = false;
             return;
-        } 
+        };
 
         if (keysPressed.w) gameState.leftBarPos = Math.max(8, gameState.leftBarPos - barSpeed);
         if (keysPressed.s) gameState.leftBarPos = Math.min(92, gameState.leftBarPos + barSpeed);
@@ -61,16 +99,7 @@ function launchGamePrivate(roomName, maxPoints) {
         gameState.ball.x += gameState.ball.speedX;
         gameState.ball.y += gameState.ball.speedY;
 
-        if (gameState.ball.y <= 2 || gameState.ball.y >= 98) {
-            gameState.ball.speedY *= -1;
-        }
-
-        if (gameState.ball.x <= 2 && Math.abs(gameState.leftBarPos - gameState.ball.y) < 10) {
-            gameState.ball.speedX *= -1;
-        }
-        if (gameState.ball.x >= 98 && Math.abs(gameState.rightBarPos - gameState.ball.y) < 10) {
-            gameState.ball.speedX *= -1;
-        }
+        handleBallCollision();
 
         if (gameState.ball.x <= 0) {
             gameState.rightScore++;
@@ -98,7 +127,7 @@ function launchGamePrivate(roomName, maxPoints) {
     }
 
     function resetBall() {
-        const initialSpeed = 0.2;
+        const initialSpeed = 0.5;
         gameState.ball = { 
             x: 50, 
             y: 50, 
@@ -112,9 +141,7 @@ function launchGamePrivate(roomName, maxPoints) {
         document.querySelector('.ball').classList.add('hidden');
 
         const winnerName = winner === "left" ? playerLeft.innerText : playerRight.innerText;
-        const playerLeftName = playerLeft.innerText;
-        const playerRightName = playerRight.innerText;
-        
+
         const winnerMessage = document.getElementById('winnerMessage');
         winnerMessage.innerText = `${winnerName} Wins!`;
         winnerMessage.style.display = 'block';
@@ -128,34 +155,36 @@ function launchGamePrivate(roomName, maxPoints) {
         winnerMessage.style.padding = '20px';
         winnerMessage.style.borderRadius = '10px';
 
+        sendGameResults(winnerName);
+    }
+
+    function sendGameResults(winnerName) {
         const data = {
             winner: winnerName,
-            playerLeft: playerLeftName,
-            playerRight: playerRightName,
+            playerLeft: playerLeft.innerText,
+            playerRight: playerRight.innerText,
             leftScore: gameState.leftScore,
-            rightScore: gameState.rightScore
+            rightScore: gameState.rightScore,
         };
-
-        console.log('Game results:', data);
-        
+        console.log('Sending game results to the backend:', data);
         fetch('/api/game-results/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken() // Assurez-vous de gérer CSRF si nécessaire
+                'X-CSRFToken': getCSRFToken(),
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         })
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             return response.json();
         })
-        .then(data => {
+        .then((data) => {
             console.log('Game results successfully sent to the backend:', data);
         })
-        .catch(error => {
+        .catch((error) => {
             console.error('Error sending game results to the backend:', error);
         });
     }
@@ -164,7 +193,6 @@ function launchGamePrivate(roomName, maxPoints) {
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         return csrfToken;
     }
-    
 
     const countdownElement = document.getElementById('countdown');
     function startCountdown() {
@@ -175,14 +203,18 @@ function launchGamePrivate(roomName, maxPoints) {
         const interval = setInterval(() => {
             countdown--;
             countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+
             const ball = document.querySelector('.ball');
+
             if (ball === null) {
+                isActive = false;
                 clearInterval(interval);
                 return;
             }
 
             if (countdown <= 0) {
                 if (ball === null) {
+                    isActive = false;
                     clearInterval(interval);
                     return;
                 }
