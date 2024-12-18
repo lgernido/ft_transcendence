@@ -43,7 +43,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.running = False
 
         if hasattr(self, 'game_task'):
-            self.game_task.cancel
+            self.game_task.cancel()
 
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -165,10 +165,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
     
     async def game_update(self, event):
-        await self.send(json.dumps({
-            "type": "game_state",
-            **event,
-        }))
+        try:
+            if self.running:
+                await self.send(json.dumps({
+                    "type": "game_state",
+                    **event,
+                }))
+        except Exception as e:
+            print(e)
 
     async def move_ball(self):
         self.game.move_ball()

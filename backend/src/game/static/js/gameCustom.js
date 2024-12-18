@@ -136,6 +136,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         } else if (data.type === "game_over") {
             displayWinner(data.winner);
             if (socketCustom.readyState === WebSocket.OPEN) {
+                socketCustom.send(JSON.stringify({ type: 'over_game', winner: data.winner, user1: playerLeft.innerText, user2: playerRight.innerText }));
                 sendStopGame();
                 socketCustom.close();
             }
