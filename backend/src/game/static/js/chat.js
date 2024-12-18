@@ -23,10 +23,21 @@ function handleChat(){
 	const userList = document.getElementById("userList");
 	const chatHeader = document.querySelector(".contact-details strong");
 
+	if (!userList)
+		console.log("userlist not find")
+	else 
+		console.log("userlist find")
+
 	let currentChannelId = null;
 	let chatSocket = null;
 
-	
+	fetch(`/chat2/search_users?query=all`)
+		.then(response => response.json())
+		.then(data => { 
+			console.log("select all", data)
+			createUserEntry(data);
+		})
+
 	// Fonction pour initialiser WebSocket pour le canal spécifié
 	function initWebSocket(channelId) {
 		if (chatSocket) {
@@ -95,7 +106,7 @@ function handleChat(){
 	}
 
 	// Fonction pour gérer le clic sur un utilisateur de la liste
-	function handleUserClick(user, userList, userSearchInput) {
+	function handleUserClick(user) {
 		const user2Id = user.id; // ID de l'utilisateur sélectionné
 		// Mettre à jour le nom du contact dans le chat header
 		chatHeader.textContent = user.username;
@@ -129,45 +140,59 @@ function handleChat(){
 
 // ==============================================================================================
 	// Recherche d'utilisateurs
+	// userSearchInput.addEventListener("input", function () {
+	// 	const query = userSearchInput.value.trim();
+	// 	if (query.length >= 1) {
+	// 		fetch(`/chat2/search_users?query=${query}`)
+	// 			.then(response => response.json())
+	// 			.then(data => {
+	// 				userList.innerHTML = "";
+	// 				data.results.forEach(user => {
+	// 					const userEntry = document.createElement("div");
+	// 					userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
+	// 					userEntry.innerHTML = `
+	// 						<img src="${user.avatar}" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
+	// 						<div data_user_id='${user.id}'>
+	// 							<div class="user-details"><strong>${user.username}</strong></div>
+	// 							<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
+	// 						</div>
+	// 					`;
+	// 					userEntry.addEventListener("click", () => handleUserClick(user, userList, userSearchInput)); // Attacher l'événement clic
+	// 					userList.appendChild(userEntry);
+	// 				});
+	// 			});
+	// 	} else {
+	// 		userList.innerHTML = ""; // Effacer la liste si la recherche est vide
+	// 	}
+	// });
+
 	userSearchInput.addEventListener("input", function () {
 		const query = userSearchInput.value.trim();
-		if (query.length >= 1) {
+		if (query.length >= 2) {
 			fetch(`/chat2/search_users?query=${query}`)
 				.then(response => response.json())
 				.then(data => {
-					userList.innerHTML = "";
-					data.results.forEach(user => {
-						const userEntry = document.createElement("div");
-						userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
-						userEntry.innerHTML = `
-							<img src="${user.avatar}" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
-							<div data_user_id='${user.id}'>
-								<div class="user-details"><strong>${user.username}</strong></div>
-								<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
-							</div>
-						`;
-						userEntry.addEventListener("click", () => handleUserClick(user, userList, userSearchInput)); // Attacher l'événement clic
-						userList.appendChild(userEntry);
-					});
+					createUserEntry(data);
 				});
 		} else {
-			userList.innerHTML = ""; // Effacer la liste si la recherche est vide
+			userList.innerHTML = "";
 		}
 	});
 
-//=========================================
-    // function fetchUserConversations() {
-    //     fetch('/chat2/user_conversations/')
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             console.log('Conversations utilisateur :', data);
-    //         })
-    //         .catch(error => {
-    //             console.error('Erreur lors de la requête :', error);
-    //         });
-    // }
-
-    // // Lancer la fonction toutes les 1 seconde
-    //  setInterval(fetchUserConversations, 10000);
-//===========================================
+	function createUserEntry(data) {
+		userList.innerHTML = "";
+		data.results.forEach(user => {
+			const userEntry = document.createElement("div");
+			userEntry.classList.add("user-entry", "d-flex", "align-items-center", "mb-3");
+			userEntry.innerHTML = `
+				<img src="${user.avatar}" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
+				<div data_user_id='${user.id}'>
+					<div class="user-details"><strong>${user.username}</strong></div>
+					<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
+				</div>
+			`;
+			userEntry.addEventListener("click", () => handleUserClick(user)); // Attacher l'événement clic
+			userList.appendChild(userEntry);
+		});
+	}
 }

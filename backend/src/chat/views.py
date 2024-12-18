@@ -101,7 +101,7 @@ def search_users(request):
                     'last_message_timestamp': None
                 })
 
-        # results.sort(key=lambda x: datetime.fromisoformat(x['last_message_timestamp']) if x['last_message_timestamp'] else datetime.min, reverse=True)
+        results.sort(key=lambda x: (x['last_message_timestamp'] is None, x['last_message_timestamp']), reverse=True)
         return JsonResponse({'results': results})
     return JsonResponse({'results': []})
 
