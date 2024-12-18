@@ -269,6 +269,8 @@ function loadFriends() {
                     }
                     console.log("Load function amis");
                     loadscript('amis.js', () => selectUser());
+                    // setTimeout(checkStatus, 1000);
+                    checkStatus();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -743,5 +745,83 @@ window.addEventListener('load', function () {
     history.replaceState(initialState, '', window.location.pathname);
 });
 
+const OnlineUsers = {
+    users: [], 
+    updateUsers(newUsers) {
+        this.users = newUsers; 
+        this.notify();
+    },
+    notify() {
+        const event = new CustomEvent("usersUpdated", { detail: this.users });
+        window.dispatchEvent(event);
+    }
+};
+
+// websocket variables
+let chatSocket = null;
+let presenceOnline = null;
+
+function checkStatus() {
+    const wsScheme_ = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsUrl = `${wsScheme_}://${window.location.host}/ws/users/presence/`;
+    presenceOnline = new WebSocket(wsUrl);
+
+    presenceOnline.onopen = () => {
+        console.log("WebSocket connecté !");
+    };
+
+    presenceOnline.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "online_users_list") {
+            OnlineUsers.updateUsers(data.online_users);
+        } else if (data.type === "user_presence") {
+            let updatedUsers = [...OnlineUsers.users];
+
+            if (data.status === "online") {
+                // Ajouter l'utilisateur s'il n'est pas déjà dans la liste
+                if (!updatedUsers.some(user => user.user_id === data.user_id)) {
+                    updatedUsers.push({ user_id: data.user_id, username: data.username });
+                }
+            } else if (data.status === "offline") {
+                // Retirer l'utilisateur s'il est dans la liste
+                updatedUsers = updatedUsers.filter(user => user.user_id !== data.user_id);
+            }
+
+            OnlineUsers.updateUsers(updatedUsers);
+        }
+
+        // Mise à jour des icônes de statut
+        updateStatusIcons();
+        console.log("C'est le user " + OnlineUsers.users.username)
+    };
+
+    presenceOnline.onclose = () => {
+        console.log("WebSocket déconnecté !");
+    };
+
+    presenceOnline.onerror = (error) => {
+        console.error("Erreur WebSocket :", error);
+    };
+}
+
+function updateStatusIcons() {
+    const avatars = document.getElementsByClassName('status');
+
+    Array.from(avatars).forEach(icon => {
+        const username = icon.getAttribute('data_name');
+
+        // Vérifie si l'utilisateur est présent dans OnlineUsers.users
+        const isOnline = OnlineUsers.users.some(user => user.username === username);
+
+        if (isOnline) {
+            icon.classList.remove("text-secondary"); // Enlève le gris
+            icon.classList.add("text-success");      // Ajoute le vert
+        } else {
+            icon.classList.remove("text-success");   // Enlève le vert
+            icon.classList.add("text-secondary");    // Ajoute le gris
+        }
+    });
+}
 
 

@@ -107,6 +107,12 @@ function handleChat(){
 		initWebSocket(user.id);
 		userList.innerHTML = "";
 		userSearchInput.value = "";
+
+		chatHeader.addEventListener("click", function() {
+			localStorage.setItem('opponentName', user.username);
+			localStorage.setItem('opponentId', user.id);
+			loadStats();
+		});
 	}
 	
 	// Envoi de messages via le WebSocket

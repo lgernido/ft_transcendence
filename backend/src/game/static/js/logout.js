@@ -18,6 +18,7 @@ function logoutUser() {
                 .then(response => {
                     if (response.ok) {
                         loadConnectPage();
+                        closeAllOpenWebSocket();
                     } else {
                         console.error('Erreur lors de la déconnexion');
                     }
@@ -40,4 +41,10 @@ function logoutSession() {
             logoutUser();
         });
     }
+}
+
+function closeAllOpenWebSocket()
+{
+    if (chatSocket) { chatSocket.close(); }
+    if (presenceOnline) { presenceOnline.close() };
 }

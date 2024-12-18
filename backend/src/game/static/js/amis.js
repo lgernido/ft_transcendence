@@ -302,8 +302,15 @@ async function extractValueProfileFriends(userId) {
 
 async function generateUserHTML(user, action) {
     const userTemplate = document.getElementById('user-template').content.cloneNode(true);
-    // const isOnline = OnlineUsers.users.some(onlineUser => onlineUser.username === user.username);
-    
+    const isOnline = OnlineUsers.users.some(onlineUser => onlineUser.username === user.username);
+
+    const userData = userTemplate.querySelector("[data-user-name]");
+    userData.addEventListener("click", function() {
+        localStorage.setItem('opponentName', user.username);
+        localStorage.setItem('opponentId', user.id);
+        loadStats();
+    });
+
     const { gamesWin, gamesLose, gamesDraw } = await extractValueProfileFriends(user.id);
     const totalGame = gamesWin + gamesLose + gamesDraw;
     
@@ -317,8 +324,8 @@ async function generateUserHTML(user, action) {
     
     userTemplate.querySelector('[data-user-name]').textContent = user.username || 'Unknown';
     userTemplate.querySelector('[data-user-avatar]').src = user.avatar_url;
-    // userTemplate.querySelector('[data-icon]').classList = `status bi bi-circle-fill ${isOnline ? 'text-success' : 'text-secondary'}`;
-    // userTemplate.querySelector('[data-icon]').setAttribute("data_name", user.username);
+    userTemplate.querySelector('[data-icon]').classList = `status bi bi-circle-fill ${isOnline ? 'text-success' : 'text-secondary'}`;
+    userTemplate.querySelector('[data-icon]').setAttribute("data_name", user.username);
     
     const gamesPlayedElement = userTemplate.querySelector('[data-game-played]');
     const winsElement = userTemplate.querySelector('[data-win]');

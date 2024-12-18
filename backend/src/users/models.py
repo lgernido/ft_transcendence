@@ -110,3 +110,12 @@ def create_user_profiles(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profiles(sender, instance, **kwargs):
     instance.social.save()
+
+
+class UserPresence(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_online = models.BooleanField(default=False)
+    last_seen = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {'Online' if self.is_online else 'Offline'}"
