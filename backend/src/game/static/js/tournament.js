@@ -4,6 +4,9 @@ function launchTournament(roomName, maxPoints, players) {
     let currentRound = [...players];
     let matchPlayers = [...players];
     const barSpeed = 1.5;
+    const paddleWidth = 2;
+    const ballRadius = 1;
+    const paddleHeight = 20;
 
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
@@ -23,7 +26,7 @@ function launchTournament(roomName, maxPoints, players) {
         isActive = false; 
         playerLeft.innerText = player1;
         playerRight.innerText = player2;
-    
+
         const roundAnnouncement = document.getElementById('roundAnnouncement');
         const ballElement = document.querySelector('.ball');
         const countdownElement = document.getElementById('countdown');
@@ -41,7 +44,7 @@ function launchTournament(roomName, maxPoints, players) {
             playerLeft.classList.add('slide-in-left');
             playerRight.classList.add('slide-in-right');
         }, 500);
-    
+
         setTimeout(() => {
             roundAnnouncement.style.display = 'none';
             resetGameState();
@@ -138,26 +141,7 @@ function launchTournament(roomName, maxPoints, players) {
         gameState.ball.x += gameState.ball.speedX;
         gameState.ball.y += gameState.ball.speedY;
 
-        const ballSize = 2;
-        if (gameState.ball.y <= ballSize || gameState.ball.y >= 100 - ballSize) {
-            gameState.ball.speedY *= -1;
-        }
-
-
-        if (gameState.ball.x <= 2 && Math.abs(gameState.leftBarPos - gameState.ball.y) < 10) {
-            gameState.ball.speedX *= -1;
-        }
-        if (gameState.ball.x >= 98 && Math.abs(gameState.rightBarPos - gameState.ball.y) < 10) {
-            gameState.ball.speedX *= -1;
-        }
-
-        if (gameState.ball.x <= 0) {
-            gameState.rightScore++;
-            resetBall();
-        } else if (gameState.ball.x >= 100) {
-            gameState.leftScore++;
-            resetBall();
-        }
+        handleBallCollision();
 
         document.getElementById('scorePLeft').innerText = gameState.leftScore;
         document.getElementById('scorePRight').innerText = gameState.rightScore;
@@ -173,6 +157,39 @@ function launchTournament(roomName, maxPoints, players) {
             endMatch(winner);
         } else {
             requestAnimationFrame(updateGame);
+        }
+    }
+
+    function handleBallCollision() {
+        const ball = gameState.ball;
+    
+        if (ball.y - ballRadius <= 0 || ball.y + ballRadius >= 100) {
+            ball.speedY *= -1;
+            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius;
+        }
+    
+        if (ball.x - ballRadius <= paddleWidth) {
+            const distanceFromCenter = Math.abs(gameState.leftBarPos - ball.y);
+            if (distanceFromCenter <= paddleHeight / 2) {
+                ball.speedX *= -1.1; 
+                ball.speedY += (ball.y - gameState.leftBarPos) * 0.05;
+                ball.x = paddleWidth + ballRadius;
+            } else {
+                gameState.rightScore++;
+                resetBall();
+            }
+        }
+    
+        if (ball.x + ballRadius >= 100 - paddleWidth) {
+            const distanceFromCenter = Math.abs(gameState.rightBarPos - ball.y);
+            if (distanceFromCenter <= paddleHeight / 2) {
+                ball.speedX *= -1.1;
+                ball.speedY += (ball.y - gameState.rightBarPos) * 0.05;
+                ball.x = 100 - paddleWidth - ballRadius;
+            } else {
+                gameState.leftScore++;
+                resetBall();
+            }
         }
     }
 
@@ -208,37 +225,38 @@ function launchTournament(roomName, maxPoints, players) {
 
     function endMatch(winner) {
         isActive = false;
-
+    
         setTimeout(() => {
             winnerMessage.style.display = 'none';
-
+    
             const winnerName = winner === "left" ? playerLeft.innerText : playerRight.innerText;
             const loserName = winner === "left" ? playerRight.innerText : playerLeft.innerText;
-
+    
             currentRound.push(winnerName);
             currentMatchIndex++;    
-
+    
             const loserIndex = matchPlayers.indexOf(loserName);
             if (loserIndex !== -1) {
                 matchPlayers.splice(loserIndex, 1);
             }
-
+    
             if (matchPlayers.length === 1) {
                 displayWinner(winner)
                 return;
             }
-
+    
             if (currentMatchIndex * 2 >= currentRound.length) {
                 currentRound = currentRound.slice(-currentRound.length / 2);
                 currentMatchIndex = 0;
             }
-
+    
             if (currentRound.length > 1) {
                 startMatch(currentRound[currentMatchIndex * 2], currentRound[currentMatchIndex * 2 + 1]);
             }
         }, 3000);
     }
 
+    // Gestion des entrées clavier
     document.addEventListener('keydown', (event) => {
         if (event.key in keysPressed) keysPressed[event.key] = true;
     });
@@ -248,3 +266,6 @@ function launchTournament(roomName, maxPoints, players) {
 
     startMatch(currentRound[currentMatchIndex * 2], currentRound[currentMatchIndex * 2 + 1]);
 }
+
+
+

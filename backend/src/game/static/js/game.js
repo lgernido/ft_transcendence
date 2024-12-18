@@ -55,7 +55,7 @@ function launchGameBot(roomName, maxPoints) {
     
         if (ball.y - ballRadius <= 0 || ball.y + ballRadius >= 100) {
             ball.speedY *= -1;
-            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius; 
+            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius;
         }
     
         if (ball.x - ballRadius <= paddleWidth) {
@@ -94,14 +94,11 @@ function launchGameBot(roomName, maxPoints) {
             return;
         }
    
-        // Left paddle controls (human player)
         if (keysPressed.w) gameState.leftBarPos = Math.max(8, gameState.leftBarPos - barSpeed);
         if (keysPressed.s) gameState.leftBarPos = Math.min(92, gameState.leftBarPos + barSpeed);
    
-        // AI logic for the right paddle
         aiLogic();
    
-        // Ball update logic
         gameState.ball.x += gameState.ball.speedX;
         gameState.ball.y += gameState.ball.speedY;
    
@@ -133,27 +130,29 @@ function launchGameBot(roomName, maxPoints) {
     }
    
 
-    var aiPaddle = { y: gameState.rightBarPos, height: paddleHeight };
-    var lastUpdateAt = null;
-    var pY = 50; // starting at the middle of the screen
+    var aiBar = { y: gameState.rightBarPos, height: paddleHeight };
+    var lastTiming = null;
+    var posY = 50;
 
     function aiLogic() {
-        if (lastUpdateAt === null || (Date.now() - lastUpdateAt > 1000)) {
-            lastUpdateAt = Date.now();
-            pY = predictY(gameState.ball);   
+        if (lastTiming === null || (Date.now() - lastTiming > 1000)) {
+            lastTiming = Date.now();
+            posY = predictY(gameState.ball);   
         }
-
-        let difference = pY - (aiPaddle.y + aiPaddle.height / 2);
-        const paddleSpeed = 1.5;
-
-        if (Math.abs(difference) > paddleSpeed) {
-            aiPaddle.y += Math.sign(difference) * paddleSpeed;
+    
+        let difference = posY - (aiBar.y + aiBar.height / 2);
+    
+        if (Math.abs(difference) > barSpeed) {
+            aiBar.y += Math.sign(difference) * barSpeed;
         } else {
-            aiPaddle.y = pY - aiPaddle.height / 2;
+            aiBar.y = posY - aiBar.height / 2;
         }
-
-        gameState.rightBarPos = aiPaddle.y;
+    
+        aiBar.y = Math.max(paddleHeight / 2, Math.min(100 - paddleHeight / 2, aiBar.y));
+    
+        gameState.rightBarPos = aiBar.y;
     }
+    
 
     function predictY(ball) {
         let bx = ball.x;

@@ -51,7 +51,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
     
         if (ball.y - ballRadius <= 0 || ball.y + ballRadius >= 100) {
             ball.speedY *= -1;
-            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius;
+            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius; // Ajuster la position
         }
     
         if (ball.x - ballRadius <= paddleWidth) {
@@ -59,7 +59,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
             if (distanceFromCenter <= paddleHeight / 2) {
                 ball.speedX *= -1.1; 
                 ball.speedY += (ball.y - gameState.leftBarPos) * 0.05;
-                ball.x = paddleWidth + ballRadius; 
+                ball.x = paddleWidth + ballRadius; // Ajuste la position pour éviter le chevauchement
             } else {
                 gameState.rightScore++;
                 resetBall();
@@ -71,7 +71,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
             if (distanceFromCenter <= paddleHeight / 2) {
                 ball.speedX *= -1.1;
                 ball.speedY += (ball.y - gameState.rightBarPos) * 0.05;
-                ball.x = 100 - paddleWidth - ballRadius; 
+                ball.x = 100 - paddleWidth - ballRadius; // Ajuste la position pour éviter le chevauchement
             } else {
                 gameState.leftScore++;
                 resetBall();
