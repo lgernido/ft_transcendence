@@ -99,7 +99,6 @@ function launchGamePrivate(roomName, maxPoints) {
 
     document.addEventListener('keydown', (event) => {
         if (!isActive) return;
-
         if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             keysPressed[event.key] = true;
         }
@@ -107,7 +106,6 @@ function launchGamePrivate(roomName, maxPoints) {
     
     document.addEventListener('keyup', (event) => {
         if (!isActive) return;
-
         if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             keysPressed[event.key] = false;
         }
@@ -205,6 +203,8 @@ function launchGamePrivate(roomName, maxPoints) {
                         socketPrivate.close();
                     }
 
+                    clearInterval(countdownInterval);
+
                     return;
                 }
             
@@ -216,6 +216,8 @@ function launchGamePrivate(roomName, maxPoints) {
                         sendStopGame();
                         socketPrivate.close();
                     }
+
+                    clearInterval(countdownInterval);
 
                     return;
                 }

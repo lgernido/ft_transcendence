@@ -125,9 +125,6 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         }));
     }
     
-    socketCustom.onclose = (event) => {
-    }
-    
     socketCustom.onmessage = (message) => {
         const data = JSON.parse(message.data);
     
@@ -140,7 +137,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
                 setTimeout(() => {
                     sendStopGame();
                     socketCustom.close();
-                }, 1000);
+                }, 5000);
             }
         } else if (data.type === "close_socket") {
             if (socketCustom.readyState === WebSocket.OPEN) {
@@ -165,8 +162,8 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         leftBar.style.top = `${state.left_bar_pos}%`;
         rightBar.style.top = `${state.right_bar_pos}%`;
     
-        leftBar.style.height = `${state.left_bar_height}%`;
-        rightBar.style.height = `${state.right_bar_height}%`;
+        leftBar.style.height = `${Math.min(100, state.left_bar_height)}%`;
+        rightBar.style.height = `${Math.min(100, state.right_bar_height)}%`;
     
         document.querySelector('.ballfoot').style.left = `${state.ball_pos.x}%`;
         document.querySelector('.ballfoot').style.top = `${state.ball_pos.y}%`;
@@ -207,6 +204,7 @@ function launchGamePrivateCustom(roomName, maxPoints) {
                     sendStopGame();
                     socketCustom.close();
                 }
+                clearInterval(countdownInterval);
 
                 return;
             }
@@ -219,6 +217,8 @@ function launchGamePrivateCustom(roomName, maxPoints) {
                         sendStopGame();
                         socketCustom.close();
                     }
+
+                    clearInterval(countdownInterval);
 
                     return;
                 }

@@ -220,6 +220,7 @@ function launchGameBot(roomName, maxPoints) {
                         sendStopGame();
                         socketBOT.close();
                     }
+                    clearInterval(countdownInterval);
 
                     return;
                 }

@@ -143,6 +143,11 @@
 	margin-right: 3px;
 }
 
+#tlbar #trbar {
+    transform: translateY(-50%);
+    top: clamp(0%, calc(var(--bar-position, 50%) - 50px), calc(100% - 50px));
+}
+
 .center-line {
     position: absolute;
     left: 50%;

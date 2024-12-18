@@ -130,15 +130,19 @@ function launchTournament(roomName, maxPoints, players) {
             return;
         }
 
-        if (keysPressed.w) gameState.leftBarPos = Math.max(0, gameState.leftBarPos - barSpeed);
-        if (keysPressed.s) gameState.leftBarPos = Math.min(100, gameState.leftBarPos + barSpeed);
-        if (keysPressed.ArrowUp) gameState.rightBarPos = Math.max(0, gameState.rightBarPos - barSpeed);
-        if (keysPressed.ArrowDown) gameState.rightBarPos = Math.min(100, gameState.rightBarPos + barSpeed);
+        if (keysPressed.w) gameState.leftBarPos = Math.max(0 + 8, gameState.leftBarPos - barSpeed);
+        if (keysPressed.s) gameState.leftBarPos = Math.min(100 - 8, gameState.leftBarPos + barSpeed);
+        if (keysPressed.ArrowUp) gameState.rightBarPos = Math.max(0 + 8, gameState.rightBarPos - barSpeed);
+        if (keysPressed.ArrowDown) gameState.rightBarPos = Math.min(100 - 8, gameState.rightBarPos + barSpeed);
 
         gameState.ball.x += gameState.ball.speedX;
         gameState.ball.y += gameState.ball.speedY;
 
-        if (gameState.ball.y <= 0 || gameState.ball.y >= 100) gameState.ball.speedY *= -1;
+        const ballSize = 2;
+        if (gameState.ball.y <= ballSize || gameState.ball.y >= 100 - ballSize) {
+            gameState.ball.speedY *= -1;
+        }
+
 
         if (gameState.ball.x <= 2 && Math.abs(gameState.leftBarPos - gameState.ball.y) < 10) {
             gameState.ball.speedX *= -1;
@@ -220,7 +224,7 @@ function launchTournament(roomName, maxPoints, players) {
             }
 
             if (matchPlayers.length === 1) {
-                alert(`🏆 Tournament Winner: ${matchPlayers[0]}!`);
+                displayWinner(winner)
                 return;
             }
 
