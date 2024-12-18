@@ -66,6 +66,10 @@ def callback(request):
             )
             profile = Profile.objects.create(user=user)
             profile.save()
+        else:
+            social2 = Social.objects.get(user=user)
+            if social2.user42 == False:
+                return redirect('/connect')
             
 
         if not request.user.is_authenticated:
