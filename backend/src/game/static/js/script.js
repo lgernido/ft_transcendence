@@ -64,6 +64,7 @@ function loadscript(file, func) {
 }
 
 function loadConnectPage() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     
@@ -110,6 +111,7 @@ function loadConnectPage() {
 }
 
 function loadCreateAccount() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -141,6 +143,7 @@ function loadCreateAccount() {
 }
 
 function loadMyPage() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -187,6 +190,7 @@ function loadMyPage() {
 }
 
 function loadStats() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -235,6 +239,7 @@ function loadStats() {
 }
 
 function loadFriends() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -269,7 +274,6 @@ function loadFriends() {
                     }
                     console.log("Load function amis");
                     loadscript('amis.js', () => selectUser());
-                    // setTimeout(checkStatus, 1000);
                     checkStatus();
                 })
                 .catch(error => {
@@ -286,6 +290,7 @@ function loadFriends() {
 }
 
 function loadAccount() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     
@@ -333,6 +338,7 @@ function loadAccount() {
 
 function loadTournament()
 {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/lobby_tournament/', {
@@ -365,6 +371,7 @@ function loadTournament()
 }
 
 function loadPublic() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/lobby/', {
@@ -396,6 +403,7 @@ function loadPublic() {
 }
 
 function loadPrivate() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch('/lobby_private/', {
@@ -427,6 +435,7 @@ function loadPrivate() {
 }
 
 function loadGame(roomName, maxPoints) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/game/${roomName}`, {
@@ -457,6 +466,7 @@ function loadGame(roomName, maxPoints) {
 }
 
 function loadGamePrivateCustom(roomName, maxPoints) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/custom/${roomName}`, {
@@ -487,6 +497,7 @@ function loadGamePrivateCustom(roomName, maxPoints) {
 }
 
 function loadGamePrivate(roomName, maxPoints) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/game/${roomName}`, {
@@ -517,6 +528,7 @@ function loadGamePrivate(roomName, maxPoints) {
 }
 
 function loadGameTournament(roomName, maxPoints, players) {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     fetch(`/tournament/${roomName}`, {
@@ -547,6 +559,7 @@ function loadGameTournament(roomName, maxPoints, players) {
 }
 
 function loadChat() {
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     
@@ -766,6 +779,7 @@ function checkStatus() {
     const wsUrl = `${wsScheme_}://${window.location.host}/ws/users/presence/`;
     presenceOnline = new WebSocket(wsUrl);
 
+    console.log("CheckStatus");
     presenceOnline.onopen = () => {
         console.log("WebSocket connecté !");
     };

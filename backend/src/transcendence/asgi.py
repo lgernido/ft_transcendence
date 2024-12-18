@@ -20,7 +20,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'transcendence.settings')
 
 django_asgi_app = get_asgi_application()
 
-websocket_urlpatterns = chat_urlpatterns + game_urlpatterns + users_urlpatterns
+websocket_urlpatterns = chat_urlpatterns + users_urlpatterns + game_urlpatterns
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
