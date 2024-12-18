@@ -112,7 +112,9 @@ function launchTournament(roomName, maxPoints, players) {
                 
                 clearInterval(interval);
                 countdownElement.style.display = 'none';
-                document.querySelector('.ball').classList.remove('hidden');
+                if (ballElement) {
+                    document.querySelector('.ball').classList.remove('hidden');
+                } 
                 callback();
             }
         }, 1000);

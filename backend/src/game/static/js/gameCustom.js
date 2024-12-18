@@ -25,6 +25,9 @@ function launchGamePrivateCustom(roomName, maxPoints) {
     };
 
     function sendStopGame() {
+        if (socketCustom.readyState !== WebSocket.OPEN) {
+            return;
+        }
         socketCustom.send(JSON.stringify({ type: 'stop_game' }));
         isActive = false;
     }

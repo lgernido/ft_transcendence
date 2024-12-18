@@ -32,7 +32,6 @@ class Migration(migrations.Migration):
                 ('player1_score', models.PositiveIntegerField(default=0)),
                 ('player2_score', models.PositiveIntegerField(default=0)),
                 ('date_played', models.DateTimeField(auto_now_add=True)),
-                ('duration', models.DurationField(blank=True, null=True)),
                 ('player1', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='games_as_player1', to=settings.AUTH_USER_MODEL)),
                 ('player2', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='games_as_player2', to=settings.AUTH_USER_MODEL)),
                 ('winner', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='games_won', to=settings.AUTH_USER_MODEL)),

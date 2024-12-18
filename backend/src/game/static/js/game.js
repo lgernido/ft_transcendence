@@ -30,6 +30,9 @@ function launchGameBot(roomName, maxPoints) {
     };
 
     function sendStopGame() {
+        if (socketBOT.readyState !== WebSocket.OPEN) {
+            return;
+        }
         socketBOT.send(JSON.stringify({ type: 'stop_game' }));
         isActive = false;
     }

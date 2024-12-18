@@ -14,7 +14,6 @@ class Game(models.Model):
     player2_score = models.PositiveIntegerField(default=0)
 
     date_played = models.DateTimeField(auto_now_add=True)
-    duration = models.DurationField(blank=True, null=True)
 
     def __str__(self):
         return f"Game between {self.player1.username} and {self.player2.username} - Winner: {self.winner.username if self.winner else 'Draw'}"

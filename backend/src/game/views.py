@@ -300,7 +300,6 @@ def extractGame(request):
                 "player1_score": game.player1_score,
                 "player2_score": game.player2_score,
                 "date_played": game.date_played.isoformat(),
-                "duration": str(game.duration) if game.duration else None,
                 "opponentId": opponent.id,
                 "avatar": avatar_url,
             })
