@@ -70,10 +70,7 @@ def search_users(request):
             users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
         
         results = []
-        blocked_by_others = User.objects.filter(social__blocked_user=current_user) |  User.objects.filter(id=current_user.id)
-        users = User.objects.filter(is_staff=False).exclude(id__in=blocked_by_others.values_list('id', flat=True))
-        only_none_block = users.filter(username__icontains=query)
-        for user in only_none_block:
+        for user in users:
             # Générer l'identifiant unique pour le canal
             user1_id, user2_id = sorted([current_user.id, user.id])
             unique_identifier = f"private_{user1_id}-{user2_id}"
@@ -100,7 +97,6 @@ def search_users(request):
                     'last_message': 'Aucun message',
                     'last_message_timestamp': None
                 })
-
         results.sort(key=lambda x: (x['last_message_timestamp'] is None, x['last_message_timestamp']), reverse=True)
         return JsonResponse({'results': results})
     return JsonResponse({'results': []})
