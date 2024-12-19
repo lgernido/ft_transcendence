@@ -1,195 +1,215 @@
 function launchGameBot(roomName, maxPoints) {
-    let isActive = false;
-    const paddleWidth = 2; 
-    const ballRadius = 1;  
-
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
-    const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
-    const barSpeed = 1.5;
-
-    const paddleHeight = 20;
-
-    const gameState = {
-        leftBarPos: 50,
-        rightBarPos: 50,
-        ball: { x: 50, y: 50, speedX: 0.5, speedY: 0.5 },
-        leftScore: 0,
-        rightScore: 0
-    };
 
     setTimeout(() => {
         playerLeft.classList.add('slide-in-left');
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    function getRandomNumber(min, max) {
-        return Math.random() * (max - min) + min;
+    const leftBarre = document.querySelector('.left-barre');
+    const rightBarre = document.querySelector('.right-barre');
+
+    let leftBarrePosition = 50;
+    let rightBarrePosition = 50;
+
+    const barreSpeed = 1;
+    const barreHeight = 15;
+
+    const keys = {}; 
+
+    function moveBarre(barre, position, direction) {
+        const maxPosition = 100 - (barreHeight * 0.5);
+        position += direction * barreSpeed;
+        position = Math.max(barreHeight * 0.5, Math.min(maxPosition, position));
+        barre.style.top = position + '%';
+        return position;
     }
 
-    function resetGameState() {
-        const initialSpeed = 0.5;
-        gameState.leftBarPos = 50;
-        gameState.rightBarPos = 50;
-        gameState.ball = { 
-            x: 50, 
-            y: 50, 
-            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed, 
-            speedY: Math.random() * 1.5 - 0.75 
-        };
-        gameState.leftScore = 0;
-        gameState.rightScore = 0;
+    document.addEventListener('keydown', (e) => {
+        keys[e.key] = true;
+    });
 
-        document.querySelector('.left-barre').style.top = '50%';
-        document.querySelector('.right-barre').style.top = '50%';
-        document.querySelector('.ball').style.left = '50%';
-        document.querySelector('.ball').style.top = '50%';
-        document.getElementById('scorePLeft').innerText = 0;
-        document.getElementById('scorePRight').innerText = 0;
+    document.addEventListener('keyup', (e) => {
+        keys[e.key] = false;
+    });
 
-        document.querySelector('.ball').classList.add('hidden');
+    const moveValue = 0.5;
+    setInterval(() => {
+        if (keys['w']) {
+            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
+        }
+        if (keys['s']) {
+            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
+        }
+
+        // Déplacer l'IA pour la barre de droite (remplacer les touches fléchées par la logique de l'IA)
+        aiMove();
+    }, 10);
+
+    const ball = document.querySelector('.ball');
+    const gameSetup = document.querySelector('.game-window');
+
+    let posBallX = 50;
+    let posBallY = 50;
+    let speedX = 0.3;
+    let speedY = 0.2;
+
+    let ballSpeed = 0.3;
+
+    let scrorePlayerLeft = 0;
+    let scrorePlayerRight = 0;
+
+    let resettingBall = false;
+
+    const increaseSpeed = 1.1;
+    const maxAngle = Math.PI / 4; // angle max
+
+    function calculateAngle(impactPoint, maxAngle) {
+        return maxAngle * (2 * impactPoint - 1);
     }
 
-    function handleBallCollision() {
-        const ball = gameState.ball;
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function updateScore() {
+        document.getElementById("scorePLeft").textContent = scrorePlayerLeft;
+        document.getElementById("scorePRight").textContent = scrorePlayerRight;
+    }
+
+    updateScore();
     
-        if (ball.y - ballRadius <= 0 || ball.y + ballRadius >= 100) {
-            ball.speedY *= -1;
-            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius;
-        }
-    
-        if (ball.x - ballRadius <= paddleWidth) {
-            const distanceFromCenter = Math.abs(gameState.leftBarPos - ball.y);
-            if (distanceFromCenter <= paddleHeight / 2) {
-                ball.speedX *= -1.1; 
-                ball.speedY += (ball.y - gameState.leftBarPos) * 0.05;
-                ball.x = paddleWidth + ballRadius;
-            } else {
-                gameState.rightScore++;
-                resetBall();
-            }
-        }
-    
-        if (ball.x + ballRadius >= 100 - paddleWidth) {
-            const distanceFromCenter = Math.abs(gameState.rightBarPos - ball.y);
-            if (distanceFromCenter <= paddleHeight / 2) {
-                ball.speedX *= -1.1;
-                ball.speedY += (ball.y - gameState.rightBarPos) * 0.05;
-                ball.x = 100 - paddleWidth - ballRadius;
-            } else {
-                gameState.leftScore++;
-                resetBall();
-            }
-        }
+    function resetBall()
+    {
+        console.log("Init/reset ball");
+        posBallX = 50;
+        posBallY = 50;
+        const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
+        const directionX = Math.random() > 0.5 ? 1 : -1;
+        const directionY = 0;
+        
+        speedX = ballSpeed * Math.cos(angle) * directionX;
+        speedY = ballSpeed * Math.sin(angle) * directionY;
     }
 
-    function updateGame() {
-        if (!isActive) return;
-   
-        const leftBar = document.querySelector('.left-barre');
-        const rightBar = document.querySelector('.right-barre');
-   
-        if (!leftBar || !rightBar) {
-            isActive = false;
-            return;
-        }
-   
-        if (keysPressed.w) gameState.leftBarPos = Math.max(8, gameState.leftBarPos - barSpeed);
-        if (keysPressed.s) gameState.leftBarPos = Math.min(92, gameState.leftBarPos + barSpeed);
-   
-        aiLogic();
-   
-        gameState.ball.x += gameState.ball.speedX;
-        gameState.ball.y += gameState.ball.speedY;
-   
-        handleBallCollision();
-   
-        if (gameState.ball.x <= 0) {
-            gameState.rightScore++;
-            resetBall();
-        } else if (gameState.ball.x >= 100) {
-            gameState.leftScore++;
-            resetBall();
-        }
-   
-        document.getElementById('scorePLeft').innerText = gameState.leftScore;
-        document.getElementById('scorePRight').innerText = gameState.rightScore;
-   
-        document.querySelector('.left-barre').style.top = `${gameState.leftBarPos}%`;
-        document.querySelector('.right-barre').style.top = `${gameState.rightBarPos}%`;
-        document.querySelector('.ball').style.left = `${gameState.ball.x}%`;
-        document.querySelector('.ball').style.top = `${gameState.ball.y}%`;
-   
-        if (gameState.leftScore >= maxPoints || gameState.rightScore >= maxPoints) {
-            const winner = gameState.leftScore >= maxPoints ? "left" : "right";
-            displayWinner(winner);
-            isActive = false;
-        } else {
-            requestAnimationFrame(updateGame);
-        }
-    }
-   
-
-    var aiBar = { y: gameState.rightBarPos, height: paddleHeight };
+    var aiBar = { y: rightBarrePosition, height: barreHeight };
     var lastTiming = null;
     var posY = 50;
 
-    function aiLogic() {
+    function aiMove() {
         if (lastTiming === null || (Date.now() - lastTiming > 1000)) {
             lastTiming = Date.now();
-            posY = predictY(gameState.ball);   
+            posY = predict_ball_position({x: posBallX, y: posBallY, speedX: speedX, speedY: speedY});   
         }
-    
+            
         let difference = posY - (aiBar.y + aiBar.height / 2);
-    
-        if (Math.abs(difference) > barSpeed) {
-            aiBar.y += Math.sign(difference) * barSpeed;
+
+        if (Math.abs(difference) > barreSpeed) {
+            aiBar.y += Math.sign(difference) * barreSpeed;
         } else {
             aiBar.y = posY - aiBar.height / 2;
         }
-    
-        aiBar.y = Math.max(paddleHeight / 2, Math.min(100 - paddleHeight / 2, aiBar.y));
-    
-        gameState.rightBarPos = aiBar.y;
-    }
-    
 
-    function predictY(ball) {
+        aiBar.y = Math.max(barreHeight / 2, Math.min(100 - barreHeight / 2, aiBar.y));
+
+        rightBarrePosition = aiBar.y;
+        rightBarre.style.top = rightBarrePosition + '%';
+    }
+
+    function predict_ball_position(ball) {
         let bx = ball.x;
         let by = ball.y;
         let bdx = ball.speedX;
         let bdy = ball.speedY;
-
-        while(1) {
+    
+        while (bx + bdx >= 0 && bx + bdx <= 100) {  // Vérifie si la balle est dans la fenêtre de jeu
             bx += bdx;
             by += bdy;
-
-            if (by + ballRadius >= 100 || by - ballRadius <= 0) {
+    
+            if (by + 1 >= 100 || by - 1 <= 0) {
                 bdy = -bdy * getRandomNumber(0.6, 1.4);
                 by += bdy;
-            } else if (bx - ballRadius <= paddleWidth) {
+            } else if (bx - 1 <= 5) {
                 bdx = -bdx * getRandomNumber(0.6, 1.4);
                 bx += bdx;
-            } else if (bx + ballRadius >= 100 - paddleWidth) {
+            } else if (bx + 1 >= 100 - 5) {
                 return by;
             }
         }
+        return by;
+    }
+    
+
+    function getRandomNumber(min, max) {
+        return Math.random() * (max - min) + min;
     }
 
-    function resetBall() {
-        const initialSpeed = 0.5;
-        gameState.ball = { 
-            x: 50, 
-            y: 50, 
-            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed, 
-            speedY: Math.random() * 1.5 - 0.75 
+    function startGame() {
+        scrorePlayerLeft = 0;
+        scrorePlayerRight = 0;
+        updateScore();
+        resetBall();
+        ballInterval = setInterval(moveBall, 10);
+    }
+
+    const countdownElement = document.getElementById('countdown');
+    let countdown = 5;
+    function startCountdown() {
+        toggleBallVisibility(true);
+        countdownElement.textContent = countdown;
+        const countdownInterval = setInterval(() => { 
+            countdown -= 1;
+            countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.style.display = 'none';
+                toggleBallVisibility(false);
+                startGame();
+            }
+        }, 1000);
+    }
+
+    function sendGameResults(winnerName) {
+        const data = {
+            winner: winnerName,
+            playerLeft: playerLeft.innerText,
+            playerRight: playerRight.innerText,
+            leftScore: scrorePlayerLeft,
+            rightScore: scrorePlayerRight,
         };
+        console.log('Sending game results to the backend:', data);
+        fetch('/api/game-results/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify(data),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log('Game results successfully sent to the backend:', data);
+        })
+        .catch((error) => {
+            console.error('Error sending game results to the backend:', error);
+        });
+    }
+
+    function getCSRFToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        return csrfToken;
     }
 
     function displayWinner(winner) {
         isActive = false;
-        document.querySelector('.ball').classList.add('hidden');
-
+        toggleBallVisibility(true);
         const winnerName = winner === "left" ? playerLeft.innerText : playerRight.innerText;
 
         const winnerMessage = document.getElementById('winnerMessage');
@@ -204,49 +224,94 @@ function launchGameBot(roomName, maxPoints) {
         winnerMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
         winnerMessage.style.padding = '20px';
         winnerMessage.style.borderRadius = '10px';
+
+        sendGameResults(winnerName);
     }
 
-    const countdownElement = document.getElementById('countdown');
-    function startCountdown() {
-        let countdown = 5;
-        countdownElement.textContent = countdown;
-        countdownElement.style.display = 'block';
+    function toggleBallVisibility(isHidden) {
+        if (isHidden) {
+            ball.classList.add('hidden');
+        } else {
+            ball.classList.remove('hidden');
+        }
+    }
 
-        const interval = setInterval(() => {
-            countdown--;
-            countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+    async function moveBall() {
+        posBallX += speedX;
+        posBallY += speedY;
 
-            const ball = document.querySelector('.ball');
+        const ballRect = ball.getBoundingClientRect();
+        const leftBarreRect = leftBarre.getBoundingClientRect();
+        const rightBarreRect = rightBarre.getBoundingClientRect();
 
-            if (ball === null) {
-                isActive = false;
-                clearInterval(interval);
-                return;
-            }
+        if (resettingBall) return;
 
-            if (countdown <= 0) {
-                if (ball === null) {
-                    isActive = false;
-                    clearInterval(interval);
+        if (posBallY - 2 <= 0 || posBallY + 2 >= 100)
+            speedY *= -1;
+
+        if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
+        {
+            console.log("touch Left barre");
+            posBallX = posBallX + 1;
+
+            const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
+            const angle = calculateAngle(impactPoint, maxAngle);
+
+            const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
+            speedX = Math.cos(angle) * totalSpeed;
+            speedY = Math.sin(angle) * totalSpeed;
+
+            speedX = Math.abs(speedX);
+        }
+
+        if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
+        {
+            console.log("touch Right barre");
+            posBallX = posBallX - 1;
+
+            const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;
+            const angle = calculateAngle(impactPoint, maxAngle);
+        
+            const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
+            speedX = Math.cos(angle) * totalSpeed;
+            speedY = Math.sin(angle) * totalSpeed;
+        
+            speedX = -Math.abs(speedX);
+        }
+
+        if (posBallX - 1 <= 0 || posBallX + 1 >= 100)
+        {
+            resettingBall = true;
+            clearInterval(ballInterval);
+
+            ball.style.left = posBallX - 1 + '%';
+            ball.style.top = posBallY - 2 + '%';
+            if (posBallX - 1.5 <= 0) {
+                scrorePlayerRight++;
+                if (scrorePlayerRight >= maxPoints) {
+                    displayWinner('right');
                     return;
                 }
-                clearInterval(interval);
-                countdownElement.style.display = 'none';
-                document.querySelector('.ball').classList.remove('hidden');
-                isActive = true;
-                updateGame();
+            } else if (posBallX + 1.5 >= 100) {
+                scrorePlayerLeft++;
+                if (scrorePlayerLeft >= maxPoints) {
+                    displayWinner('left');
+                    return;
+                }
             }
-        }, 1000);
+
+            ball.classList.add('breaking');
+            updateScore();
+            await sleep(1000);
+            ball.classList.remove('breaking')
+            resetBall();
+            resettingBall = false;
+            ballInterval = setInterval(moveBall, 10);
+        }
+
+        ball.style.left = posBallX + '%';
+        ball.style.top = posBallY + '%';
     }
 
-    document.addEventListener('keydown', (event) => {
-        if (event.key in keysPressed) keysPressed[event.key] = true;
-    });
-
-    document.addEventListener('keyup', (event) => {
-        if (event.key in keysPressed) keysPressed[event.key] = false;
-    });
-
-    resetGameState();
     startCountdown();
 }
