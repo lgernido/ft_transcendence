@@ -51,98 +51,56 @@ function lobby_private() {
         
         playerName2.classList.add(event.target.value);
     });
+    const roomName = document.getElementById("check-invite").textContent;
+    if (roomName === "False")
+        createRoomP();
+    else
+        InitWebSocketRoomP(roomName)
+}
 
-    document.getElementById('btn-custom').addEventListener('click', function() {
-        const player1Color = document.getElementById('selectColorPlayer1').value;
-        const player2Color = document.getElementById('selectColorPlayer2').value;
-        const maxPoint = document.getElementById('maxPoint').value;
-        const userInfoDiv = document.getElementById('user-info');
-        const username = userInfoDiv.getAttribute('data-username');
-        const roomName = `${username}_room`;
-
-        if (player1Color !== 'color-player-none' && player2Color !== 'color-player-none' && player1Color != player2Color && maxPoint > 0 && maxPoint < 40) {
-            fetch("create_custom/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify({
-                    roomName: roomName,
-                    player1Color: player1Color,
-                    player2Color: player2Color,
-                    maxPoint: maxPoint,
-                }),
-            })
-                .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
-                .then(({ status, body }) => {
-                    if (status === 200) {
-                        loadGamePrivateCustom(roomName, maxPoint);
-                    } else {
-                        alert(body.error || 'Failed to create room');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Fetch error:', error);
-                    alert('Failed to create room');
-            });
+function createRoomP() {
+    fetch("/create_room/", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
         } else {
-            alert('Please select differents colors for both players OR a limit point betwenn 0 and 40.');
+            displayError("Failed to create room");
         }
+    })
+    .then(data => {
+        console.log("Room created successfully:", data.room_name);
+        console.log("Join the room using this link:", data.room_link);
+        InitWebSocketRoomP(data.room_name);
+    })
+    .catch(error => {
+        loadMyPage();
+        displayError("Error creating room:", error);
     });
+}
 
-	document.getElementById('btn-ready').addEventListener('click', function() {
-        const player1Color = document.getElementById('selectColorPlayer1').value;
-        const player2Color = document.getElementById('selectColorPlayer2').value;
-        const maxPoint = document.getElementById('maxPoint').value;
-        const userInfoDiv = document.getElementById('user-info');
-        const username = userInfoDiv.getAttribute('data-username');
-        const roomName = `${username}_room`;
+function InitWebSocketRoomP(roomName) {
+    socket_roomP = new WebSocket(`wss://${window.location.host}/ws/game/${roomName}/`);
 
-        if (player1Color !== 'color-player-none' && player2Color !== 'color-player-none' && player1Color != player2Color && maxPoint > 0 && maxPoint < 40) {
-            fetch("create_room/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify({
-                    roomName: roomName,
-                    player1Color: player1Color,
-                    player2Color: player2Color,
-                    maxPoint: maxPoint,
-                }),
-            })
-                .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
-                .then(({ status, body }) => {
-                    if (status === 200) {
-                        loadGamePrivate(roomName, maxPoint);
-                    } else {
-                        alert(body.error || 'Failed to create room');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Fetch error:', error);
-                    alert('Failed to create room');
-            });
-        } else {
-            alert('Please select differents colors for both players OR a limit point betwenn 0 and 40.');
-        }
-    });
-	    
-    // Fonction pour récupérer le token CSRF
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
+    socket_roomP.onopen = function () {
+        console.log("Connected to room:", roomName);
+    };
+
+    socket_roomP.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        console.log("Message received:", data.message);
+    };
+
+    socket_roomP.onclose = function () {
+        console.log("Disconnected from room:", roomName);
+    };
+
+    function sendMessage(message) {
+        socket_roomP.send(JSON.stringify({ message }));
     }
 }

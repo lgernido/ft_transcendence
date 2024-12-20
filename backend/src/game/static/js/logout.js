@@ -47,4 +47,5 @@ function closeAllOpenWebSocket()
 {
     if (chatSocket) { chatSocket.close(); }
     if (presenceOnline) { presenceOnline.close() };
+    if (socket_roomP) { socket_roomP.close()};
 }

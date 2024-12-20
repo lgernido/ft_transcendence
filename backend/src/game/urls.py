@@ -3,7 +3,6 @@ from . import views
 from users.views import create_account
 from django.conf.urls.i18n import i18n_patterns
 from django.views.i18n import set_language
-from .views import game_room
 from users.views import create_account, GetUserId, GetUserById, GetUserByName, GetUser42
 
 urlpatterns = [
@@ -24,22 +23,15 @@ urlpatterns = [
 	path('log_user/', views.log_user, name='log_user'),
     path('set_language/', set_language, name='set_language'),
     path('check_user_status/', views.check_user_status, name='check_user_status'),
-	path('create_dynamic_room/', views.create_dynamic_room, name='create_dynamic_room'),
-    path('dynamic_game/<str:room_name>/', views.dynamic_game_room, name='dynamic_game_room'),
     path('game/', views.game, name='game'),
-    path('api/game-results/', views.game_results, name='game_results'),
-    path('create_custom/', views.create_custom, name='create_custom'),
+	
     path('create_room/', views.create_room, name='create_room'),
-    path('create_tournament/', views.create_tournament, name='create_tournament'),
-    path('custom/<str:room_name>/', views.game_custom, name='game_custom'),
-    path('tournament/<str:room_name>/', views.game_tournament, name='game_tournament'),
-    path('game/<str:room_name>/', views.game_room, name='game_room'),
+	path('join_room/<str:room_name>/', views.join_room, name='join_room'),
 
     path('set_language/', views.set_language, name='set_language'),
 	path('check_user_status/', views.check_user_status, name='check_user_status'),
 	path('extractProfile/', views.extractProfile, name='extractProfile'),
 	path('extractGame/', views.extractGame, name='extractGame'),
-	
 
 	path('GetUserId/', GetUserId, name="GetUserId"),
 	path('GetUserById/', GetUserById, name="GetUserById"),

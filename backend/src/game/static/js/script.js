@@ -215,7 +215,6 @@ function loadStats() {
                         history.pushState(state, '', "/stats");
                     }
                     loadscript('camenbert.js', () => func_stats());
-                    checkStatus();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -264,7 +263,6 @@ function loadFriends() {
                         history.pushState(state, '', "/amis");
                     }
                     loadscript('amis.js', () => selectUser());
-                    checkStatus();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -312,7 +310,6 @@ function loadAccount() {
                         history.pushState(state, '', "/compte");
                     }
                     loadscript('compte.js', () => validChanges());
-                    checkStatus();
                 })
                 .catch(error => {
                     console.error('There was a problem with the fetch operation:', error);
@@ -605,33 +602,43 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     else if (path === '/stats/') {
         loadStats();
+        checkStatus();
     }
     else if (path === '/game/') {
         loadGame();
+        checkStatus();
     }
     else if (path === '/lobby_Pr/') {
         loadPrivate();
+        checkStatus();
     }
     else if (path === '/lobby_Pu/') {
         loadPublic();
+        checkStatus();
     }
     else if (path === '/lobby_T/') {
         loadTournament();
+        checkStatus();
     }
     else if (path === '/compte/') {
         loadAccount();
+        checkStatus();
     }
     else if (path === '/amis/') {
         loadFriends();
+        checkStatus();
     }
     else if (path === '/create_account/') {
         loadCreateAccount();
+        checkStatus();
     }
     else if (path === '/connect/') {
         loadConnectPage();
+        checkStatus();
     }
     else if (path === '/chat/') {
         loadChat();
+        checkStatus();
     }
     else {
         loadMyPage();
@@ -697,33 +704,43 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if (lastPart === 'stats') {
                 loadStats();
+                checkStatus();
             }
             else if (lastPart === 'game') {
                 loadGame();
+                checkStatus();
             }
             else if (lastPart === 'lobby_Pr') {
                 loadPrivate();
+                checkStatus();
             }
             else if (lastPart === 'lobby_Pu') {
                 loadPublic();
+                checkStatus();
             }
             else if (lastPart === 'lobby_T') {
                 loadTournament();
+                checkStatus();
             }
             else if (lastPart === 'compte') {
                 loadAccount();
+                checkStatus();
             }
             else if (lastPart === 'amis') {
                 loadFriends();
+                checkStatus();
             }
             else if (lastPart === 'create_account') {
                 loadCreateAccount();
+                checkStatus();
             }
             else if (lastPart === 'connect') {
                 loadConnectPage();
+                checkStatus();
             }
             else if (lastPart === 'chat') {
                 loadChat();
+                checkStatus();
             }
             else {
                 loadConnectPage();
@@ -753,6 +770,7 @@ const OnlineUsers = {
 
 // websocket variables
 let chatSocket = null;
+let socket_roomP = null;
 let presenceOnline = null;
 
 function checkStatus() {
