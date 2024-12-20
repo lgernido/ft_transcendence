@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-(ezrh!_r8=w4ksnuzvty@@^n$6w%4kn_^!0v8h&kw5yq15=-&r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.12.2.11']
+CSRF_TRUSTED_ORIGINS = ['https://10.12.2.11:8443']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://localhost:8443',
+# ]
 
 PORT = 8000
 
@@ -202,10 +207,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8443',
-]
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),

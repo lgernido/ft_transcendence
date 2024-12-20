@@ -82,7 +82,6 @@ function launchGameBot(roomName, maxPoints) {
     
     function resetBall()
     {
-        console.log("Init/reset ball");
         posBallX = 50;
         posBallY = 50;
         const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
@@ -102,7 +101,6 @@ function launchGameBot(roomName, maxPoints) {
             lastTiming = Date.now();
             posY = predict_ball_position({x: posBallX, y: posBallY, speedX: speedX, speedY: speedY});   
         }
-            
         let difference = posY - (aiBar.y + aiBar.height / 2);
 
         if (Math.abs(difference) > barreSpeed) {
@@ -122,8 +120,8 @@ function launchGameBot(roomName, maxPoints) {
         let by = ball.y;
         let bdx = ball.speedX;
         let bdy = ball.speedY;
-    
-        while (bx + bdx >= 0 && bx + bdx <= 100) {  // Vérifie si la balle est dans la fenêtre de jeu
+
+        while (1) {
             bx += bdx;
             by += bdy;
     
@@ -139,7 +137,6 @@ function launchGameBot(roomName, maxPoints) {
         }
         return by;
     }
-    
 
     function getRandomNumber(min, max) {
         return Math.random() * (max - min) + min;
@@ -251,7 +248,6 @@ function launchGameBot(roomName, maxPoints) {
 
         if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
         {
-            console.log("touch Left barre");
             posBallX = posBallX + 1;
 
             const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
@@ -266,7 +262,6 @@ function launchGameBot(roomName, maxPoints) {
 
         if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
         {
-            console.log("touch Right barre");
             posBallX = posBallX - 1;
 
             const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;

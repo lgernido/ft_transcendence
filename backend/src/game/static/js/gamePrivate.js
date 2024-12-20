@@ -206,7 +206,6 @@ function launchGamePrivate(roomName, maxPoints) {
 
 		if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
 		{
-			console.log("touch Left barre");
 			posBallX = posBallX + 1;
 
 			const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
@@ -221,7 +220,6 @@ function launchGamePrivate(roomName, maxPoints) {
 
 		if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
 		{
-			console.log("touch Right barre");
 			posBallX = posBallX - 1;
 
 			const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;
@@ -254,6 +252,9 @@ function launchGamePrivate(roomName, maxPoints) {
                     return;
                 }
 			}
+
+			if (!playerLeft)
+				return;
 
 			ball.classList.add('breaking');
 			updateScore();
