@@ -38,8 +38,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/code/backend
-    # ports:
-    #   - "8000:8000"
+    ports:
+      - "8000:8000" # a enlever
     depends_on:
       db:
         condition: service_healthy

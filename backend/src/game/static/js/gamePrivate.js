@@ -1,77 +1,9 @@
-// function launchGamePrivate(roomName, maxPoints) {
-	
-// 	// Inititialision du canva
-// 	var canvas = document.getElementById('pong');
-// 	canvas.width = window.innerWidth * 0.75;
-// 	canvas.height = window.innerHeight  * 0.5;
 
-// 	// Appliquer du style
-// 	const ctx = canvas.getContext('2d');
-// 	ctx.fillStyle = "black";
-// 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	
-// 	// Ball
-// 	function drawBall() {
-// 		var ballRadius = 10;
-// 		var ballX = canvas.width / 2;
-// 		var ballY = canvas.height / 2;
-// 		var ballSpeedX = 2;
-// 		var ballSpeedY = 2;
-// 		ctx.beginPath();
-// 		ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2, false);
-// 		ctx.fillStyle = 'red';
-// 		ctx.fill();
-// 		ctx.closePath();
-// 	}
-
-	
-// 	// Barre
-// 	function drawBarre() {
-//     // Dimensions communes aux deux barres
-//     var barWidth = canvas.height * 0.20; // Hauteur de la barre
-//     var barHeight = canvas.height * 0.01; // Largeur de la barre
-//     var barY = (canvas.height - barWidth) / 2; // Centrée verticalement
-
-//     // Player droite (barre à droite)
-//     var barXRight = canvas.width - barHeight - (0.01 * canvas.width); // Position à droite
-//     ctx.fillStyle = 'blue';
-//     ctx.fillRect(barXRight, barY, barHeight, barWidth);
-
-//     // Player gauche (barre à gauche)
-//     var barXLeft = 0.01 * canvas.width; // Position à gauche
-//     ctx.fillStyle = 'red'; // Une couleur différente pour la barre gauche
-//     ctx.fillRect(barXLeft, barY, barHeight, barWidth);
-// }
-	
-// 	drawBall();
-// 	drawBarre();
-	
-// 	// Modification des variables en fontion de la taille de l'ecran
-// 	window.addEventListener('resize', function() {
-// 		canvas.width = window.innerWidth * 0.75;
-// 		canvas.height = window.innerHeight * 0.5;
-// 		ctx.fillStyle = "black";
-// 		ctx.fillRect(0, 0, canvas.width, canvas.height);
-// 		drawBall();
-// 		drawBarre();
-// 	});
-
-// 	function draw() {
-
-// 	}
-
-// 	function gameLoop() {
-// 		update();
-// 		draw();
-// 		requestAnimationFrame(gameLoop);
-// 	}
-// 	gameLoop();
-// }
-
+//verifier le calcule de mouvement
 
 function launchGamePrivate(roomName, maxPoints) {
     const canvas = document.getElementById('pong');
+    const userId = canvas.dataset.userId; // Récupération de l'ID de l'utilisateur
     canvas.width = window.innerWidth * 0.75;
     canvas.height = window.innerHeight * 0.5;
     const ctx = canvas.getContext('2d');
@@ -90,49 +22,71 @@ function launchGamePrivate(roomName, maxPoints) {
     const leftPaddle = {
         x: 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
-        speed: 5,
+        id: null, // Identifiant du joueur associé
     };
 
     const rightPaddle = {
         x: canvas.width - paddleHeight - 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
-        speed: 5,
+        id: null, // Identifiant du joueur associé
     };
 
     let upPressed = false, downPressed = false;
+    let paddleMoved = false;
 
     // WebSocket
-	const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-	roomName = "4x"; // a effacer
-	const wsUrl = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
-    const ws = new WebSocket(wsUrl);
-    ws.onmessage = function (event) {
+    roomName = "4x"
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
+    const wsPong = new WebSocket(wsUrlPong);
+
+    wsPong.onmessage = function (event) {
         const data = JSON.parse(event.data);
+        console.log("DATA :", data);
 
         if (data.type === 'game_update') {
-            ball.x = data.ball.x;
-            ball.y = data.ball.y;
-            leftPaddle.y = data.leftPaddle.y;
-            rightPaddle.y = data.rightPaddle.y;
+            ball.x = data.ball.x * canvas.width;
+            ball.y = data.ball.y * canvas.height;
+            leftPaddle.y = data.left_paddle.y * canvas.height;
+            leftPaddle.id = data.left_paddle.id;
+            rightPaddle.y = data.right_paddle.y * canvas.height;
+            rightPaddle.id = data.right_paddle.id;
         } else if (data.type === 'start') {
-		gameStarted = true;
-		alert(data.message);
-	}
+            alert(data.message);
+        }
     };
 
-    ws.onclose = function () {
+    wsPong.onopen = function () {
+        console.log("WebSocket connection opened.");
+    };
+
+    wsPong.onclose = function () {
         alert("Connection closed. Refresh the page to reconnect.");
     };
 
     // Événements clavier
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowUp') upPressed = false;
-        if (e.key === 'ArrowDown') downPressed = true;
+        if (e.key === 'ArrowUp') {
+            upPressed = true;
+            e.preventDefault();
+            paddleMoved = true;
+        }
+        if (e.key === 'ArrowDown') {
+            downPressed = true;
+            e.preventDefault();
+            paddleMoved = true;
+        }
     });
 
     document.addEventListener('keyup', function (e) {
-        if (e.key === 'ArrowUp') upPressed = true;
-        if (e.key === 'ArrowDown') downPressed = false;
+        if (e.key === 'ArrowUp') {
+            upPressed = false;
+            e.preventDefault();
+        }
+        if (e.key === 'ArrowDown') {
+            downPressed = false;
+            e.preventDefault();
+        }
     });
 
     function drawField() {
@@ -157,16 +111,23 @@ function launchGamePrivate(roomName, maxPoints) {
     }
 
     function updatePaddlePositions() {
+        let previousY = rightPaddle.y;
         if (upPressed) rightPaddle.y = Math.max(0, rightPaddle.y - rightPaddle.speed);
         if (downPressed) rightPaddle.y = Math.min(canvas.height - paddleWidth, rightPaddle.y + rightPaddle.speed);
 
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
+        console.log(`le paddle ${rightPaddle.y}`)
+        if (rightPaddle.y !== previousY) {
+            paddleMoved = true;
+        }
+
+        if (paddleMoved && wsPong.readyState === WebSocket.OPEN) {
+            wsPong.send(JSON.stringify({
                 type: 'move',
-                paddle: 'right',
-              y: rightPaddle.y,
-          }));
-          };
+                id: userId,
+                pos: rightPaddle.y / canvas.height, // Normaliser entre 0 et 1
+            }));
+            paddleMoved = false;
+        }
     }
 
     function draw() {
