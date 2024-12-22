@@ -6,7 +6,7 @@
 		<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
 			<div class="d-flex align-items-center">
 				<div class="card-lobby">
-					<img src="{{ social.avatar.url }}" class="card-lobby-img-top" alt="img-profil" style="width: 100%; height: auto;">
+					<img src="{{ social.avatar.url }}" class="card-lobby-img-top" alt="img-profil" id="avatarPlayer1" style="width: 100%; height: auto;">
 					<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
 						<p class="card-lobby-text-name1" id="playerName1">{{ user.username }}</p>
 						<div class="form-floating mb-1 w-75">
@@ -24,33 +24,41 @@
 							</select>
 							<label for="selectColorPlayer1">{%trans 'Colors :' %}</label>
 						</div>
+						<div class="btn-group mt-2 mb-1" role="group" aria-label="Basic checkbox toggle button group">
+							<input type="checkbox" class="btn-check" id="readyPlayer1" autocomplete="off">
+							<label class="btn btn-outline-secondary" for="readyPlayer1">Ready</label>
+						</div>						
 					</div>
 				</div>
-				<div id="user-info" data-username="{{ user.username }}"></div>
-				<div>
-					<div class="card-lobby">
-						<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil">
-						<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
-							<p class="card-lobby-text-name2" id="playerName2">{%trans 'Guest' %}</p>
-							<div class="form-floating mb-1 w-75">
-								<select class="form-select" id="selectColorPlayer2">
-									<option value="color-player-red">{%trans 'Red' %}</option>
-									<option value="color-player-green" selected>{%trans 'Green' %}</option>
-									<option value="color-player-blue">{%trans 'Blue' %}</option>
-									<option value="color-player-yellow">{%trans 'Yellow' %}</option>
-									<option value="color-player-cyan">{%trans 'Cyan' %}</option>
-									<option value="color-player-magenta">{%trans 'Magenta' %}</option>
-									<option value="color-player-orange">{%trans 'Orange' %}</option>
-									<option value="color-player-purple">{%trans 'Purple' %}</option>
-									<option value="color-player-pink">{%trans 'Pink' %}</option>
-									<option value="color-player-gray">{%trans 'Gray' %}</option>
-								</select>
-								<label for="selectColorPlayer2">{%trans 'Colors :' %}</label>
-							</div>
+				
+				<!-- Joueur 2 -->
+				<div class="card-lobby">
+					<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil" id="avatarPlayer2" style="width: 100%; height: auto;">
+					<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
+						<p class="card-lobby-text-name2" id="playerName2">{%trans 'Guest' %}</p>
+						<div class="form-floating mb-1 w-75">
+							<select class="form-select" id="selectColorPlayer2">
+								<option value="color-player-red">{%trans 'Red' %}</option>
+								<option value="color-player-green" selected>{%trans 'Green' %}</option>
+								<option value="color-player-blue">{%trans 'Blue' %}</option>
+								<option value="color-player-yellow">{%trans 'Yellow' %}</option>
+								<option value="color-player-cyan">{%trans 'Cyan' %}</option>
+								<option value="color-player-magenta">{%trans 'Magenta' %}</option>
+								<option value="color-player-orange">{%trans 'Orange' %}</option>
+								<option value="color-player-purple">{%trans 'Purple' %}</option>
+								<option value="color-player-pink">{%trans 'Pink' %}</option>
+								<option value="color-player-gray">{%trans 'Gray' %}</option>
+							</select>
+							<label for="selectColorPlayer2">{%trans 'Colors :' %}</label>
 						</div>
+						<div class="btn-group mt-2 mb-1" role="group" aria-label="Basic checkbox toggle button group">
+							<input type="checkbox" class="btn-check" id="readyPlayer2" autocomplete="off">
+							<label class="btn btn-outline-secondary" for="readyPlayer2">Ready</label>
+						</div>						
 					</div>
 				</div>
 			</div>
+			<div id="user-info" data-username="{{ user.username }}" data-avatar="{{ social.avatar.url }}"></div>
 			<div class="d-flex flex-column align-items-center justify-content-center lobbySettings my-5">
 				<div>
 					{%trans 'Points limit :'%} <input class="inputMaxPoint ms-2" id="maxPoint" max="40" type="number" value="5">

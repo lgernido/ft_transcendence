@@ -24,7 +24,6 @@ from django.core.exceptions import ObjectDoesNotExist
 import logging
 logger = logging.getLogger(__name__)
 import uuid
-import logging
 
 @csrf_protect
 @login_required
@@ -99,6 +98,19 @@ def stats(request):
         return render(request, 'partials/stats.html')
     else:
         return redirect('/?next=/stats/')
+
+@csrf_protect
+def local(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/gameCustom.html')
+    else:
+        return redirect('/?next=/gameCustom/')
+
+def GameBot(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/game.html')
+    else:
+        return redirect('/?next=/game/')
 
 @csrf_protect
 @login_required
@@ -316,6 +328,8 @@ from .models import Room
 @login_required
 def create_room(request):
     if request.method == 'POST':
+        private = request.GET.get('private', 'False')
+        is_private = private.lower() == 'true'
         current_user = request.user
 
         try:
@@ -329,6 +343,9 @@ def create_room(request):
             
             room = Room.objects.create()
             room.add_player(current_user)
+            room.host = current_user
+            room.privateRoom = is_private
+            room.save()
             room_link = f"https://localhost:8443/join_room/{room.name}/"
             request.session['roomName'] = room.name
 

@@ -23,7 +23,8 @@ urlpatterns = [
 	path('log_user/', views.log_user, name='log_user'),
     path('set_language/', set_language, name='set_language'),
     path('check_user_status/', views.check_user_status, name='check_user_status'),
-    path('game/', views.game, name='game'),
+    path('GameBot/', views.GameBot, name='GameBot'),
+	path('local/', views.local, name='local'),
 	
     path('create_room/', views.create_room, name='create_room'),
 	path('join_room/<str:room_name>/', views.join_room, name='join_room'),

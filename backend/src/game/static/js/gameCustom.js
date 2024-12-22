@@ -1,14 +1,20 @@
-function launchGamePrivateCustom(roomName, maxPoints) {
+function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
+
+	let ballInterval;
+	let countdownInterval;
+
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
 
     setTimeout(() => {
-        playerLeft.classList.add('slide-in-left');
+		playerLeft.classList.add('slide-in-left');
         playerRight.classList.add('slide-in-right');
     }, 500);
-
+	
 	const leftBarre = document.querySelector('.left-barre');
 	const rightBarre = document.querySelector('.right-barre');
+
+	updatePlayerColor(leftBarre, rightBarre, colorP1, colorP2);
 
 	let leftBarrePosition = 50;
 	let rightBarrePosition = 50;
@@ -155,11 +161,6 @@ function launchGamePrivateCustom(roomName, maxPoints) {
         });
     }
 
-    function getCSRFToken() {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        return csrfToken;
-    }
-
     function displayWinner(winner) {
         isActive = false;
         toggleBallVisibility(true);
@@ -204,7 +205,6 @@ function launchGamePrivateCustom(roomName, maxPoints) {
 
 		if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
 		{
-			console.log("touch Left barre");
 			posBallX = posBallX + 1;
 
 			const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
@@ -219,7 +219,6 @@ function launchGamePrivateCustom(roomName, maxPoints) {
 
 		if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
 		{
-			console.log("touch Right barre");
 			posBallX = posBallX - 1;
 
 			const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;
@@ -267,4 +266,40 @@ function launchGamePrivateCustom(roomName, maxPoints) {
 	}
 
 	startCountdown();
+
+	window.addEventListener('popstate', () => {
+		console.log("STOP Process setintervall");
+		clearInterval(ballInterval);
+		clearInterval(countdownInterval);
+	});
+	
+	window.addEventListener('beforeunload', () => {
+		console.log("STOP Process setintervall");
+		clearInterval(ballInterval);
+		clearInterval(countdownInterval);
+	});
+}
+
+function updatePlayerColor(playerElement1, playerElement2, newColor1, newColor2) {
+    const colorClasses = [
+        'color-player-red', 
+        'color-player-green', 
+        'color-player-blue', 
+        'color-player-yellow', 
+        'color-player-cyan', 
+        'color-player-magenta', 
+        'color-player-orange', 
+        'color-player-purple', 
+        'color-player-pink', 
+        'color-player-gray'
+    ];
+    playerElement1.classList.remove(...colorClasses);
+	playerElement2.classList.remove(...colorClasses);
+
+    if (newColor1) {
+        playerElement1.classList.add(newColor1);
+    }
+	if (newColor2) {
+        playerElement2.classList.add(newColor2);
+    }
 }

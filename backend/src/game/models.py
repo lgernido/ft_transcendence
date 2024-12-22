@@ -23,6 +23,13 @@ class Room(models.Model):
     name = models.CharField(max_length=50, unique=True)
     players = models.ManyToManyField(User, related_name='rooms')
     created_at = models.DateTimeField(auto_now_add=True)
+    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hosted_rooms', null=True)
+    privateRoom = models.BooleanField(default=False)
+    points_limit = models.IntegerField(default=5)
+    player1_ready = models.BooleanField(default=False)
+    player2_ready = models.BooleanField(default=False)
+    player1_color = models.CharField(max_length=50, default='color-player-default')
+    player2_color = models.CharField(max_length=50, default='color-player-default')
 
     def add_player(self, user):
         if self.players.count() < 2:

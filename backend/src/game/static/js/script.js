@@ -418,14 +418,15 @@ function loadPrivate() {
         });
 }
 
-function loadGame(roomName, maxPoints) {
+function loadGame(maxPoints, colorP1, colorP2) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/game/${roomName}`, {
+    fetch(`/GameBot/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -437,26 +438,26 @@ function loadGame(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `game-${roomName}`) {
-                const state = { page: `game-${roomName}` };
-                history.pushState(state, '', `/game/${roomName}`);
+            if (history.state?.page !== `game`) {
+                const state = { page: `game` };
+                history.pushState(state, '', `/game`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('game.js', () => launchGameBot(roomName, maxPoints));
+            loadscript('game.js', () => launchGameBot(maxPoints, colorP1, colorP2));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
 
-function loadGamePrivateCustom(roomName, maxPoints) {
+function loadGamePrivateCustom(maxPoints, colorP1, colorP2) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/custom/${roomName}`, {
+    fetch(`/local/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -468,12 +469,12 @@ function loadGamePrivateCustom(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `custom-${roomName}`) {
-                const state = { page: `custom-${roomName}` };
-                history.pushState(state, '', `/custom/${roomName}`);
+            if (history.state?.page !== `local`) {
+                const state = { page: `local` };
+                history.pushState(state, '', `/local`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('gameCustom.js', () => launchGamePrivateCustom(roomName, maxPoints));
+            loadscript('gameCustom.js', () => launchGamePrivateCustom(maxPoints, colorP1, colorP2));
+
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);

@@ -1,4 +1,4 @@
-function launchGameBot(roomName, maxPoints) {
+function launchGameBot(maxPoints, colorP1, colorP2) {
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
 
@@ -9,6 +9,8 @@ function launchGameBot(roomName, maxPoints) {
 
     const leftBarre = document.querySelector('.left-barre');
     const rightBarre = document.querySelector('.right-barre');
+
+    updatePlayerColor(leftBarre, rightBarre, colorP1, colorP2);
 
     let leftBarrePosition = 50;
     let rightBarrePosition = 50;
@@ -43,10 +45,8 @@ function launchGameBot(roomName, maxPoints) {
             leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
         }
 
-        // Déplacer l'IA pour la barre de droite (remplacer les touches fléchées par la logique de l'IA)
-        aiMove();
     }, 10);
-
+    
     const ball = document.querySelector('.ball');
     const gameSetup = document.querySelector('.game-window');
 
@@ -93,50 +93,50 @@ function launchGameBot(roomName, maxPoints) {
     }
 
     var aiBar = { y: rightBarrePosition, height: barreHeight };
-    var lastTiming = null;
-    var posY = 50;
+    let predictedBallY = posBallY;
 
     function aiMove() {
-        if (lastTiming === null || (Date.now() - lastTiming > 1000)) {
-            lastTiming = Date.now();
-            posY = predict_ball_position({x: posBallX, y: posBallY, speedX: speedX, speedY: speedY});   
-        }
-        let difference = posY - (aiBar.y + aiBar.height / 2);
-
-        if (Math.abs(difference) > barreSpeed) {
-            aiBar.y += Math.sign(difference) * barreSpeed;
+        let difference = predictedBallY - (aiBar.y + aiBar.height / 2);
+    
+        const maxMove = barreSpeed;
+        if (Math.abs(difference) > maxMove) {
+            aiBar.y += Math.sign(difference) * maxMove;
         } else {
-            aiBar.y = posY - aiBar.height / 2;
+            aiBar.y = predictedBallY - aiBar.height / 2;
         }
-
+    
         aiBar.y = Math.max(barreHeight / 2, Math.min(100 - barreHeight / 2, aiBar.y));
-
-        rightBarrePosition = aiBar.y;
-        rightBarre.style.top = rightBarrePosition + '%';
+    
+        rightBarre.style.top = aiBar.y + '%';
     }
-
-    function predict_ball_position(ball) {
-        let bx = ball.x;
-        let by = ball.y;
-        let bdx = ball.speedX;
-        let bdy = ball.speedY;
-
-        while (1) {
+    
+    function predict_ball_position() {
+        let bx = posBallX;
+        let by = posBallY;
+        let bdx = speedX;
+        let bdy = speedY;
+    
+        for (let i = 0; i < 100; i++) {
             bx += bdx;
             by += bdy;
     
             if (by + 1 >= 100 || by - 1 <= 0) {
                 bdy = -bdy * getRandomNumber(0.6, 1.4);
                 by += bdy;
-            } else if (bx - 1 <= 5) {
+            }
+    
+            if (bx - 1 <= 5 || bx + 1 >= 100 - 5) {
                 bdx = -bdx * getRandomNumber(0.6, 1.4);
                 bx += bdx;
-            } else if (bx + 1 >= 100 - 5) {
-                return by;
             }
         }
-        return by;
+
+        predictedBallY = by;
     }
+    
+    setInterval(predict_ball_position, 1000);
+
+    setInterval(aiMove, 10);
 
     function getRandomNumber(min, max) {
         return Math.random() * (max - min) + min;
@@ -222,7 +222,7 @@ function launchGameBot(roomName, maxPoints) {
         winnerMessage.style.padding = '20px';
         winnerMessage.style.borderRadius = '10px';
 
-        sendGameResults(winnerName);
+        // sendGameResults(winnerName);
     }
 
     function toggleBallVisibility(isHidden) {
@@ -309,4 +309,28 @@ function launchGameBot(roomName, maxPoints) {
     }
 
     startCountdown();
+}
+
+function updatePlayerColor(playerElement1, playerElement2, newColor1, newColor2) {
+    const colorClasses = [
+        'color-player-red', 
+        'color-player-green', 
+        'color-player-blue', 
+        'color-player-yellow', 
+        'color-player-cyan', 
+        'color-player-magenta', 
+        'color-player-orange', 
+        'color-player-purple', 
+        'color-player-pink', 
+        'color-player-gray'
+    ];
+    playerElement1.classList.remove(...colorClasses);
+	playerElement2.classList.remove(...colorClasses);
+
+    if (newColor1) {
+        playerElement1.classList.add(newColor1);
+    }
+	if (newColor2) {
+        playerElement2.classList.add(newColor2);
+    }
 }
