@@ -23,12 +23,14 @@ function launchGamePrivate(roomName, maxPoints) {
         x: 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
         id: null, // Identifiant du joueur associé
+        speed: 10,
     };
 
     const rightPaddle = {
         x: canvas.width - paddleHeight - 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
         id: null, // Identifiant du joueur associé
+        speed: 1,
     };
 
     let upPressed = false, downPressed = false;
@@ -47,10 +49,14 @@ function launchGamePrivate(roomName, maxPoints) {
         if (data.type === 'game_update') {
             ball.x = data.ball.x * canvas.width;
             ball.y = data.ball.y * canvas.height;
-            leftPaddle.y = data.left_paddle.y * canvas.height;
-            leftPaddle.id = data.left_paddle.id;
-            rightPaddle.y = data.right_paddle.y * canvas.height;
-            rightPaddle.id = data.right_paddle.id;
+            if (data.left_paddle.id == userId) {
+                leftPaddle.y = data.left_paddle.y * canvas.height;
+                rightPaddle.y = data.right_paddle.y * canvas.height;
+            } else {
+                leftPaddle.y = data.right_paddle.y * canvas.height;
+                rightPaddle.y = data.left_paddle.y * canvas.height;
+            }
+            
         } else if (data.type === 'start') {
             alert(data.message);
         }
@@ -115,17 +121,26 @@ function launchGamePrivate(roomName, maxPoints) {
         if (upPressed) rightPaddle.y = Math.max(0, rightPaddle.y - rightPaddle.speed);
         if (downPressed) rightPaddle.y = Math.min(canvas.height - paddleWidth, rightPaddle.y + rightPaddle.speed);
 
-        console.log(`le paddle ${rightPaddle.y}`)
         if (rightPaddle.y !== previousY) {
             paddleMoved = true;
         }
 
         if (paddleMoved && wsPong.readyState === WebSocket.OPEN) {
-            wsPong.send(JSON.stringify({
-                type: 'move',
-                id: userId,
-                pos: rightPaddle.y / canvas.height, // Normaliser entre 0 et 1
-            }));
+            if (upPressed || downPressed) {
+                const action = upPressed ? 'up' : 'down';
+                wsPong.send(JSON.stringify({
+                    type: 'move',
+                    id: userId,
+                    action: action, // Indiquer l'action
+                }));
+                console.log("action");
+                console.log(action);
+            }
+            // wsPong.send(JSON.stringify({
+            //     type: 'move',
+            //     id: userId,
+            //     pos: rightPaddle.y / canvas.height, // Normaliser entre 0 et 1
+            // }));
             paddleMoved = false;
         }
     }

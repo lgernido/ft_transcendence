@@ -20,8 +20,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         if not hasattr(self.channel_layer, "game_state"):
             self.channel_layer.game_state = {
                 "ball": {"x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
-                "left_paddle": {"y": 0.5, "id": None},
-                "right_paddle": {"y": 0.5, "id": None},
+                "left_paddle": {"y": 0.45, "id": None},
+                "right_paddle": {"y": 0.45, "id": None},
                 "connected_players": 0,  # Nombre de joueurs connectés
             }
 
@@ -60,19 +60,42 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         logger.warning(f"Receive called by {self.user.username}")
         data = json.loads(text_data)
-
         if data["type"] == "move":
-            game_state = self.channel_layer.game_state
             user_id = data["id"]
-            pos = data["pos"]
+            action = data["action"]
 
-            logger.warning("left_paddle ")
-            logger.warning(pos)
-            # Identifier quelle raquette doit être mise à jour
+            game_state = self.channel_layer.game_state
+            # paddle_speed = 0.05  # Vitesse de la raquette (normale)
+            paddle_speed = 0.02  # Vitesse de la raquette (normale)
+
+            # Identifier la raquette et calculer la nouvelle position
             if game_state["left_paddle"]["id"] == user_id:
-                game_state["left_paddle"]["y"] = pos
+                if action == "up":
+                    game_state["left_paddle"]["y"] = max(0, game_state["left_paddle"]["y"] - paddle_speed)
+                elif action == "down":
+                    game_state["left_paddle"]["y"] = min(1, game_state["left_paddle"]["y"] + paddle_speed)
             elif game_state["right_paddle"]["id"] == user_id:
-                game_state["right_paddle"]["y"] = pos
+                if action == "up":
+                    game_state["right_paddle"]["y"] = max(0, game_state["right_paddle"]["y"] - paddle_speed)
+                elif action == "down":
+                    game_state["right_paddle"]["y"] = min(1, game_state["right_paddle"]["y"] + paddle_speed)
+
+            # Propager les nouvelles positions
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "game_update",
+                    "ball": game_state["ball"],
+                    "left_paddle": {
+                        "y": game_state["left_paddle"]["y"],
+                        "id": game_state["left_paddle"]["id"]
+                    },
+                    "right_paddle": {
+                        "y": game_state["right_paddle"]["y"],
+                        "id": game_state["right_paddle"]["id"]
+                    },
+                }
+            )
 
     async def game_loop(self):
         while True:
@@ -81,6 +104,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
             # Mettre à jour la position de la balle si elle est en mouvement
             if ball["speed_x"] != 0 and ball["speed_y"] != 0:
+
                 # ball["x"] += ball["speed_x"]
                 # ball["y"] += ball["speed_y"]
 
@@ -119,8 +143,8 @@ class PongConsumer(AsyncWebsocketConsumer):
                     },
                 },
             )
-            # await asyncio.sleep(0.016)  # 60 FPS
-            await asyncio.sleep(1)  # 1 FPS
+            await asyncio.sleep(0.016)  # 60 FPS
+            # await asyncio.sleep(2)  # 2 FPS
 
 
     async def game_update(self, event):
