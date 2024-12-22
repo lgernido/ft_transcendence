@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 import logging
+from asgiref.sync import sync_to_async
 
 logger = logging.getLogger('game')
 
@@ -69,18 +70,24 @@ class PongConsumer(AsyncWebsocketConsumer):
             paddle_speed = 0.02  # Vitesse de la raquette (normale)
 
             # Identifier la raquette et calculer la nouvelle position
-            if game_state["left_paddle"]["id"] == user_id:
+            logger.warning("Je suis dans la out boucle")
+            logger.warning(type(game_state["left_paddle"]["id"]))
+            logger.warning(type(user_id))
+            if game_state["left_paddle"]["id"] == int(user_id):
+                logger.warning("Je suis dans la boucle")
                 if action == "up":
                     game_state["left_paddle"]["y"] = max(0, game_state["left_paddle"]["y"] - paddle_speed)
                 elif action == "down":
                     game_state["left_paddle"]["y"] = min(1, game_state["left_paddle"]["y"] + paddle_speed)
-            elif game_state["right_paddle"]["id"] == user_id:
+            elif game_state["right_paddle"]["id"] == int(user_id):
                 if action == "up":
                     game_state["right_paddle"]["y"] = max(0, game_state["right_paddle"]["y"] - paddle_speed)
                 elif action == "down":
                     game_state["right_paddle"]["y"] = min(1, game_state["right_paddle"]["y"] + paddle_speed)
 
             # Propager les nouvelles positions
+            logger.warning(f"right_paddle {game_state["right_paddle"]["y"]}")
+            logger.warning(f"left_paddle {game_state["left_paddle"]["y"]}")
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -99,6 +106,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         while True:
+
             state = self.channel_layer.game_state
             ball = state["ball"]
 
@@ -115,6 +123,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 left_paddle = state["left_paddle"]
                 right_paddle = state["right_paddle"]
                 
+                logger.debug(f"Left paddle Y: {left_paddle['y']}, Right paddle Y: {right_paddle['y']}")
 
                 # if (
                 #     ball["x"] <= 0.05
@@ -146,9 +155,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(0.016)  # 60 FPS
             # await asyncio.sleep(2)  # 2 FPS
 
-
     async def game_update(self, event):
         await self.send(text_data=json.dumps(event))
+        logger.debug("Game update:", event)
 
     async def game_start(self, event):
         await self.send(text_data=json.dumps({
