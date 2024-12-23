@@ -9,10 +9,10 @@ function launchGamePrivate(roomName, maxPoints) {
     const ctx = canvas.getContext('2d');
     
     // texte
-    // ctx.font = '30px Arial'; // Taille et famille de police
-    // ctx.fillStyle = 'white';  // Couleur du texte
-    // ctx.textAlign = 'center'; // Alignement horizontal
-    // ctx.textBaseline = 'middle';
+    ctx.font = '30px Arial'; // Taille et famille de police
+    ctx.fillStyle = 'white';  // Couleur du texte
+    ctx.textAlign = 'center'; // Alignement horizontal
+    ctx.textBaseline = 'middle';
 
     // Variables
     const ball = {
@@ -28,14 +28,14 @@ function launchGamePrivate(roomName, maxPoints) {
     const leftPaddle = {
         x: 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
-        id: null, // Identifiant du joueur associé
-        score:0,
+        id: 0, // Identifiant du joueur associé
+        score: 0,
     };
 
     const rightPaddle = {
         x: canvas.width - paddleHeight - 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
-        id: null, // Identifiant du joueur associé
+        id: 0, // Identifiant du joueur associé
         score:0,
     };
 
@@ -53,8 +53,8 @@ function launchGamePrivate(roomName, maxPoints) {
 
         if (data.type === 'game_update') {
             ball.y = data.ball.y * canvas.height;
-            leftPaddle.score = data.leftPaddle.score;
-            rightPaddle.score = data.rightPaddle.score;
+            leftPaddle.score = data.left_paddle.score;
+            rightPaddle.score = data.right_paddle.score;
             if (data.left_paddle.id == userId) {
                 leftPaddle.y = data.left_paddle.y * canvas.height;
                 rightPaddle.y = data.right_paddle.y * canvas.height;
@@ -64,10 +64,18 @@ function launchGamePrivate(roomName, maxPoints) {
                 rightPaddle.y = data.left_paddle.y * canvas.height;
                 ball.x = (1 - data.ball.x)* canvas.width;
             }
-            console.log(`${data.left_paddle.id } score :${data.left_paddle.score}`)
-            console.log(`${data.right_paddle.id } score :${data.right_paddle.score}`)
-        } else if (data.type === 'start') {
+        } else if (data.type === 'game_start') {
+            if (parseInt(data.left_paddle.id) == parseInt(userId))
+            {
+                leftPaddle.id = data.left_paddle.id;
+                rightPaddle.id = data.right_paddle.id;
+            } else {
+                leftPaddle.id = data.right_paddle.id;
+                rightPaddle.id = data.left_paddle.id;;
+            }
+            console.log(`${rightPaddle.id}   ${leftPaddle.id}`);
             alert(data.message);
+
         } else if (data.type === 'game_state') {
             console.log(data.message);
         }
@@ -137,7 +145,6 @@ function launchGamePrivate(roomName, maxPoints) {
         }
 
         if (paddleMoved && wsPong.readyState === WebSocket.OPEN) {
-            console.log(`IS ${userId}`)
             if (upPressed || downPressed) {
                 const action = upPressed ? 'up' : 'down';
                 wsPong.send(JSON.stringify({
@@ -151,14 +158,30 @@ function launchGamePrivate(roomName, maxPoints) {
     }
 
     function drawScore() {
-        ctx.fillText("salut", canvas.width / 2, canvas.height / 2);
+            // texte
+        ctx.font = '30px Arial'; // Taille et famille de police
+        ctx.fillStyle = 'white';  // Couleur du texte
+        ctx.textAlign = 'center'; // Alignement horizontal
+        ctx.textBaseline = 'middle';
+
+        console.log(`${rightPaddle.id}   ${leftPaddle.id}`);
+        console.log(`${leftPaddle.id}: ${typeof leftPaddle.id}`)
+        console.log(`${userId}: ${typeof userId}`)
+        if (parseInt(leftPaddle.id) == parseInt(userId))
+        {
+            ctx.fillText(leftPaddle.score, (canvas.width / 2) - 20, canvas.height * 0.1);
+            ctx.fillText(rightPaddle.score, (canvas.width / 2) + 20, canvas.height * 0.1); 
+        } else {
+            ctx.fillText(leftPaddle.score, (canvas.width / 2) + 20, canvas.height * 0.1);
+            ctx.fillText(rightPaddle.score, (canvas.width / 2) - 20, canvas.height * 0.1);
+        }
     }
 
     function draw() {
         drawField();
         drawBall();
         drawPaddles();
-        // drawScore();
+        drawScore();
     }
 
     function gameLoop() {

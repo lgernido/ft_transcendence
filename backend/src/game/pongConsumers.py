@@ -49,6 +49,12 @@ class PongConsumer(AsyncWebsocketConsumer):
                 {
                     "type": "game_start",
                     "message": "Both players are connected. The game starts now!",
+                    "left_paddle": {
+                        "id": game_state["left_paddle"]["id"],
+                    },
+                    "right_paddle": {
+                        "id": game_state["right_paddle"]["id"],
+                    },
                 },
             )
 
@@ -61,13 +67,12 @@ class PongConsumer(AsyncWebsocketConsumer):
         if hasattr(self.channel_layer, "game_state"):
             self.channel_layer.game_state["connected_players"] -= 1
             # Informer les autres joueurs que ce joueur s'est déconnecté
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "player_disconnect",
-                    "message": f"Player {self.user.username} has disconnected.",
-                },
-            )
+            self.channel_layer.game_state = {
+                "ball": {"radius":0.01, "x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
+                "left_paddle": {"y": 0.45, "id": None, "score": 0},
+                "right_paddle": {"y": 0.45, "id": None, "score": 0},
+                "connected_players": 0,  # Nombre de joueurs connectés
+            }
             
         # Fermer explicitement la connexion WebSocket
         await self.close()
@@ -147,9 +152,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                     ball["speed_y"] = min(max(-max_speed, total_speed * math.sin(math.radians(angle))), max_speed)
                     ball["speed_x"] = abs(ball["speed_x"])  # Toujours positif pour partir à droite
 
-                    logging.warning(f"Vitesse X gauche: {ball['speed_x']}")
-                    logging.warning(f"Vitesse Y gauche: {ball['speed_y']}")
-
                 elif ( ball["x"] + ball["radius"] >= 0.98 and right_paddle["y"] <= ball["y"] <= right_paddle["y"] + 0.2):
                     impact_point = (ball["y"] - right_paddle["y"]) / 0.2
                     angle = self.calculate_angle(impact_point, 75)
@@ -159,9 +161,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                     ball["speed_y"] = min(max(-max_speed, total_speed * math.sin(math.radians(angle))), max_speed)
                     ball["speed_x"] = -abs(ball["speed_x"])
 
-                    logging.warning(f"raquette 2 vitesse x: {ball["speed_x"]}")
-                    logging.warning(f"raquette 2 vitesse x: {max_speed}")
-            
             # Réinitialiser la balle en cas de sortie
             if ball["x"] - ball["radius"] <= 0:
                 ball["x"], ball["y"] = 0.5, 0.5
@@ -200,7 +199,4 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def game_start(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "start",
-            "message": event["message"],
-        }))
+        await self.send(text_data=json.dumps(event))
