@@ -7,14 +7,19 @@ function lobby_private() {
     
     const roomName = document.getElementById("check-invite").textContent;
 
-    if (roomName === "False")
+    if (roomName === "False") {
+        console.log("Create new room");
         createRoomP();
-    else
+    }
+    else {
+        console.log("Create websocket");
         InitWebSocketRoomP(roomName)
+    }
 
     handleColorChange();
     handlePointchange();
     handleReadyChange();
+    handleQuitButton();
 }   
 
 function createRoomP() {
@@ -35,6 +40,7 @@ function createRoomP() {
     .then(data => {
         console.log("Room created successfully:", data.room_name);
         console.log("Join the room using this link:", data.room_link);
+        copyLink(data.room_link);
         InitWebSocketRoomP(data.room_name);
     })
     .catch(error => {
@@ -44,7 +50,7 @@ function createRoomP() {
 }
 
 function InitWebSocketRoomP(roomName) {
-    socket_roomP = new WebSocket(`wss://${window.location.host}/ws/game/${roomName}/`);
+    socket_roomP = new WebSocket(`wss://${window.location.host}/ws/lobby/${roomName}/`);
 
     const currentUser = document.getElementById("user-info").dataset.username;
     const currentAvatar = document.getElementById("user-info").dataset.avatar;
@@ -61,8 +67,7 @@ function InitWebSocketRoomP(roomName) {
 
     socket_roomP.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("data: ", data);
-    
+        
         const playerName1 = document.getElementById("playerName1");
         const playerName2 = document.getElementById("playerName2");
         const avatarPlayer1 = document.getElementById("avatarPlayer1");
@@ -70,9 +75,40 @@ function InitWebSocketRoomP(roomName) {
         const readyCheckboxPlayer1 = document.getElementById('readyPlayer1');
         const readyCheckboxPlayer2 = document.getElementById('readyPlayer2');
         const selectColorPlayer1 = document.getElementById('selectColorPlayer1');
-        const selectColorPlayer2 = document.getElementById('selectColorPlayer2'); 
+        const selectColorPlayer2 = document.getElementById('selectColorPlayer2');
+        
+        if (!data || !playerName1 || !avatarPlayer1 || !readyCheckboxPlayer1 || !selectColorPlayer1 || !playerName2 || !avatarPlayer2 || !readyCheckboxPlayer2 || !selectColorPlayer2) {
+            return;
+        }
+        
+        if (data.type === 'room_closed') {
+            alert(data.message); 
+            socket_roomP.close();
+            const csrfToken = getCookie('csrftoken');
+            fetch('/reset_room_session/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Session roomName réinitialisée.');
+                } else {
+                    console.error('Erreur lors de la réinitialisation de la session.');
+                }
+            });
+            loadMyPage();
+            return;
+        }
+
+        if (data.type === "player_left") {
+            alert(data.message); // Exemple : afficher un message d'alerte
+            return ;
+        }
+
+        console.log("data: ", data);
     
-        // Handle colors
         if (playerName1 && avatarPlayer1 && data.player1) {
             playerName1.textContent = data.player1.username;
             avatarPlayer1.src = data.player1.avatar;
@@ -95,7 +131,8 @@ function InitWebSocketRoomP(roomName) {
         // Handle point
         if (data.points_limit !== undefined) {
             const pointsLimitInput = document.getElementById("maxPoint");
-            pointsLimitInput.value = data.points_limit;
+            if (pointsLimitInput)
+                pointsLimitInput.value = data.points_limit;
         }
 
         // Handle ready button
@@ -234,15 +271,52 @@ function handleReadyChange(){
     readyCheckboxPlayer1.addEventListener('change', function (e) {
         if (currentUser === playerName1.textContent.trim()) {
             const isReady = e.target.checked;
-            console.log("value1 isReady: ", isReady)
             sendReadyState('player1', isReady);
         }
     });
     readyCheckboxPlayer2.addEventListener('change', function (e) {
         if (currentUser === playerName2.textContent.trim()) {
             const isReady = e.target.checked;
-            console.log("value2 isReady: ", isReady)
             sendReadyState('player2', isReady);
         }
     });
+}
+
+function copyLink(txt) {
+    const copyButton = document.getElementById("copyButton");
+
+    copyButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(txt)
+            
+    });
+}
+
+function handleQuitButton() {
+    const leaveBtn = document.getElementById("leaveRoomButton");
+    if (leaveBtn) {
+        leaveBtn.addEventListener("click", () => {
+            if (socket_roomP && socket_roomP.readyState === WebSocket.OPEN) {
+                socket_roomP.send(JSON.stringify({ type: "leave_room" }));
+            }
+
+            if (socket_roomP) {
+                socket_roomP.close();
+            }
+            const csrfToken = getCookie('csrftoken');
+            fetch('/reset_room_session/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Session roomName réinitialisée.');
+                } else {
+                    console.error('Erreur lors de la réinitialisation de la session.');
+                }
+            });
+            loadMyPage();
+        });
+    }
 }

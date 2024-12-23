@@ -1,4 +1,4 @@
-function launchTournament(roomName, maxPoints, players) {
+function launchTournament(maxPoints, players) {
     let isActive = false; 
     let currentMatchIndex = 0; 
     let currentRound = [...players];

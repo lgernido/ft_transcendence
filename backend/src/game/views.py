@@ -105,6 +105,12 @@ def local(request):
         return render(request, 'partials/gameCustom.html')
     else:
         return redirect('/?next=/gameCustom/')
+    
+def tournament(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/tournament.html')
+    else:
+        return redirect('/?next=/tournament/')
 
 def GameBot(request):
     if request.headers.get('X-Fetch-Request') == 'true':
@@ -388,3 +394,9 @@ def get_room_status(request, room_name):
         return JsonResponse({'room_name': room.name, 'players': [player.username for player in room.players.all()]})
     except Room.DoesNotExist:
         return JsonResponse({'error': 'Room does not exist.'}, status=404)
+    
+def reset_room_session(request):
+    if request.method == "POST":
+        request.session['roomName'] = None
+        return JsonResponse({"success": True, "message": "Session roomName réinitialisée."})
+    return JsonResponse({"success": False, "message": "Méthode non autorisée."})

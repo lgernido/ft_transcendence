@@ -53,6 +53,11 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
     def save_room_points_limit(self, room, points_limit):
         room.points_limit = points_limit
         room.save()
+    
+    @database_sync_to_async
+    def remove_player_from_room(self, room, user):
+        room.players.remove(user)
+        room.save()
 
     @database_sync_to_async
     def save_session(self, session):
@@ -113,6 +118,53 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
             await database_sync_to_async(room.save)()
             await self.send_room_state()
 
+        elif data['type'] == 'leave_room':
+            room = await self.get_room()
+
+            if self.scope['user'] == room.host:
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        "type": "room_closed",
+                        "message": "The host has left the room. The room is now closed."
+                    }
+                )
+                await self.channel_layer.group_discard(
+                    room.name,
+                    self.channel_name
+                )
+                await database_sync_to_async(room.delete)()
+
+            else:
+                self.scope['session']['roomName'] = None
+                await self.save_session(self.scope['session'])
+
+                room = await self.get_room()
+                user = self.scope['user']
+
+                await self.remove_player_from_room(room, user)
+
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        "type": "player_left",
+                        "player": self.scope['user'].username,
+                    }
+                )
+
+                await self.channel_layer.group_discard(
+                    self.room_group_name,
+                    self.channel_name
+                )
+
+                await self.send(text_data=json.dumps({
+                    'status': 'success',
+                    'message': 'You have left the room.'
+                }))
+
+                await self.send_room_state()
+
+
 
     async def send_room_state(self):
         room = await self.get_room()
@@ -167,4 +219,23 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
         
         await self.send(text_data=json.dumps(players_data))
 
+    async def room_closed(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "room_closed",
+            "message": event["message"]
+        }))
+        await self.close()
+
+    async def player_left(self, event):
+        # Récupère le nom du joueur qui a quitté
+        player = event["player"]
+
+        # Diffuse une mise à jour aux clients restants
+        await self.send(text_data=json.dumps({
+            "type": "player_left",
+            "message": f"{player} has left the room."
+        }))
+
+        # Optionnel : Met à jour les informations de la salle si nécessaire
+        await self.send_room_state()
 

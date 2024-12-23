@@ -25,6 +25,7 @@ urlpatterns = [
     path('check_user_status/', views.check_user_status, name='check_user_status'),
     path('GameBot/', views.GameBot, name='GameBot'),
 	path('local/', views.local, name='local'),
+    path('tournament/', views.tournament, name='tournament'),
 	
     path('create_room/', views.create_room, name='create_room'),
 	path('join_room/<str:room_name>/', views.join_room, name='join_room'),
@@ -33,6 +34,7 @@ urlpatterns = [
 	path('check_user_status/', views.check_user_status, name='check_user_status'),
 	path('extractProfile/', views.extractProfile, name='extractProfile'),
 	path('extractGame/', views.extractGame, name='extractGame'),
+	path('reset_room_session/', views.reset_room_session, name='reset_room_session'),
 
 	path('GetUserId/', GetUserId, name="GetUserId"),
 	path('GetUserById/', GetUserById, name="GetUserById"),

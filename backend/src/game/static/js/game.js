@@ -37,17 +37,9 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
     });
 
     const moveValue = 0.5;
-    setInterval(() => {
-        if (keys['w']) {
-            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
-        }
-        if (keys['s']) {
-            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
-        }
-
-    }, 10);
     
     const ball = document.querySelector('.ball');
+    const ballRadius = 2;
     const gameSetup = document.querySelector('.game-window');
 
     let posBallX = 50;
@@ -63,7 +55,7 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
     let resettingBall = false;
 
     const increaseSpeed = 1.1;
-    const maxAngle = Math.PI / 4; // angle max
+    const maxAngle = Math.PI / 4;
 
     function calculateAngle(impactPoint, maxAngle) {
         return maxAngle * (2 * impactPoint - 1);
@@ -96,13 +88,14 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
     let predictedBallY = posBallY;
 
     function aiMove() {
-        let difference = predictedBallY - (aiBar.y + aiBar.height / 2);
+        let difference = predictedBallY - aiBar.y;
     
         const maxMove = barreSpeed;
+    
         if (Math.abs(difference) > maxMove) {
             aiBar.y += Math.sign(difference) * maxMove;
         } else {
-            aiBar.y = predictedBallY - aiBar.height / 2;
+            aiBar.y = predictedBallY;
         }
     
         aiBar.y = Math.max(barreHeight / 2, Math.min(100 - barreHeight / 2, aiBar.y));
@@ -115,28 +108,43 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
         let by = posBallY;
         let bdx = speedX;
         let bdy = speedY;
-    
+        
         for (let i = 0; i < 100; i++) {
             bx += bdx;
             by += bdy;
-    
+            
             if (by + 1 >= 100 || by - 1 <= 0) {
                 bdy = -bdy * getRandomNumber(0.6, 1.4);
                 by += bdy;
             }
-    
-            if (bx - 1 <= 5 || bx + 1 >= 100 - 5) {
+            
+            if (bx + 1 >= 100 - 5) {
+                bx = 100 - 5;
+                break;
+            }
+            
+            if (bx - 1 <= 5) {
                 bdx = -bdx * getRandomNumber(0.6, 1.4);
                 bx += bdx;
             }
         }
-
+        
         predictedBallY = by;
     }
     
-    setInterval(predict_ball_position, 1000);
+    paddleInterval = setInterval(() => {
+        if (keys['w']) {
+            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
+        }
+        if (keys['s']) {
+            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
+        }
 
-    setInterval(aiMove, 10);
+    }, 10);
+
+    calcIaInterval = setInterval(predict_ball_position, 1000);
+
+    moveIaInterval = setInterval(aiMove, 10);
 
     function getRandomNumber(min, max) {
         return Math.random() * (max - min) + min;
@@ -234,6 +242,7 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
     }
 
     async function moveBall() {
+        const maxSpeed = 0.7;
         posBallX += speedX;
         posBallY += speedY;
 
@@ -243,7 +252,7 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
 
         if (resettingBall) return;
 
-        if (posBallY - 2 <= 0 || posBallY + 2 >= 100)
+        if (posBallY - ballRadius <= 0 || posBallY + ballRadius >= 100)
             speedY *= -1;
 
         if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
@@ -254,9 +263,10 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             const angle = calculateAngle(impactPoint, maxAngle);
 
             const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-            speedX = Math.cos(angle) * totalSpeed;
-            speedY = Math.sin(angle) * totalSpeed;
-
+            console.log("1 Speed: ", totalSpeed)
+            if (totalSpeed < maxSpeed)
+                speedX = Math.cos(angle) * totalSpeed;
+                speedY = Math.sin(angle) * totalSpeed;
             speedX = Math.abs(speedX);
         }
 
@@ -268,8 +278,10 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             const angle = calculateAngle(impactPoint, maxAngle);
         
             const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-            speedX = Math.cos(angle) * totalSpeed;
-            speedY = Math.sin(angle) * totalSpeed;
+            console.log("2 Speed: ", totalSpeed)
+            if (totalSpeed < maxSpeed)
+                speedX = Math.cos(angle) * totalSpeed;
+                speedY = Math.sin(angle) * totalSpeed;
         
             speedX = -Math.abs(speedX);
         }

@@ -41,7 +41,7 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 	});
 
 	const moveValue = 0.5;
-	setInterval(() => {
+	paddleInterval = setInterval(() => {
 		if (keys['w']) {
 			leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
 		}
@@ -191,6 +191,7 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
     }
 
 	async function moveBall() {
+		const maxSpeed = 0.7;
 		posBallX += speedX;
 		posBallY += speedY;
 
@@ -203,7 +204,8 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 		if (posBallY - 2 <= 0 || posBallY + 2 >= 100)
 			speedY *= -1;
 
-		if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
+		
+        if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
 		{
 			posBallX = posBallX + 1;
 
@@ -211,13 +213,13 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 			const angle = calculateAngle(impactPoint, maxAngle);
 
 			const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-			speedX = Math.cos(angle) * totalSpeed;
-			speedY = Math.sin(angle) * totalSpeed;
-
+			if (totalSpeed < maxSpeed)
+				speedX = Math.cos(angle) * totalSpeed;
+				speedY = Math.sin(angle) * totalSpeed;
 			speedX = Math.abs(speedX);
 		}
 
-		if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
+		if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
 		{
 			posBallX = posBallX - 1;
 
@@ -225,8 +227,9 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 			const angle = calculateAngle(impactPoint, maxAngle);
 		
 			const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-			speedX = Math.cos(angle) * totalSpeed;
-			speedY = Math.sin(angle) * totalSpeed;
+			if (totalSpeed < maxSpeed)
+				speedX = Math.cos(angle) * totalSpeed;
+				speedY = Math.sin(angle) * totalSpeed;
 		
 			speedX = -Math.abs(speedX);
 		}
@@ -266,18 +269,6 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 	}
 
 	startCountdown();
-
-	window.addEventListener('popstate', () => {
-		console.log("STOP Process setintervall");
-		clearInterval(ballInterval);
-		clearInterval(countdownInterval);
-	});
-	
-	window.addEventListener('beforeunload', () => {
-		console.log("STOP Process setintervall");
-		clearInterval(ballInterval);
-		clearInterval(countdownInterval);
-	});
 }
 
 function updatePlayerColor(playerElement1, playerElement2, newColor1, newColor2) {

@@ -62,6 +62,7 @@ function loadscript(file, func) {
 }
 
 function loadConnectPage() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -109,6 +110,7 @@ function loadConnectPage() {
 }
 
 function loadCreateAccount() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -141,6 +143,7 @@ function loadCreateAccount() {
 }
 
 function loadMyPage() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -183,6 +186,7 @@ function loadMyPage() {
 }
 
 function loadStats() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -230,6 +234,7 @@ function loadStats() {
 }
 
 function loadFriends() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -278,6 +283,7 @@ function loadFriends() {
 }
 
 function loadAccount() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -324,8 +330,7 @@ function loadAccount() {
         });
 }
 
-function loadTournament()
-{
+function loadTournament() {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -504,7 +509,6 @@ function loadGamePrivate(roomName, maxPoints) {
                 const state = { page: `game-${roomName}` };
                 history.pushState(state, '', `/game/${roomName}`);
             }
-            // loadscript('loadelement.js', () => loadchat());
             loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints));
         })
         .catch(error => {
@@ -512,14 +516,15 @@ function loadGamePrivate(roomName, maxPoints) {
         });
 }
 
-function loadGameTournament(roomName, maxPoints, players) {
+function loadGameTournament(maxPoints, players) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/tournament/${roomName}`, {
+    fetch(`/tournament/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -531,12 +536,11 @@ function loadGameTournament(roomName, maxPoints, players) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `tournament-${roomName}`) {
-                const state = { page: `tournament-${roomName}` };
-                history.pushState(state, '', `/tournament/${roomName}`);
+            if (history.state?.page !== `tournament`) {
+                const state = { page: `tournament` };
+                history.pushState(state, '', `/tournament`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('tournament.js', () => launchTournament(roomName, maxPoints, players));
+            loadscript('tournament.js', () => launchTournament(maxPoints, players));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -544,6 +548,7 @@ function loadGameTournament(roomName, maxPoints, players) {
 }
 
 function loadChat() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -774,6 +779,36 @@ let chatSocket = null;
 let socket_roomP = null;
 let presenceOnline = null;
 
+// setintervall variables
+let paddleInterval = null;
+let ballInterval = null;
+let moveIaInterval = null;
+let calcIaInterval = null;
+
+function stopAllIntervals() {
+    if (paddleInterval) {
+        clearInterval(paddleInterval);
+        paddleInterval = null;
+        console.log("Paddle clear");
+    }
+    if (ballInterval) {
+        clearInterval(ballInterval);
+        ballInterval = null;
+        console.log("ball clear");
+    }
+    if (moveIaInterval) {
+        clearInterval(moveIaInterval);
+        moveIaInterval = null;
+        console.log("moveia clear");
+    }
+    if (calcIaInterval) {
+        clearInterval(calcIaInterval);
+        calcIaInterval = null;
+        console.log("calcia clear");
+    }
+}
+
+
 function checkStatus() {
     const wsScheme_ = window.location.protocol === "https:" ? "wss" : "ws";
     const wsUrl = `${wsScheme_}://${window.location.host}/ws/users/presence/`;
@@ -837,5 +872,3 @@ function updateStatusIcons() {
         }
     });
 }
-
-

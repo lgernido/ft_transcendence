@@ -19,6 +19,7 @@ function logoutUser() {
                     if (response.ok) {
                         loadConnectPage();
                         closeAllOpenWebSocket();
+                        stopAllIntervals();
                     } else {
                         console.error('Erreur lors de la déconnexion');
                     }
