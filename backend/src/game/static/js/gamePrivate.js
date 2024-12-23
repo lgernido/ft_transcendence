@@ -7,12 +7,18 @@ function launchGamePrivate(roomName, maxPoints) {
     canvas.width = window.innerWidth * 0.75;
     canvas.height = window.innerHeight * 0.5;
     const ctx = canvas.getContext('2d');
+    
+    // texte
+    // ctx.font = '30px Arial'; // Taille et famille de police
+    // ctx.fillStyle = 'white';  // Couleur du texte
+    // ctx.textAlign = 'center'; // Alignement horizontal
+    // ctx.textBaseline = 'middle';
 
     // Variables
     const ball = {
         x: canvas.width / 2,
         y: canvas.height / 2,
-        radius: 10,
+        radius: canvas.width * 0.01,
         speedX: 3,
         speedY: 3,
     };
@@ -23,14 +29,14 @@ function launchGamePrivate(roomName, maxPoints) {
         x: 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
         id: null, // Identifiant du joueur associé
-        speed: 10,
+        score:0,
     };
 
     const rightPaddle = {
         x: canvas.width - paddleHeight - 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
         id: null, // Identifiant du joueur associé
-        speed: 1,
+        score:0,
     };
 
     let upPressed = false, downPressed = false;
@@ -44,21 +50,26 @@ function launchGamePrivate(roomName, maxPoints) {
 
     wsPong.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        console.log("DATA :", data);
 
         if (data.type === 'game_update') {
-            ball.x = data.ball.x * canvas.width;
             ball.y = data.ball.y * canvas.height;
+            leftPaddle.score = data.leftPaddle.score;
+            rightPaddle.score = data.rightPaddle.score;
             if (data.left_paddle.id == userId) {
                 leftPaddle.y = data.left_paddle.y * canvas.height;
                 rightPaddle.y = data.right_paddle.y * canvas.height;
+                ball.x = data.ball.x * canvas.width;
             } else {
                 leftPaddle.y = data.right_paddle.y * canvas.height;
                 rightPaddle.y = data.left_paddle.y * canvas.height;
+                ball.x = (1 - data.ball.x)* canvas.width;
             }
-            
+            console.log(`${data.left_paddle.id } score :${data.left_paddle.score}`)
+            console.log(`${data.right_paddle.id } score :${data.right_paddle.score}`)
         } else if (data.type === 'start') {
             alert(data.message);
+        } else if (data.type === 'game_state') {
+            console.log(data.message);
         }
     };
 
@@ -126,6 +137,7 @@ function launchGamePrivate(roomName, maxPoints) {
         }
 
         if (paddleMoved && wsPong.readyState === WebSocket.OPEN) {
+            console.log(`IS ${userId}`)
             if (upPressed || downPressed) {
                 const action = upPressed ? 'up' : 'down';
                 wsPong.send(JSON.stringify({
@@ -133,22 +145,20 @@ function launchGamePrivate(roomName, maxPoints) {
                     id: userId,
                     action: action, // Indiquer l'action
                 }));
-                console.log("action");
-                console.log(action);
             }
-            // wsPong.send(JSON.stringify({
-            //     type: 'move',
-            //     id: userId,
-            //     pos: rightPaddle.y / canvas.height, // Normaliser entre 0 et 1
-            // }));
             paddleMoved = false;
         }
+    }
+
+    function drawScore() {
+        ctx.fillText("salut", canvas.width / 2, canvas.height / 2);
     }
 
     function draw() {
         drawField();
         drawBall();
         drawPaddles();
+        // drawScore();
     }
 
     function gameLoop() {

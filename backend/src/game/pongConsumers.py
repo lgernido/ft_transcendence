@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 import logging
-from asgiref.sync import sync_to_async
+import math
 
 logger = logging.getLogger('game')
 
@@ -20,9 +20,9 @@ class PongConsumer(AsyncWebsocketConsumer):
         # Initialiser l'état du jeu s'il n'existe pas encore
         if not hasattr(self.channel_layer, "game_state"):
             self.channel_layer.game_state = {
-                "ball": {"x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
-                "left_paddle": {"y": 0.45, "id": None},
-                "right_paddle": {"y": 0.45, "id": None},
+                "ball": {"radius":0.01, "x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
+                "left_paddle": {"y": 0.45, "id": None, "score": 0},
+                "right_paddle": {"y": 0.45, "id": None, "score": 0},
                 "connected_players": 0,  # Nombre de joueurs connectés
             }
 
@@ -42,6 +42,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             game_state["ball"]["speed_x"] = 0.01
             game_state["ball"]["speed_y"] = 0.01
 
+
             # Informer tous les joueurs que le jeu commence
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -50,16 +51,28 @@ class PongConsumer(AsyncWebsocketConsumer):
                     "message": "Both players are connected. The game starts now!",
                 },
             )
+
             asyncio.create_task(self.game_loop())
+
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
         if hasattr(self.channel_layer, "game_state"):
             self.channel_layer.game_state["connected_players"] -= 1
+            # Informer les autres joueurs que ce joueur s'est déconnecté
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "player_disconnect",
+                    "message": f"Player {self.user.username} has disconnected.",
+                },
+            )
+            
+        # Fermer explicitement la connexion WebSocket
+        await self.close()
 
     async def receive(self, text_data):
-        logger.warning(f"Receive called by {self.user.username}")
         data = json.loads(text_data)
         if data["type"] == "move":
             user_id = data["id"]
@@ -70,11 +83,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             paddle_speed = 0.02  # Vitesse de la raquette (normale)
 
             # Identifier la raquette et calculer la nouvelle position
-            logger.warning("Je suis dans la out boucle")
-            logger.warning(type(game_state["left_paddle"]["id"]))
-            logger.warning(type(user_id))
             if game_state["left_paddle"]["id"] == int(user_id):
-                logger.warning("Je suis dans la boucle")
                 if action == "up":
                     game_state["left_paddle"]["y"] = max(0, game_state["left_paddle"]["y"] - paddle_speed)
                 elif action == "down":
@@ -86,8 +95,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                     game_state["right_paddle"]["y"] = min(1, game_state["right_paddle"]["y"] + paddle_speed)
 
             # Propager les nouvelles positions
-            logger.warning(f"right_paddle {game_state["right_paddle"]["y"]}")
-            logger.warning(f"left_paddle {game_state["left_paddle"]["y"]}")
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -95,46 +102,76 @@ class PongConsumer(AsyncWebsocketConsumer):
                     "ball": game_state["ball"],
                     "left_paddle": {
                         "y": game_state["left_paddle"]["y"],
-                        "id": game_state["left_paddle"]["id"]
+                        "id": game_state["left_paddle"]["id"],
+                        "score": game_state["left_paddle"]["score"]
+
+                    
                     },
                     "right_paddle": {
                         "y": game_state["right_paddle"]["y"],
-                        "id": game_state["right_paddle"]["id"]
+                        "id": game_state["right_paddle"]["id"],
+                        "score": game_state["left_paddle"]["score"]
                     },
                 }
             )
 
     async def game_loop(self):
+        # max_speed = 0.031
+        max_speed = 0.025
         while True:
-
             state = self.channel_layer.game_state
             ball = state["ball"]
 
             # Mettre à jour la position de la balle si elle est en mouvement
+            left_paddle = state["left_paddle"]
+            right_paddle = state["right_paddle"]
+            
             if ball["speed_x"] != 0 and ball["speed_y"] != 0:
+                ball["x"] += ball["speed_x"]
+                ball["y"] += ball["speed_y"]
 
-                # ball["x"] += ball["speed_x"]
-                # ball["y"] += ball["speed_y"]
+                # Détection des collisions
+                if ball["y"] - ball["radius"] <= 0 or ball["y"] + ball["radius"]  >= 1:
+                    ball["speed_y"] *= -1  # Collision avec le mur haut/bas
 
-                # # Détection des collisions
-                # if ball["y"] <= 0 or ball["y"] >= 1:
-                #     ball["speed_y"] *= -1  # Collision avec le mur haut/bas
 
-                left_paddle = state["left_paddle"]
-                right_paddle = state["right_paddle"]
+                if (ball["x"] - ball["radius"] <= 0.02
+                    and left_paddle["y"] <= ball["y"] <= left_paddle["y"] + 0.2):
+                    logger.warning("Collision avec la raquette gauche.")
+                   
+                    impact_point = (ball["y"] - left_paddle["y"]) / 0.2
+                    angle = self.calculate_angle(impact_point, 75)
+                    total_speed = ((ball["speed_x"] ** 2 + ball["speed_y"] ** 2) ** 0.5) * 1
+
+                    ball["speed_x"] = min(max(-max_speed, total_speed * math.cos(math.radians(angle))), max_speed)
+                    ball["speed_y"] = min(max(-max_speed, total_speed * math.sin(math.radians(angle))), max_speed)
+                    ball["speed_x"] = abs(ball["speed_x"])  # Toujours positif pour partir à droite
+
+                    logging.warning(f"Vitesse X gauche: {ball['speed_x']}")
+                    logging.warning(f"Vitesse Y gauche: {ball['speed_y']}")
+
+                elif ( ball["x"] + ball["radius"] >= 0.98 and right_paddle["y"] <= ball["y"] <= right_paddle["y"] + 0.2):
+                    impact_point = (ball["y"] - right_paddle["y"]) / 0.2
+                    angle = self.calculate_angle(impact_point, 75)
+                    total_speed = ((ball["speed_x"] ** 2 + ball["speed_y"] ** 2) ** 0.5) * 1
+
+                    ball["speed_x"] = min(max(-max_speed, total_speed * math.cos(math.radians(angle))), max_speed)
+                    ball["speed_y"] = min(max(-max_speed, total_speed * math.sin(math.radians(angle))), max_speed)
+                    ball["speed_x"] = -abs(ball["speed_x"])
+
+                    logging.warning(f"raquette 2 vitesse x: {ball["speed_x"]}")
+                    logging.warning(f"raquette 2 vitesse x: {max_speed}")
+            
+            # Réinitialiser la balle en cas de sortie
+            if ball["x"] - ball["radius"] <= 0:
+                ball["x"], ball["y"] = 0.5, 0.5
+                left_paddle["score"] += 1
+                logger.warning(left_paddle["score"])
                 
-                logger.debug(f"Left paddle Y: {left_paddle['y']}, Right paddle Y: {right_paddle['y']}")
-
-                # if (
-                #     ball["x"] <= 0.05
-                #     and left_paddle["y"] <= ball["y"] <= left_paddle["y"] + 0.2
-                # ):
-                #     ball["speed_x"] *= -1  # Collision avec la raquette gauche
-                # elif (
-                #     ball["x"] >= 0.95
-                #     and right_paddle["y"] <= ball["y"] <= right_paddle["y"] + 0.2
-                # ):
-                #     ball["speed_x"] *= -1  # Collision avec la raquette droite
+            if ball["x"] + ball["radius"] >= 1:
+                ball["x"], ball["y"] = 0.5, 0.5
+                right_paddle["score"] += 1
+                logger.warning(right_paddle["score"])
 
             # Envoyer l'état mis à jour à tous les clients
             await self.channel_layer.group_send(
@@ -144,20 +181,23 @@ class PongConsumer(AsyncWebsocketConsumer):
                     "ball": ball,
                     "left_paddle": {
                         "y": left_paddle["y"],
-                        "id": left_paddle["id"]
+                        "id": left_paddle["id"],
+                        "score": left_paddle["score"]
                     },
                     "right_paddle": {
                         "y": right_paddle["y"],
-                        "id": right_paddle["id"]
+                        "id": right_paddle["id"],
+                        "score": right_paddle["score"]
                     },
                 },
             )
             await asyncio.sleep(0.016)  # 60 FPS
-            # await asyncio.sleep(2)  # 2 FPS
+    
+    def calculate_angle(self, impact_point, max_angle):        
+        return max_angle * (2 * impact_point - 1)
 
     async def game_update(self, event):
         await self.send(text_data=json.dumps(event))
-        logger.debug("Game update:", event)
 
     async def game_start(self, event):
         await self.send(text_data=json.dumps({
