@@ -7,6 +7,8 @@ function launchGamePrivate(roomName, maxPoints) {
     canvas.width = window.innerWidth * 0.75;
     canvas.height = window.innerHeight * 0.5;
     const ctx = canvas.getContext('2d');
+    let left_backend = 0;
+    let right_backend = 0;
     
     // texte
     ctx.font = '30px Arial'; // Taille et famille de police
@@ -28,14 +30,12 @@ function launchGamePrivate(roomName, maxPoints) {
     const leftPaddle = {
         x: 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
-        id: 0, // Identifiant du joueur associé
         score: 0,
     };
 
     const rightPaddle = {
         x: canvas.width - paddleHeight - 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
-        id: 0, // Identifiant du joueur associé
         score:0,
     };
 
@@ -65,16 +65,11 @@ function launchGamePrivate(roomName, maxPoints) {
                 ball.x = (1 - data.ball.x)* canvas.width;
             }
         } else if (data.type === 'game_start') {
-            if (parseInt(data.left_paddle.id) == parseInt(userId))
-            {
-                leftPaddle.id = data.left_paddle.id;
-                rightPaddle.id = data.right_paddle.id;
-            } else {
-                leftPaddle.id = data.right_paddle.id;
-                rightPaddle.id = data.left_paddle.id;;
-            }
-            console.log(`${rightPaddle.id}   ${leftPaddle.id}`);
+            left_backend = data.left_paddle.id;
+            right_backend = data.right_paddle.id;
+            console.log(`start ${userId}: ${left_backend} ${right_backend}`);
             alert(data.message);
+            gameLoop();
 
         } else if (data.type === 'game_state') {
             console.log(data.message);
@@ -157,23 +152,20 @@ function launchGamePrivate(roomName, maxPoints) {
         }
     }
 
-    function drawScore() {
+    function drawScore(event) {
             // texte
         ctx.font = '30px Arial'; // Taille et famille de police
         ctx.fillStyle = 'white';  // Couleur du texte
         ctx.textAlign = 'center'; // Alignement horizontal
         ctx.textBaseline = 'middle';
 
-        console.log(`${rightPaddle.id}   ${leftPaddle.id}`);
-        console.log(`${leftPaddle.id}: ${typeof leftPaddle.id}`)
-        console.log(`${userId}: ${typeof userId}`)
-        if (parseInt(leftPaddle.id) == parseInt(userId))
+        if (left_backend == parseInt(userId))
         {
-            ctx.fillText(leftPaddle.score, (canvas.width / 2) - 20, canvas.height * 0.1);
-            ctx.fillText(rightPaddle.score, (canvas.width / 2) + 20, canvas.height * 0.1); 
-        } else {
             ctx.fillText(leftPaddle.score, (canvas.width / 2) + 20, canvas.height * 0.1);
-            ctx.fillText(rightPaddle.score, (canvas.width / 2) - 20, canvas.height * 0.1);
+            ctx.fillText(rightPaddle.score, (canvas.width / 2) - 20, canvas.height * 0.1); 
+        } else {
+            ctx.fillText(leftPaddle.score, (canvas.width / 2) - 20, canvas.height * 0.1);
+            ctx.fillText(rightPaddle.score, (canvas.width / 2) + 20, canvas.height * 0.1);
         }
     }
 
@@ -190,5 +182,5 @@ function launchGamePrivate(roomName, maxPoints) {
         requestAnimationFrame(gameLoop);
     }
 
-    gameLoop();
+    draw()
 }
