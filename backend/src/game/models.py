@@ -4,12 +4,11 @@ from users.models import Profile
 import time
     
 class Game(models.Model):
+    room_name = models.CharField(max_length=255, default="default_room")
     player1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="games_as_player1")
     player2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="games_as_player2")
 
-    winner = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="games_won",
-    )
+    winner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="games_won")
     
     player1_score = models.PositiveIntegerField(default=0)
     player2_score = models.PositiveIntegerField(default=0)

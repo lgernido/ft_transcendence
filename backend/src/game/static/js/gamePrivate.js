@@ -1,273 +1,266 @@
+//verifier le calcule de mouvement
+
 function launchGamePrivate(roomName, maxPoints) {
-    const playerLeft = document.getElementById('playerLeft');
-    const playerRight = document.getElementById('playerRight');
+    roomName = "5x"; // TODO: change to roomName, for now it's hardcoded
+    
+    const canvas = document.getElementById('pong');
+    const userId = canvas.dataset.userId;
+    canvas.width = window.innerWidth * 0.75;
+    canvas.height = window.innerHeight * 0.5;
+    const ctx = canvas.getContext('2d');
+    let left_backend = 0;
+    let right_backend = 0;
+    let gameActive = true;
 
-    setTimeout(() => {
-        playerLeft.classList.add('slide-in-left');
-        playerRight.classList.add('slide-in-right');
-    }, 500);
+    // Variables du jeu
+    const ball = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        radius: canvas.width * 0.01
+    };
 
+    const paddleWidth = canvas.height * 0.20;
+    const paddleHeight = canvas.height * 0.01;
+    const leftPaddle = {
+        x: 0.01 * canvas.width,
+        y: (canvas.height - paddleWidth) / 2,
+        score: 0,
+        name: ""
+    };
 
+    const rightPaddle = {
+        x: canvas.width - paddleHeight - 0.01 * canvas.width,
+        y: (canvas.height - paddleWidth) / 2,
+        score: 0,
+        name: ""
+    };
 
-	const leftBarre = document.querySelector('.left-barre');
-	const rightBarre = document.querySelector('.right-barre');
+    // Gestion des touches
+    const keyState = {
+        ArrowUp: false,
+        ArrowDown: false
+    };
 
-	let leftBarrePosition = 50;
-	let rightBarrePosition = 50;
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            keyState[e.key] = true;
+            e.preventDefault();
+        }
+    });
 
-	const barreSpeed = 1;
-	const barreHeight = 15;
-	
-	const keys = {}; 
+    document.addEventListener('keyup', function(e) {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            keyState[e.key] = false;
+            e.preventDefault();
+        }
+    });
 
-	function moveBarre(barre, position, direction) {
-		const maxPosition = 100 - (barreHeight * 0.5);
-		position += direction * barreSpeed;
-		position = Math.max(barreHeight * 0.5, Math.min(maxPosition, position));
-		barre.style.top = position + '%';
-		return position;
-	}
-
-	document.addEventListener('keydown', (e) => {
-		keys[e.key] = true;
-	});
-
-	document.addEventListener('keyup', (e) => {
-		keys[e.key] = false;
-	});
-
-	const moveValue = 0.5;
-	setInterval(() => {
-		if (keys['w']) {
-			leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
-		}
-		if (keys['s']) {
-			leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
-		}
-		if (keys['ArrowUp']) {
-			rightBarrePosition = moveBarre(rightBarre, rightBarrePosition, -moveValue);
-		}
-		if (keys['ArrowDown']) {
-			rightBarrePosition = moveBarre(rightBarre, rightBarrePosition, moveValue);
-		}
-	}, 10);
-
-
-	const ball = document.querySelector('.ball');
-	const gameSetup = document.querySelector('.game-window');
-
-	let posBallX = 50;
-	let posBallY = 50;
-	let speedX = 0.3;
-	let speedY = 0.2;
-
-	let ballSpeed = 0.3;
-
-	let scrorePlayerLeft = 0;
-	let scrorePlayerRight = 0;
-
-	let resettingBall = false;
-
-	const increaseSpeed = 1.1;
-	const maxAngle = Math.PI / 4; // angle max
-
-	function calculateAngle(impactPoint, maxAngle) {
-        return maxAngle * (2 * impactPoint - 1);
+    function drawField() {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-	
-	function sleep(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
-	
-	function updateScore() {
-		document.getElementById("scorePLeft").textContent = scrorePlayerLeft;
-		document.getElementById("scorePRight").textContent = scrorePlayerRight;
-	}
 
-	updateScore();
-	
-	function resetBall()
-	{
-		console.log("Init/reset ball");
-		posBallX = 50;
-		posBallY = 50;
-		const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
-		const directionX = Math.random() > 0.5 ? 1 : -1;
-		const directionY = Math.random() > 0.5 ? 1 : -1;
-		
-		speedX = ballSpeed * Math.cos(angle) * directionX;
-		speedY = ballSpeed * Math.sin(angle) * directionY;
-	}
-	
-	function startGame()
-	{
-		scrorePlayerLeft = 0;
-		scrorePlayerRight = 0;
-		updateScore();
-		resetBall();
-		ballInterval = setInterval(moveBall, 10);
-	}
-	
-	const countdownElement = document.getElementById('countdown');
-    let countdown = 5;
-    function startCountdown() {
-        toggleBallVisibility(true);
-        countdownElement.textContent = countdown;
-        const countdownInterval = setInterval(() => { 
-            countdown -= 1;
-            countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawPaddles() {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(leftPaddle.x, leftPaddle.y, paddleHeight, paddleWidth);
+
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(rightPaddle.x, rightPaddle.y, paddleHeight, paddleWidth);
+    }
+
+    function drawScore() {
+        ctx.font = '20px Arial';
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const scoreY = canvas.height * 0.1;
+        const nameY = canvas.height * 0.05;
+
+        ctx.fillStyle = 'red';
+        ctx.fillText(leftPaddle.name || "Player 1", (canvas.width / 2) - 50, nameY);
+        ctx.fillStyle = 'white';
+        ctx.fillText(leftPaddle.score, (canvas.width / 2) - 50, scoreY);
+
+        ctx.fillStyle = 'blue';
+        ctx.fillText(rightPaddle.name || "Player 2", (canvas.width / 2) + 50, nameY);
+        ctx.fillStyle = 'white';
+        ctx.fillText(rightPaddle.score, (canvas.width / 2) + 50, scoreY);
+    }
+
+    function drawGameOver(winnerId, finalScore) {
+        let countdown = 5; // Initialiser le compte à rebours
+        
+        function updateGameOverScreen() {
+            // Effacer le canvas
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Afficher le gagnant et le score
+            ctx.font = '40px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const winnerName = winnerId === left_backend ? leftPaddle.name : rightPaddle.name;
+            ctx.fillText(`${winnerName} Wins!`, canvas.width / 2, canvas.height / 2 - 40);
+            ctx.font = '30px Arial';
+            ctx.fillText(`Final Score: ${finalScore.left} - ${finalScore.right}`, canvas.width / 2, canvas.height / 2 + 20);
+            
+            // Afficher le message de redirection avec le décompte
+            ctx.font = '20px Arial';
+            ctx.fillText(`Game will redirect to lobby in ${countdown} seconds...`, canvas.width / 2, canvas.height / 2 + 80);
+        }
+
+        // Mettre à jour le compte à rebours chaque seconde
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            drawField();
+            updateGameOverScreen();
             
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
-                countdownElement.style.display = 'none';
-                toggleBallVisibility(false);
-				startGame();
+                window.location.href = '/mypage';
             }
         }, 1000);
+
+        // Afficher l'écran initial
+        updateGameOverScreen();
     }
 
-    function sendGameResults(winnerName) {
-        const data = {
-            winner: winnerName,
-            playerLeft: playerLeft.innerText,
-            playerRight: playerRight.innerText,
-            leftScore: scrorePlayerLeft,
-            rightScore: scrorePlayerRight,
-        };
-        console.log('Sending game results to the backend:', data);
-        fetch('/api/game-results/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
-            body: JSON.stringify(data),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    function draw() {
+        drawField();
+        drawBall();
+        drawPaddles();
+        drawScore();
+    }
+
+    function updatePaddlePositions() {
+        const isLeftPlayer = userId == left_backend;
+        const isRightPlayer = userId == right_backend;
+        
+        if ((isLeftPlayer || isRightPlayer) && wsPong.readyState === WebSocket.OPEN && gameActive) {
+            if (keyState.ArrowUp || keyState.ArrowDown) {
+                wsPong.send(JSON.stringify({
+                    type: 'move',
+                    id: userId,
+                    action: keyState.ArrowUp ? 'up' : 'down'
+                }));
             }
-            return response.json();
-        })
-        .then((data) => {
-            console.log('Game results successfully sent to the backend:', data);
-        })
-        .catch((error) => {
-            console.error('Error sending game results to the backend:', error);
-        });
-    }
-
-    function getCSRFToken() {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        return csrfToken;
-    }
-
-    function displayWinner(winner) {
-        isActive = false;
-        toggleBallVisibility(true);
-        const winnerName = winner === "left" ? playerLeft.innerText : playerRight.innerText;
-
-        const winnerMessage = document.getElementById('winnerMessage');
-        winnerMessage.innerText = `${winnerName} Wins!`;
-        winnerMessage.style.display = 'block';
-        winnerMessage.style.position = 'absolute';
-        winnerMessage.style.top = '50%';
-        winnerMessage.style.left = '50%';
-        winnerMessage.style.transform = 'translate(-50%, -50%)';
-        winnerMessage.style.fontSize = '3rem';
-        winnerMessage.style.color = '#fff';
-        winnerMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-        winnerMessage.style.padding = '20px';
-        winnerMessage.style.borderRadius = '10px';
-
-        sendGameResults(winnerName);
-    }
-
-    function toggleBallVisibility(isHidden) {
-        if (isHidden) {
-            ball.classList.add('hidden');
-        } else {
-            ball.classList.remove('hidden');
         }
     }
 
-	async function moveBall() {
-		posBallX += speedX;
-		posBallY += speedY;
+    // WebSocket setup
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
+    const wsPong = new WebSocket(wsUrlPong);
 
-		const ballRect = ball.getBoundingClientRect();
-		const leftBarreRect = leftBarre.getBoundingClientRect();
-		const rightBarreRect = rightBarre.getBoundingClientRect();
+    wsPong.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'game_update') {
+            const { ball: dataBall, left_paddle: dataLeftPaddle, right_paddle: dataRightPaddle } = data;
+            
+            // Mise à jour des scores et des noms
+            leftPaddle.score = dataLeftPaddle.score;
+            rightPaddle.score = dataRightPaddle.score;
+            leftPaddle.name = dataLeftPaddle.name;
+            rightPaddle.name = dataRightPaddle.name;
 
-		if (resettingBall) return;
+            // Mise à jour des positions depuis le serveur
+            leftPaddle.y = dataLeftPaddle.y * canvas.height;
+            rightPaddle.y = dataRightPaddle.y * canvas.height;
+            ball.x = dataBall.x * canvas.width;
+            ball.y = dataBall.y * canvas.height;
+            
+        } else if (data.type === 'game_start') {
+            left_backend = data.left_paddle.id;
+            right_backend = data.right_paddle.id;
+            requestAnimationFrame(gameLoop);
+        } else if (data.type === 'game_over') {
+            gameActive = false;
+            drawGameOver(data.winner_id, data.final_score);
+            setTimeout(() => {
+                window.location.href = '/mypage';
+            }, 5000);
+        } else if (data.type === 'game_forfeit') {
+            gameActive = false;
+            // Afficher un message de forfait
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		if (posBallY - 2 <= 0 || posBallY + 2 >= 100)
-			speedY *= -1;
+            ctx.font = '40px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-		if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
-		{
-			posBallX = posBallX + 1;
+            ctx.fillText(`${data.message}`, canvas.width / 2, canvas.height / 2 - 40);
+            ctx.font = '30px Arial';
+            ctx.fillText(`Final Score: ${data.final_score.left} - ${data.final_score.right}`, 
+                canvas.width / 2, canvas.height / 2 + 20);
 
-			const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
-			const angle = calculateAngle(impactPoint, maxAngle);
+            // Redirection après un délai
+            setTimeout(() => {
+                window.location.href = '/mypage';
+            }, 3000);
+        }
+    };
 
-			const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-			speedX = Math.cos(angle) * totalSpeed;
-			speedY = Math.sin(angle) * totalSpeed;
+    wsPong.onopen = function() {
+        console.log("WebSocket connection opened.");
+    };
 
-			speedX = Math.abs(speedX);
-		}
+    wsPong.onclose = function(event) {
+        gameActive = false;
+        if (!event.wasClean) {
+            alert("Connection closed unexpectedly. Game ended.");
+        }
+        window.location.href = '/mypage';
+    };
 
-		if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
-		{
-			posBallX = posBallX - 1;
+    function gameLoop() {
+        if (gameActive) {
+            updatePaddlePositions();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+    }
 
-			const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;
-			const angle = calculateAngle(impactPoint, maxAngle);
-		
-			const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-			speedX = Math.cos(angle) * totalSpeed;
-			speedY = Math.sin(angle) * totalSpeed;
-		
-			speedX = -Math.abs(speedX);
-		}
+    // Gestion de la fermeture de page
+    window.addEventListener('beforeunload', handleGameExit);
+    window.addEventListener('unload', handleGameExit);
+    window.addEventListener('popstate', handleGameExit);
 
-		if (posBallX - 1 <= 0 || posBallX + 1 >= 100)
-		{
-			resettingBall = true;
-			clearInterval(ballInterval);
+    // Intercepter les clics sur les liens de navigation
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link) {
+            e.preventDefault();
+            handleGameExit();
+            setTimeout(() => {
+                window.location.href = link.href;
+            }, 100);
+        }
+    });
 
-			ball.style.left = posBallX - 1 + '%';
-			ball.style.top = posBallY - 2 + '%';
-			if (posBallX - 1.5 <= 0) {
-				scrorePlayerRight++;
-                if (scrorePlayerRight >= maxPoints) {
-                    displayWinner('right');
-                    return;
-                }
-			} else if (posBallX + 1.5 >= 100) {
-				scrorePlayerLeft++;
-                if (scrorePlayerLeft >= maxPoints) {
-                    displayWinner('left');
-                    return;
-                }
-			}
+    function handleGameExit() {
+        if (wsPong && wsPong.readyState === WebSocket.OPEN) {
+            wsPong.send(JSON.stringify({
+                type: 'game_exit',
+                id: userId
+            }));
+            gameActive = false;
+            wsPong.close();
+        }
+    }
 
-			if (!playerLeft)
-				return;
-
-			ball.classList.add('breaking');
-			updateScore();
-			await sleep(1000);
-			ball.classList.remove('breaking')
-			resetBall();
-			resettingBall = false;
-			ballInterval = setInterval(moveBall, 10);
-		}
-
-		ball.style.left = posBallX + '%';
-		ball.style.top = posBallY + '%';
-	}
-
-	startCountdown();
+    draw();
 }
