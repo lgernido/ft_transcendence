@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-17 14:20+0000\n"
+"POT-Creation-Date: 2024-12-18 14:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,45 +34,35 @@ msgstr "Display friends"
 msgid "Display blocked users"
 msgstr "Display blocked users"
 
-#: game/templates/partials/amis.html:28
-#, fuzzy
-#| msgid "Games Played"
+#: game/templates/partials/amis.html:29
 msgid "Games Played"
-msgstr "Partie Jouees"
+msgstr "Games Played"
 
-#: game/templates/partials/amis.html:31
-#, fuzzy
-#| msgid "Wins"
+#: game/templates/partials/amis.html:32
 msgid "Wins"
 msgstr "Wins"
 
-#: game/templates/partials/amis.html:36
-#, fuzzy
-#| msgid "Losses"
+#: game/templates/partials/amis.html:37
 msgid "Losses "
 msgstr "Losses"
 
-#: game/templates/partials/amis.html:39
-#, fuzzy
-#| msgid "Ratio"
+#: game/templates/partials/amis.html:40
 msgid "Ratio "
 msgstr "Ratio"
 
-#: game/templates/partials/amis.html:54
+#: game/templates/partials/amis.html:55
 msgid "Add"
 msgstr "Add"
 
-#: game/templates/partials/amis.html:58
+#: game/templates/partials/amis.html:59
 msgid "Remove"
 msgstr "Remove"
 
-#: game/templates/partials/amis.html:62
+#: game/templates/partials/amis.html:63
 msgid "Block"
 msgstr "Block"
 
-#: game/templates/partials/amis.html:66
-#, fuzzy
-#| msgid "Block"
+#: game/templates/partials/amis.html:67
 msgid "Unblock"
 msgstr "Unblock"
 
@@ -80,12 +70,16 @@ msgstr "Unblock"
 msgid "Search a user..."
 msgstr "Search a user..."
 
-#: game/templates/partials/chat.html:27
-#: game/templates/partials/mini_chat.html:20
+#: game/templates/partials/chat.html:25
+msgid "No messages"
+msgstr "No messages"
+
+#: game/templates/partials/chat.html:31
+#: game/templates/partials/mini_chat.html:22
 msgid "Start a chat with someone"
 msgstr "Start a chat with someone"
 
-#: game/templates/partials/chat.html:35
+#: game/templates/partials/chat.html:40
 msgid "Write your best win 😈"
 msgstr "Write your best win 😈"
 
@@ -134,22 +128,6 @@ msgid "Colors :"
 msgstr "Colors :"
 
 #: game/templates/partials/compte.html:43
-msgid "English"
-msgstr "English"
-
-#: game/templates/partials/compte.html:44
-msgid "French"
-msgstr "French"
-
-#: game/templates/partials/compte.html:45
-msgid "Spanish"
-msgstr "Spanish"
-
-#: game/templates/partials/compte.html:47
-msgid "Language :"
-msgstr "Language :"
-
-#: game/templates/partials/compte.html:51
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -158,8 +136,6 @@ msgid "Login"
 msgstr "Login"
 
 #: game/templates/partials/connect.html:20
-#, fuzzy
-#| msgid "Sign in with 42"
 msgid "Log in with 42"
 msgstr "Sign in with 42"
 
@@ -172,8 +148,6 @@ msgid "Create an account"
 msgstr "Create an account"
 
 #: game/templates/partials/create_account.html:33
-#, fuzzy
-#| msgid "Password"
 msgid "Confirm Password"
 msgstr "Type the password again"
 
@@ -185,10 +159,10 @@ msgstr "Create account"
 msgid "Go back"
 msgstr "Go back"
 
-#: game/templates/partials/game.html:7
-#: game/templates/partials/gameCustom.html:7
+#: game/templates/partials/game.html:8
+#: game/templates/partials/gameCustom.html:8
 #: game/templates/partials/lobby_private.html:34
-#: game/templates/partials/tournament.html:7
+#: game/templates/partials/tournament.html:8
 msgid "Guest"
 msgstr "Guest"
 
@@ -278,8 +252,6 @@ msgid "Waiting for player..."
 msgstr "Waiting for player..."
 
 #: game/templates/partials/lobby.html:108
-#, fuzzy
-#| msgid "Points limit :"
 msgid "Points limit : "
 msgstr "Points limit :"
 
@@ -297,7 +269,6 @@ msgid "Private Game"
 msgstr "Private Game"
 
 #: game/templates/partials/stats.html:25
-#, fuzzy
 msgid "Player Statistics"
 msgstr "Player Statistics"
 
@@ -322,7 +293,6 @@ msgid "Win rate :"
 msgstr "Win rate :"
 
 #: game/templates/partials/stats.html:47
-#, fuzzy
 msgid "Global Ranking :"
 msgstr "Global Ranking :"
 
@@ -343,16 +313,24 @@ msgid "Unknown Date"
 msgstr "Unknown Date"
 
 #: game/templates/partials/stats.html:67
-
 msgid "Game not found"
 msgstr "Game not found"
 
-#, fuzzy
-#~| msgid "Afficher tous les utilisateurs"
 #~ msgid "Rechercher un utilisateur..."
 #~ msgstr "Display all users"
 
-#, fuzzy
+#~ msgid "English"
+#~ msgstr "English"
+
+#~ msgid "French"
+#~ msgstr "French"
+
+#~ msgid "Spanish"
+#~ msgstr "Spanish"
+
+#~ msgid "Language :"
+#~ msgstr "Language :"
+
 #~ msgid "Player"
 #~ msgstr "Player"
 
@@ -398,9 +376,6 @@ msgstr "Game not found"
 
 #~ msgid "Loss"
 #~ msgstr "Loss"
-
-#~ msgid "Send message"
-#~ msgstr "Send message"
 
 #~ msgid "Invite"
 #~ msgstr "Invite"

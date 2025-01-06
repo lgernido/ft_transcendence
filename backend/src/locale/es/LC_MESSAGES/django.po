@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-17 14:20+0000\n"
+"POT-Creation-Date: 2024-12-18 14:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,35 +35,35 @@ msgstr "Mostrar amigos"
 msgid "Display blocked users"
 msgstr "Mostrar usuarios bloqueados"
 
-#: game/templates/partials/amis.html:28
+#: game/templates/partials/amis.html:29
 msgid "Games Played"
 msgstr "Juegos jugados"
 
-#: game/templates/partials/amis.html:31
+#: game/templates/partials/amis.html:32
 msgid "Wins"
 msgstr "Victorias"
 
-#: game/templates/partials/amis.html:36
+#: game/templates/partials/amis.html:37
 msgid "Losses "
 msgstr "Derrotas"
 
-#: game/templates/partials/amis.html:39
+#: game/templates/partials/amis.html:40
 msgid "Ratio "
 msgstr "Ratio"
 
-#: game/templates/partials/amis.html:54
+#: game/templates/partials/amis.html:55
 msgid "Add"
 msgstr "Anadir"
 
-#: game/templates/partials/amis.html:58
+#: game/templates/partials/amis.html:59
 msgid "Remove"
 msgstr "Eliminar"
 
-#: game/templates/partials/amis.html:62
+#: game/templates/partials/amis.html:63
 msgid "Block"
 msgstr "Bloquear"
 
-#: game/templates/partials/amis.html:66
+#: game/templates/partials/amis.html:67
 msgid "Unblock"
 msgstr "Desbloquear"
 
@@ -71,12 +71,16 @@ msgstr "Desbloquear"
 msgid "Search a user..."
 msgstr "Buscar usuario"
 
-#: game/templates/partials/chat.html:27
-#: game/templates/partials/mini_chat.html:20
+#: game/templates/partials/chat.html:25
+msgid "No messages"
+msgstr "No mensaje"
+
+#: game/templates/partials/chat.html:31
+#: game/templates/partials/mini_chat.html:22
 msgid "Start a chat with someone"
 msgstr "Iniciar un chat con alguien"
 
-#: game/templates/partials/chat.html:35
+#: game/templates/partials/chat.html:40
 msgid "Write your best win 😈"
 msgstr "Escribe tu mejor victoria 😈"
 
@@ -125,22 +129,6 @@ msgid "Colors :"
 msgstr "Colores"
 
 #: game/templates/partials/compte.html:43
-msgid "English"
-msgstr "Ingles"
-
-#: game/templates/partials/compte.html:44
-msgid "French"
-msgstr "Frances"
-
-#: game/templates/partials/compte.html:45
-msgid "Spanish"
-msgstr "Espanol"
-
-#: game/templates/partials/compte.html:47
-msgid "Language :"
-msgstr "Idioma"
-
-#: game/templates/partials/compte.html:51
 msgid "Save changes"
 msgstr "Guardar cambios"
 
@@ -172,10 +160,10 @@ msgstr "Crear cuenta"
 msgid "Go back"
 msgstr "Volver atras"
 
-#: game/templates/partials/game.html:7
-#: game/templates/partials/gameCustom.html:7
+#: game/templates/partials/game.html:8
+#: game/templates/partials/gameCustom.html:8
 #: game/templates/partials/lobby_private.html:34
-#: game/templates/partials/tournament.html:7
+#: game/templates/partials/tournament.html:8
 msgid "Guest"
 msgstr "Invitado"
 
@@ -332,6 +320,18 @@ msgstr " Juego no encontrado"
 #~ msgid "Rechercher un utilisateur..."
 #~ msgstr "Buscar un usuario"
 
+#~ msgid "English"
+#~ msgstr "Ingles"
+
+#~ msgid "French"
+#~ msgstr "Frances"
+
+#~ msgid "Spanish"
+#~ msgstr "Espanol"
+
+#~ msgid "Language :"
+#~ msgstr "Idioma"
+
 #~ msgid "Player"
 #~ msgstr "Jugador"
 
@@ -347,12 +347,9 @@ msgstr " Juego no encontrado"
 #~ msgid "Draw"
 #~ msgstr "Empate"
 
-#, fuzzy
-#~| msgid "Global ranking :"
-#~ msgid "Global Friends : "
+#~ msgid "Global ranking :"
 #~ msgstr "Clasificacion general"
 
-#, fuzzy
 #~ msgid "Tournaments"
 #~ msgstr "Torneo"
 
