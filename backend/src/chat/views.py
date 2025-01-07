@@ -58,16 +58,36 @@ def search_users(request):
     if len(query) >= 1:
         current_user = request.user
         
+        # Obtenir les utilisateurs bloqués et ceux qui ont bloqué l'utilisateur courant
+        blocked_users = current_user.social.blocked_user.all()
+        blocked_by_users = User.objects.filter(social__blocked_user=current_user)
+        
         # Recherche des utilisateurs correspondants
         if query == 'all':
             users = set()
             channels = Channel.objects.filter(users=current_user)
             for channel in channels:
                 if channel.messages.exists():
-                    other_users = channel.users.exclude(id=current_user.id, is_staff=False)
+                    other_users = channel.users.exclude(
+                        id=current_user.id,
+                        is_staff=False
+                    ).exclude(
+                        id__in=blocked_users
+                    ).exclude(
+                        id__in=blocked_by_users
+                    )
                     users.update(other_users)
         else:
-            users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
+            users = User.objects.filter(
+                username__icontains=query,
+                is_staff=False
+            ).exclude(
+                id=current_user.id
+            ).exclude(
+                id__in=blocked_users
+            ).exclude(
+                id__in=blocked_by_users
+            )
         
         results = []
         for user in users:
@@ -104,6 +124,10 @@ def search_users(request):
 
 def user_conversations(request):
     user = request.user
+    # Obtenir les utilisateurs bloqués et ceux qui ont bloqué l'utilisateur
+    blocked_users = user.social.blocked_user.all()
+    blocked_by_users = User.objects.filter(social__blocked_user=user)
+    
     # Récupérer tous les channels où l'utilisateur est présent
     channels = Channel.objects.filter(users=user)
 
@@ -111,8 +135,14 @@ def user_conversations(request):
     for channel in channels:
         last_message = channel.last_message
         if last_message:
-            # Identifier les autres utilisateurs dans le channel (exclure l'utilisateur courant)
-            other_users = channel.users.exclude(id=user.id)
+            # Identifier les autres utilisateurs dans le channel (exclure l'utilisateur courant et les bloqués)
+            other_users = channel.users.exclude(
+                id=user.id
+            ).exclude(
+                id__in=blocked_users
+            ).exclude(
+                id__in=blocked_by_users
+            )
             other_users_data = [{'id': u.id, 'username': u.username} for u in other_users]
 
             conversations.append({

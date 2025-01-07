@@ -37,10 +37,11 @@ class PongConsumer(AsyncWebsocketConsumer):
         # Initialiser l'état du jeu pour cette room s'il n'existe pas encore
         if self.room_name not in self.game_states:
             self.game_states[self.room_name] = {
+                "score_limit": None,
                 "save_game": False,
                 "ball": {"radius":0.01, "x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
-                "left_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
-                "right_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
+                "left_paddle": {"y": 0.45, "id": None, "score": 0, "name": "", "color":""},
+                "right_paddle": {"y": 0.45, "id": None, "score": 0, "name": "", "color":""},
                 "connected_players": 0,
             }
 
@@ -49,14 +50,17 @@ class PongConsumer(AsyncWebsocketConsumer):
 
         # Assigner l'utilisateur à une raquette
         game_state = self.game_states[self.room_name]
+        # l'hote 
         if game_state["left_paddle"]["id"] is None:
             game_state["left_paddle"]["id"] = self.user.id
             game_state["left_paddle"]["name"] = self.user.username[:8]
-            logger.warning(f"Left paddle assigned to user {self.user.username}")
+            # game_state["score_limit"] = ?
+            # game_state["left_paddle"]["color"] = ?
+        # le guest
         elif game_state["right_paddle"]["id"] is None:
             game_state["right_paddle"]["id"] = self.user.id
             game_state["right_paddle"]["name"] = self.user.username[:8]
-
+            # game_state["right_paddle"]["color"] = ?
         # Vérifier si les deux joueurs sont connectés
         if game_state["connected_players"] == 2:
             game_state["ball"]["speed_x"] = 0.01
@@ -69,9 +73,11 @@ class PongConsumer(AsyncWebsocketConsumer):
                     "message": "Both players are connected. The game starts now!",
                     "left_paddle": {
                         "id": game_state["left_paddle"]["id"],
+                        "color": game_state["left_paddle"]["color"],
                     },
                     "right_paddle": {
                         "id": game_state["right_paddle"]["id"],
+                        "color": game_state["right_paddle"]["color"],
                     },
                 },
             )

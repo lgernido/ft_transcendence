@@ -76,7 +76,17 @@ class UserProfileList(APIView):
     def get(self, request):
         current_user = request.user
         try:
-            users = User.objects.filter(is_staff=False).exclude(id=current_user.id).order_by('username')
+            # Obtenir les utilisateurs qui ont bloqué l'utilisateur courant
+            blocked_by_users = User.objects.filter(social__blocked_user=current_user)
+            
+            users = User.objects.filter(
+                is_staff=False
+            ).exclude(
+                id=current_user.id
+            ).exclude(
+                id__in=blocked_by_users
+            ).order_by('username')
+            
             if not users:
                 return Response({"error": "No users found"}, status=status.HTTP_404_NOT_FOUND)
             serializer = UserProfileSerializer(users, many=True)
@@ -133,15 +143,26 @@ class ContactActionView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Exclusion du staff (si nécessaire) et gestion des différentes actions
+        # Obtenir les utilisateurs qui ont bloqué l'utilisateur courant
+        blocked_by_users = User.objects.filter(social__blocked_user=current_user)
+
         if query == 'users':
-            users = User.objects.filter(is_staff=False).exclude(id=current_user.id).order_by('username')
+            users = User.objects.filter(
+                is_staff=False
+            ).exclude(
+                id=current_user.id
+            ).exclude(
+                id__in=blocked_by_users
+            ).order_by('username')
+            
             serializer = UserProfileSerializer(users, many=True)
             return Response(serializer.data)
 
         elif query == 'added':
-            # Récupérer les amis
-            added_users = current_user.social.friends_user.all()
+            # Récupérer les amis (en excluant ceux qui ont bloqué l'utilisateur)
+            added_users = current_user.social.friends_user.all().exclude(
+                id__in=blocked_by_users
+            )
             serializer = UserProfileSerializer(added_users, many=True)
             return Response(serializer.data)
 
@@ -174,7 +195,19 @@ class GetUsers(APIView):
                 {"error": "Query parameter 'query' is required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        users = User.objects.filter(username__icontains=query, is_staff=False).exclude(id=current_user.id)
+
+        # Obtenir les utilisateurs qui ont bloqué l'utilisateur courant
+        blocked_by_users = User.objects.filter(social__blocked_user=current_user)
+        
+        users = User.objects.filter(
+            username__icontains=query,
+            is_staff=False
+        ).exclude(
+            id=current_user.id
+        ).exclude(
+            id__in=blocked_by_users
+        )
+        
         serializer = UserProfileSerializer(users, many=True)
         return Response(serializer.data)
     
