@@ -121,7 +121,8 @@ class PongConsumer(AsyncWebsocketConsumer):
                 )
 
             # Supprimer l'état du jeu pour cette room au lieu de le réinitialiser
-            del self.game_states[self.room_name]
+            if self.room_name in self.game_states:
+                del self.game_states[self.room_name]
 
         # Retirer le joueur du groupe et fermer la connexion
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
@@ -182,7 +183,10 @@ class PongConsumer(AsyncWebsocketConsumer):
             delta_time = current_time - last_update
 
             if delta_time >= self.FRAME_TIME:
-                state = self.game_states[self.room_name]
+                if self.room_name in self.game_states:
+                    state = self.game_states[self.room_name]
+                else:
+                    return
                 ball = state["ball"]
                 
                 if ball["speed_x"] != 0 and ball["speed_y"] != 0:
