@@ -16,7 +16,6 @@ class PongConsumer(AsyncWebsocketConsumer):
     game_states = {}
     
     # Constantes de jeu
-    SAVE_GAME = False
     PADDLE_SPEED = 0.02  # Vitesse des raquettes
     BALL_SPEED = 0.01    # Vitesse constante de la balle
     PADDLE_HEIGHT = 0.2  # Hauteur des raquettes
@@ -37,6 +36,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         # Initialiser l'état du jeu pour cette room s'il n'existe pas encore
         if self.room_name not in self.game_states:
             self.game_states[self.room_name] = {
+                "save_game": False,
                 "ball": {"radius":0.01, "x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
                 "left_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
                 "right_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
@@ -94,7 +94,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 forfeit_player = "right"
 
             # Sauvegarder le résultat si la partie était en cours
-            if self.SAVE_GAME == False and (state["connected_players"] == 2):
+            if state["save_game"] == False and (state["connected_players"] == 2):
                 try:
                     await self.save_game_result(
                         player1_id=state["left_paddle"]["id"],
@@ -182,11 +182,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             current_time = asyncio.get_event_loop().time()
             delta_time = current_time - last_update
 
-            if delta_time >= self.FRAME_TIME:
-                if self.room_name in self.game_states:
-                    state = self.game_states[self.room_name]
-                else:
-                    return
+            if delta_time >= self.FRAME_TIME and self.room_name in self.game_states:
+                state = self.game_states[self.room_name]
                 ball = state["ball"]
                 
                 if ball["speed_x"] != 0 and ball["speed_y"] != 0:
@@ -313,8 +310,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         left_score = state["left_paddle"]["score"]
         right_score = state["right_paddle"]["score"]
         
-        if self.SAVE_GAME == False and (left_score >= self.MAX_SCORE or right_score >= self.MAX_SCORE):
-            self.SAVE_GAME = True
+        if state["save_game"] == False and (left_score >= self.MAX_SCORE or right_score >= self.MAX_SCORE):
+            state["save_game"] = True
             # Déterminer le gagnant
             winner_id = state["left_paddle"]["id"] if left_score > right_score else state["right_paddle"]["id"]
             

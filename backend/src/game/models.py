@@ -30,6 +30,7 @@ class Room(models.Model):
     player2_ready = models.BooleanField(default=False)
     player1_color = models.CharField(max_length=50, default='color-player-default')
     player2_color = models.CharField(max_length=50, default='color-player-default')
+    is_full = models.BooleanField(default=False)
 
     def add_player(self, user):
         if self.players.count() < 2:

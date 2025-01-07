@@ -1,6 +1,11 @@
 function launchGameBot(maxPoints, colorP1, colorP2) {
+    console.log("Load game with bot")
+
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
+
+    if (!playerLeft || !playerRight)
+        return
 
     setTimeout(() => {
         playerLeft.classList.add('slide-in-left');
@@ -9,6 +14,9 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
 
     const leftBarre = document.querySelector('.left-barre');
     const rightBarre = document.querySelector('.right-barre');
+
+    if (!leftBarre || !rightBarre)
+        return
 
     updatePlayerColor(leftBarre, rightBarre, colorP1, colorP2);
 
@@ -78,7 +86,7 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
         posBallY = 50;
         const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
         const directionX = Math.random() > 0.5 ? 1 : -1;
-        const directionY = 0;
+        const directionY = Math.random() > 0.5 ? 1 : -1;
         
         speedX = ballSpeed * Math.cos(angle) * directionX;
         speedY = ballSpeed * Math.sin(angle) * directionY;
@@ -128,7 +136,6 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
                 bx += bdx;
             }
         }
-        
         predictedBallY = by;
     }
     

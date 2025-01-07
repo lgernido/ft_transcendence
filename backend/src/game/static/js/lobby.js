@@ -75,6 +75,6 @@ function lobby() {
 		if (playerTypeSelect.value == "player")
         	loadGamePrivateCustom(maxPoint, player1Color, player2Color);
 		else if (playerTypeSelect.value === "bot")
-			loadGame(maxPoint, player1Color, player2Color)
+			loadGameBot(maxPoint, player1Color, player2Color)
     });
 }

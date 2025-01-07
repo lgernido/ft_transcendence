@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 
-<div class="d-flex justify-content-center align-items-center vh-100" >
+<div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 80px);">
 	<canvas id="pong" width="300" height="150" data-user-id="{{ user.id }}">
 		Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
 	</canvas>
@@ -10,4 +10,3 @@
 <script>
 	const roomName = "{{ room_name }}";
 </script>
-	

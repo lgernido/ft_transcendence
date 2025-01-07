@@ -86,6 +86,14 @@ def lobby_private(request):
 
 @csrf_protect
 @login_required
+def lobby_public(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/lobby_public.html')
+    else:
+        return redirect('/?next=/lobby_Pu/')
+
+@csrf_protect
+@login_required
 def lobby_tournament(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/lobby_tournament.html')
@@ -116,9 +124,9 @@ def tournament(request):
 @csrf_protect
 def GameBot(request):
     if request.headers.get('X-Fetch-Request') == 'true':
-        return render(request, 'partials/game.html')
+        return render(request, 'partials/gameBot.html')
     else:
-        return redirect('/?next=/game/')
+        return redirect('/?next=/gameBot/')
 
 @csrf_protect
 @login_required
@@ -334,6 +342,66 @@ def create_roomP(request):
             return JsonResponse({'error': f"An error occurred: {str(e)}"}, status=500)
     
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
+@login_required
+def create_roomPu(request):
+    if request.method == 'POST':
+        current_user = request.user
+
+        try:
+            current_room = Room.objects.filter(players=current_user).first()
+            if current_room:
+                room_name_in_session = request.session.get('roomName')
+                if room_name_in_session and current_room.name != room_name_in_session:
+                    return JsonResponse({
+                        'error': f"You are already in a different room: {current_room.name}."
+                    }, status=400)
+            
+            room = Room.objects.create()
+            room.add_player(current_user)
+            room.host = current_user
+            room.privateRoom = False
+            room.save()
+            room_link = None
+            request.session['roomName'] = room.name
+
+            return JsonResponse({
+                'success': True, 
+                'room_name': room.name,
+                'room_link': room_link
+            })
+        except Exception as e:
+            return JsonResponse({'error': f"An error occurred: {str(e)}"}, status=500)
+    
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
+@login_required
+def find_or_create_room(request):
+    current_user = request.user
+
+    room = Room.objects.filter(is_full=False, privateRoom=False).first()
+
+    if room:
+        added = room.add_player(current_user)
+        if added:
+            room.is_full = True
+            room.save()
+        else:
+            return JsonResponse({"success": False, "error": "Room could not add player."}, status=400)
+    else:
+        room = Room.objects.create(
+            host=current_user,
+            privateRoom=False
+        )
+        room.add_player(current_user)
+        room.save()
+        request.session['roomName'] = room.name
+
+    return JsonResponse({
+        "success": True,
+        "room_name": room.name,
+    })
+
 
 @login_required
 def join_room(request, room_name):

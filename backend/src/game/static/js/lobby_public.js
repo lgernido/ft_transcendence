@@ -1,4 +1,4 @@
-function lobby_private() {
+function lobby_public() {
     const playerName1 = document.querySelector('.card-lobby-text-name1');
     const playerName2 = document.querySelector('.card-lobby-text-name2');
 
@@ -8,7 +8,7 @@ function lobby_private() {
     const roomName = document.getElementById("check-invite").textContent;
     if (roomName === "Nop" || !roomName) {
         console.log("Create new room");
-        createRoomP();
+        createRoomPu();
     }
     else {
         console.log("Create websocket");
@@ -22,8 +22,8 @@ function lobby_private() {
     handleStartButton();
 }   
 
-function createRoomP() {
-    fetch(`/create_roomP/`, {
+function createRoomPu() {
+    fetch(`/find_or_create_room/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -39,8 +39,6 @@ function createRoomP() {
     })
     .then(data => {
         console.log("Room created successfully:", data.room_name);
-        console.log("Join the room using this link:", data.room_link);
-        copyLink(data.room_link);
         InitWebSocketRoomP(data.room_name);
     })
     .catch(error => {
@@ -50,22 +48,22 @@ function createRoomP() {
 }
 
 function InitWebSocketRoomP(roomName) {
-    socket_roomP = new WebSocket(`wss://${window.location.host}/ws/lobby/${roomName}/`);
+    socket_roomPu = new WebSocket(`wss://${window.location.host}/ws/lobby/${roomName}/`);
 
     const currentUser = document.getElementById("user-info").dataset.username;
     const currentAvatar = document.getElementById("user-info").dataset.avatar;
 
-    socket_roomP.onopen = () => {
+    socket_roomPu.onopen = () => {
         console.log("WebSocket connection established for room: ", roomName);
 
-        socket_roomP.send(JSON.stringify({
+        socket_roomPu.send(JSON.stringify({
             type: "init",
             username: currentUser,
             avatar: currentAvatar,
         }));
     };
 
-    socket_roomP.onmessage = (event) => {
+    socket_roomPu.onmessage = (event) => {
         const data = JSON.parse(event.data);
         
         const playerName1 = document.getElementById("playerName1");
@@ -82,10 +80,10 @@ function InitWebSocketRoomP(roomName) {
         }
         
         if (data.type === 'room_closed') {
-            alert(data.message); 
-            if (socket_roomP) {
-                socket_roomP.close();
-                socket_roomP = null;
+            alert(data.message);
+            if (socket_roomPu) {
+                socket_roomPu.close();
+                socket_roomPu = null;
             }
             const csrfToken = getCookie('csrftoken');
             fetch('/reset_room_session/', {
@@ -162,14 +160,9 @@ function InitWebSocketRoomP(roomName) {
 
         if (data.type === 'start_game') {
             if (data.player1.ready && data.player2.ready) {
-                sessionStorage.removeItem('roomName');
-                sessionStorage.setItem('roomName', null);
-
-                localStorage.removeItem('roomName');
-                localStorage.setItem('roomName', null);
                 if (socket_roomP) { 
-                    socket_roomP.close();
-                    socket_roomP = null;
+                    socket_roomPu.close();
+                    socket_roomPu = null;
                 }
                 loadGamePrivate(roomName, pointsLimitInput.value, data.player1.color, data.player2.color);
             }
@@ -178,7 +171,7 @@ function InitWebSocketRoomP(roomName) {
         blockInteract();
     };
 
-    socket_roomP.onclose = function () {
+    socket_roomPu.onclose = function () {
         console.log("Disconnected from room:", roomName);
     };
 }
@@ -238,7 +231,7 @@ function handlePointchange() {
         else if (maxPoints.value > 40)
             maxPoints.value = 40;
 
-        socket_roomP.send(JSON.stringify({
+        socket_roomPu.send(JSON.stringify({
             type: 'points_limit_change',
             points_limit: maxPoints
         }));
@@ -254,7 +247,7 @@ function handleColorChange() {
             color: color
         };
         console.log("Update couleur: ", message);
-        socket_roomP.send(JSON.stringify(message));
+        socket_roomPu.send(JSON.stringify(message));
     }
 
     document.getElementById('selectColorPlayer1').addEventListener('change', function (e) {
@@ -277,7 +270,7 @@ function handleReadyChange(){
             playerId: playerId,
             ready: isReady
         };
-        socket_roomP.send(JSON.stringify(message));
+        socket_roomPu.send(JSON.stringify(message));
     }
 
     const currentUser = document.getElementById("user-info").dataset.username;
@@ -298,26 +291,17 @@ function handleReadyChange(){
     });
 }
 
-function copyLink(txt) {
-    const copyButton = document.getElementById("copyButton");
-
-    copyButton.addEventListener("click", () => {
-        navigator.clipboard.writeText(txt)
-        console.log(txt)
-    });
-}
-
 function handleQuitButton() {
     const leaveBtn = document.getElementById("leaveRoomButton");
     if (leaveBtn) {
         leaveBtn.addEventListener("click", () => {
-            if (socket_roomP && socket_roomP.readyState === WebSocket.OPEN) {
-                socket_roomP.send(JSON.stringify({ type: "leave_room" }));
+            if (socket_roomPu && socket_roomPu.readyState === WebSocket.OPEN) {
+                socket_roomPu.send(JSON.stringify({ type: "leave_room" }));
             }
 
-            if (socket_roomP) {
-                socket_roomP.close();
-                socket_roomP = null;
+            if (socket_roomPu) {
+                socket_roomPu.close();
+                socket_roomPu = null;
             }
             const csrfToken = getCookie('csrftoken');
             fetch('/reset_room_session/', {
@@ -342,7 +326,7 @@ function handleStartButton() {
     const btnReady = document.getElementById("btn-ready");
 
     btnReady.addEventListener('click', () => {
-        socket_roomP.send(JSON.stringify({
+        socket_roomPu.send(JSON.stringify({
             type: 'start_game'
         }));
     });

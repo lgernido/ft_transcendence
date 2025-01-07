@@ -49,5 +49,6 @@ function closeAllOpenWebSocket()
     if (chatSocket) { chatSocket.close(); chatSocket = null; }
     if (presenceOnline) { presenceOnline.close(); presenceOnline = null; };
     if (socket_roomP) { socket_roomP.close(); socket_roomP = null; };
+    if (socket_roomPu) { socket_roomPu.close(); socket_roomPu = null; }
     if (wsPong) {wsPong.close(); wsPong = null; };
 }

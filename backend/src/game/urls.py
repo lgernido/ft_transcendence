@@ -10,6 +10,7 @@ urlpatterns = [
     path('create_account/', create_account, name='create_account'),
     path('mypage/', views.mypage, name='mypage'),
     path('lobby_private/', views.lobby_private, name='lobby_private'),
+    path('lobby_public/', views.lobby_public, name='lobby_public'),
     path('lobby_tournament/', views.lobby_tournament, name='lobby_tournament'),
     path('stats/', views.stats, name='stats'),
     path('chat/', views.chat, name='chat'),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('tournament/', views.tournament, name='tournament'),
 	
     path('create_roomP/', views.create_roomP, name='create_roomP'),
+    path('find_or_create_room/', views.find_or_create_room, name='find_or_create_room'),
 	path('join_room/<str:room_name>/', views.join_room, name='join_room'),
 
     path('set_language/', views.set_language, name='set_language'),
