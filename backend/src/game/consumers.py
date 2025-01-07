@@ -163,7 +163,32 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
                 }))
 
                 await self.send_room_state()
+        elif data['type'] == 'start_game':
+            self.scope['session']['roomName'] = None
+            await self.save_session(self.scope['session'])
+        
+            room = await self.get_room()
+            if room:
+                await self.reset_roomname_for_all_users(room)
+                response_data = {
+                    'type': 'start_game',
+                    'player1': {
+                        'ready': room.player1_ready,
+                        "color": room.player1_color,
+                    },
+                    'player2': {
+                        'ready': room.player2_ready,
+                        "color": room.player2_color,
+                    }
+                }
 
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'send_message',
+                        'message': response_data
+                    }
+                )
 
 
     async def send_room_state(self):
@@ -238,4 +263,38 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
 
         # Optionnel : Met à jour les informations de la salle si nécessaire
         await self.send_room_state()
+
+    async def send_message(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps(message))
+
+    @database_sync_to_async
+    def reset_roomname_for_all_users(self, room):
+        """
+        Supprime la variable de session `roomName` pour tous les utilisateurs d'une room.
+        """
+        from django.contrib.sessions.models import Session
+        from django.contrib.auth.models import User
+
+        # Obtenir toutes les sessions
+        sessions = Session.objects.all()
+
+        for session in sessions:
+            try:
+                # Décoder les données de la session
+                session_data = session.get_decoded()
+                user_id = session_data.get('_auth_user_id')
+
+                # Vérifier si l'utilisateur est dans la room
+                if user_id and int(user_id) in room.players.values_list('id', flat=True):
+                    # Supprimer la variable `roomName`
+                    if 'roomName' in session_data:
+                        del session_data['roomName']
+
+                    # Sauvegarder les modifications
+                    session.session_data = Session.objects.encode(session_data)
+                    session.save()
+            except Exception as e:
+                # Ignorer les erreurs pour éviter d'interrompre le processus
+                print(f"Erreur lors de la mise à jour de la session : {e}")
 

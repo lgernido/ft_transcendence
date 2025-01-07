@@ -46,7 +46,8 @@ function logoutSession() {
 
 function closeAllOpenWebSocket()
 {
-    if (chatSocket) { chatSocket.close(); }
-    if (presenceOnline) { presenceOnline.close() };
-    if (socket_roomP) { socket_roomP.close()};
+    if (chatSocket) { chatSocket.close(); chatSocket = null; }
+    if (presenceOnline) { presenceOnline.close(); presenceOnline = null; };
+    if (socket_roomP) { socket_roomP.close(); socket_roomP = null; };
+    if (wsPong) {wsPong.close(); wsPong = null; };
 }

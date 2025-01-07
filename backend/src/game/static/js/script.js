@@ -147,6 +147,10 @@ function loadMyPage() {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
+    if (wsPong) {
+        wsPong.close();
+        wsPong = null;
+    }
 
     fetch('/check_user_status/', {
         method: 'GET',
@@ -486,14 +490,15 @@ function loadGamePrivateCustom(maxPoints, colorP1, colorP2) {
         });
 }
 
-function loadGamePrivate(roomName, maxPoints) {
+function loadGamePrivate(roomName, maxPoints, colorR, colorL) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/game/${roomName}`, {
+    fetch(`/game/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -505,11 +510,11 @@ function loadGamePrivate(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `game-${roomName}`) {
-                const state = { page: `game-${roomName}` };
-                history.pushState(state, '', `/game/${roomName}`);
+            if (history.state?.page !== `game`) {
+                const state = { page: `game` };
+                history.pushState(state, '', `/game`);
             }
-            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints));
+            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints, colorR, colorL));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -596,6 +601,7 @@ function loadChat() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    console.log("R3")
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
@@ -651,6 +657,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.addEventListener('popstate', function(event) {
+        console.log("R2")
         if (event.state) {
             const pageType = event.state.page;
 
@@ -699,6 +706,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
+    console.log("R1")
     window.addEventListener("keydown", function(event) {
         if (event.key === "F5") {
             event.preventDefault();
@@ -778,6 +786,7 @@ const OnlineUsers = {
 let chatSocket = null;
 let socket_roomP = null;
 let presenceOnline = null;
+let wsPong = null;
 
 // setintervall variables
 let paddleInterval = null;
@@ -810,9 +819,9 @@ function stopAllIntervals() {
 
 
 function checkStatus() {
-    const wsScheme_ = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsUrl = `${wsScheme_}://${window.location.host}/ws/users/presence/`;
-    presenceOnline = new WebSocket(wsUrl);
+    const wsUrl = `wss://${window.location.host}/ws/users/presence/`;
+    if (!presenceOnline)
+        presenceOnline = new WebSocket(wsUrl);
 
     console.log("CheckStatus");
     presenceOnline.onopen = () => {

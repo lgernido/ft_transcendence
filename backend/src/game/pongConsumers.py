@@ -8,11 +8,15 @@ from django.contrib.auth.models import User
 from game.models import Game
 from channels.db import database_sync_to_async
 
-logger = logging.getLogger('game')
-
+import logging
+logger = logging.getLogger(__name__)
 
 class PongConsumer(AsyncWebsocketConsumer):
+    # Dictionnaire pour stocker les états de jeu par room
+    game_states = {}
+    
     # Constantes de jeu
+    SAVE_GAME = False
     PADDLE_SPEED = 0.02  # Vitesse des raquettes
     BALL_SPEED = 0.01    # Vitesse constante de la balle
     PADDLE_HEIGHT = 0.2  # Hauteur des raquettes
@@ -30,37 +34,33 @@ class PongConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
-        # Initialiser l'état du jeu s'il n'existe pas encore
-        if not hasattr(self.channel_layer, "game_state"):
-            self.channel_layer.game_state = {
+        # Initialiser l'état du jeu pour cette room s'il n'existe pas encore
+        if self.room_name not in self.game_states:
+            self.game_states[self.room_name] = {
                 "ball": {"radius":0.01, "x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
                 "left_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
                 "right_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
                 "connected_players": 0,
             }
 
-        # Augmenter le compteur de joueurs connectés
-        self.channel_layer.game_state["connected_players"] += 1
+        # Augmenter le compteur de joueurs connectés pour cette room
+        self.game_states[self.room_name]["connected_players"] += 1
 
         # Assigner l'utilisateur à une raquette
-        game_state = self.channel_layer.game_state
+        game_state = self.game_states[self.room_name]
         if game_state["left_paddle"]["id"] is None:
             game_state["left_paddle"]["id"] = self.user.id
-            game_state["left_paddle"]["name"] = self.user.username[:8]  # Limite à 8 caractères
+            game_state["left_paddle"]["name"] = self.user.username[:8]
             logger.warning(f"Left paddle assigned to user {self.user.username}")
         elif game_state["right_paddle"]["id"] is None:
             game_state["right_paddle"]["id"] = self.user.id
-            game_state["right_paddle"]["name"] = self.user.username[:8]  # Limite à 8 caractères
+            game_state["right_paddle"]["name"] = self.user.username[:8]
 
-        logger.warning(f"Game state: {game_state}")
         # Vérifier si les deux joueurs sont connectés
         if game_state["connected_players"] == 2:
-            # Commencer le mouvement de la balle
             game_state["ball"]["speed_x"] = 0.01
             game_state["ball"]["speed_y"] = 0.01
 
-
-            # Informer tous les joueurs que le jeu commence
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -82,8 +82,8 @@ class PongConsumer(AsyncWebsocketConsumer):
         """Gestion de la déconnexion d'un joueur"""
         logger.info(f"User {self.user.id} disconnected with code: {close_code}")
         
-        if hasattr(self.channel_layer, "game_state"):
-            state = self.channel_layer.game_state
+        if self.room_name in self.game_states:
+            state = self.game_states[self.room_name]
             
             # Déterminer quel joueur s'est déconnecté et qui est le gagnant
             if state["left_paddle"]["id"] == self.user.id:
@@ -94,7 +94,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                 forfeit_player = "right"
 
             # Sauvegarder le résultat si la partie était en cours
-            if state["connected_players"] == 2:
+            if self.SAVE_GAME == False and (state["connected_players"] == 2):
                 try:
                     await self.save_game_result(
                         player1_id=state["left_paddle"]["id"],
@@ -107,36 +107,31 @@ class PongConsumer(AsyncWebsocketConsumer):
                     logger.error(f"Error saving game result on disconnect: {e}")
 
             # Informer l'autre joueur avant de réinitialiser l'état
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "game_forfeit",
-                    "message": f"{forfeit_player} player disconnected",
-                    "winner_id": winner_id,
-                    "final_score": {
-                        "left": state["left_paddle"]["score"],
-                        "right": state["right_paddle"]["score"]
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        "type": "game_forfeit",
+                        "message": f"{forfeit_player} player disconnected",
+                        "winner_id": winner_id,
+                        "final_score": {
+                            "left": state["left_paddle"]["score"],
+                            "right": state["right_paddle"]["score"]
+                        }
                     }
-                }
-            )
+                )
 
-            # Réinitialiser l'état du jeu
-            self.channel_layer.game_state = {
-                "ball": {"radius": 0.01, "x": 0.5, "y": 0.5, "speed_x": 0, "speed_y": 0},
-                "left_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
-                "right_paddle": {"y": 0.45, "id": None, "score": 0, "name": ""},
-                "connected_players": 0
-            }
+            # Supprimer l'état du jeu pour cette room au lieu de le réinitialiser
+            del self.game_states[self.room_name]
 
         # Retirer le joueur du groupe et fermer la connexion
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        await self.close()
+
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         if data["type"] == "game_exit":
             # Sauvegarder le jeu avec forfait
-            state = self.channel_layer.game_state
+            state = self.game_states[self.room_name]
             user_id = int(data["id"])
             
             # Déterminer le gagnant (l'autre joueur)
@@ -146,15 +141,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             else:
                 winner_id = state["left_paddle"]["id"]
                 forfeit_player = "right"
-
-            # Sauvegarder le résultat
-            await self.save_game_result(
-                player1_id=state["left_paddle"]["id"],
-                player2_id=state["right_paddle"]["id"],
-                winner_id=winner_id,
-                player1_score=state["left_paddle"]["score"],
-                player2_score=state["right_paddle"]["score"]
-            )
 
             # Informer l'autre joueur
             await self.channel_layer.group_send(
@@ -167,12 +153,12 @@ class PongConsumer(AsyncWebsocketConsumer):
             )
 
             # Fermer la connexion
-            await self.close()
+            # await self.close()
             
         elif data["type"] == "move":
             user_id = int(data["id"])
             action = data["action"]
-            game_state = self.channel_layer.game_state
+            game_state = self.game_states[self.room_name]
 
             # Appliquer le mouvement avec la vitesse définie côté serveur
             if game_state["left_paddle"]["id"] == user_id:
@@ -196,7 +182,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             delta_time = current_time - last_update
 
             if delta_time >= self.FRAME_TIME:
-                state = self.channel_layer.game_state
+                state = self.game_states[self.room_name]
                 ball = state["ball"]
                 
                 if ball["speed_x"] != 0 and ball["speed_y"] != 0:
@@ -243,7 +229,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             # Calculer l'angle de rebond basé sur le point d'impact
             impact_point = (ball["y"] - left_paddle["y"]) / self.PADDLE_HEIGHT
             angle = 75 * (2 * impact_point - 1)  # Angle entre -75° et 75°
-            
+
             # Maintenir une vitesse constante
             ball["speed_x"] = self.BALL_SPEED * math.cos(math.radians(angle))
             ball["speed_y"] = self.BALL_SPEED * math.sin(math.radians(angle))
@@ -323,11 +309,13 @@ class PongConsumer(AsyncWebsocketConsumer):
         left_score = state["left_paddle"]["score"]
         right_score = state["right_paddle"]["score"]
         
-        if left_score >= self.MAX_SCORE or right_score >= self.MAX_SCORE:
+        if self.SAVE_GAME == False and (left_score >= self.MAX_SCORE or right_score >= self.MAX_SCORE):
+            self.SAVE_GAME = True
             # Déterminer le gagnant
             winner_id = state["left_paddle"]["id"] if left_score > right_score else state["right_paddle"]["id"]
             
             # Créer l'entrée dans la base de données
+            logging.warning(f"\033[91mleft score {left_score} - right score {right_score}\033[0m")
             await self.save_game_result(
                 player1_id=state["left_paddle"]["id"],
                 player2_id=state["right_paddle"]["id"],
@@ -335,32 +323,29 @@ class PongConsumer(AsyncWebsocketConsumer):
                 player1_score=left_score,
                 player2_score=right_score
             )
-
             # Envoyer le message de fin de partie
             await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "game_over",
-                    "winner_id": winner_id,
-                    "final_score": {
-                        "left": left_score,
-                        "right": right_score
+                    self.room_group_name,
+                    {
+                        "type": "game_over",
+                        "winner_id": winner_id,
+                        "final_score": {
+                            "left": left_score,
+                            "right": right_score
+                        }
                     }
-                }
-            )
+                )
 
             # Réinitialiser l'état du jeu
             self.reset_game_state()
-            self.clo
 
     async def save_game_result(self, player1_id, player2_id, winner_id, player1_score, player2_score):
         """Sauvegarde le résultat de la partie dans la base de données"""
+        logger.warning(f"\033[93mSaving game result with scores - Left: {player1_score}, Right: {player2_score}\033[0m")
         try:
             # Vérifier si une partie existe déjà pour ces joueurs dans cette room
             existing_game = await self.get_existing_game(
-                room_name=self.room_name,
-                player1_id=player1_id,
-                player2_id=player2_id
+                room_name=self.room_name
             )
 
             if existing_game:
@@ -371,7 +356,6 @@ class PongConsumer(AsyncWebsocketConsumer):
                     player1_score=player1_score,
                     player2_score=player2_score
                 )
-                logger.info(f"Game updated in room {self.room_name}")
             else:
                 # Créer une nouvelle partie
                 player1 = await self.get_user(player1_id)
@@ -386,20 +370,16 @@ class PongConsumer(AsyncWebsocketConsumer):
                     player1_score=player1_score,
                     player2_score=player2_score
                 )
-                logger.info(f"New game created in room {self.room_name}")
-
         except Exception as e:
             logger.error(f"Error saving game result: {e}")
 
+
     @database_sync_to_async
-    def get_existing_game(self, room_name, player1_id, player2_id):
+    def get_existing_game(self, room_name):
         """Vérifie si une partie existe déjà"""
         try:
             return Game.objects.get(
                 room_name=room_name,
-                player1_id=player1_id,
-                player2_id=player2_id,
-                winner__isnull=True  # Seulement les parties non terminées
             )
         except Game.DoesNotExist:
             return None
@@ -422,8 +402,8 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     def reset_game_state(self):
         """Réinitialise l'état du jeu après une partie"""
-        if hasattr(self.channel_layer, "game_state"):
-            state = self.channel_layer.game_state
+        if self.room_name in self.game_states:
+            state = self.game_states[self.room_name]
             state["ball"]["speed_x"] = 0
             state["ball"]["speed_y"] = 0
             state["left_paddle"]["score"] = 0

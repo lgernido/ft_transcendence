@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from users.models import Profile
 import time
+import random
     
 class Game(models.Model):
     room_name = models.CharField(max_length=255, default="default_room")
@@ -38,5 +39,6 @@ class Room(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.name:
-            self.name = f"room_{int(time.time())}"
+            random_number = random.randint(100000, 999999)
+            self.name = f"room_{random_number}_{int(time.time())}"
         super().save(*args, **kwargs)

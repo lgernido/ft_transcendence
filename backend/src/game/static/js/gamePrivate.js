@@ -1,8 +1,6 @@
 //verifier le calcule de mouvement
 
-function launchGamePrivate(roomName, maxPoints) {
-    roomName = "5x"; // TODO: change to roomName, for now it's hardcoded
-    
+function launchGamePrivate(roomName, maxPoints, colorL, colorR) {    
     const canvas = document.getElementById('pong');
     const userId = canvas.dataset.userId;
     canvas.width = window.innerWidth * 0.75;
@@ -128,7 +126,6 @@ function launchGamePrivate(roomName, maxPoints) {
             
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
-                window.location.href = '/mypage';
             }
         }, 1000);
 
@@ -161,7 +158,7 @@ function launchGamePrivate(roomName, maxPoints) {
     // WebSocket setup
     const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
     const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
-    const wsPong = new WebSocket(wsUrlPong);
+    wsPong = new WebSocket(wsUrlPong);
 
     wsPong.onmessage = function(event) {
         const data = JSON.parse(event.data);
@@ -189,7 +186,12 @@ function launchGamePrivate(roomName, maxPoints) {
             gameActive = false;
             drawGameOver(data.winner_id, data.final_score);
             setTimeout(() => {
-                window.location.href = '/mypage';
+                console.log("RELOAD GAME OVER")
+                if (wsPong) {
+                    wsPong.close();
+                    wsPong = null;
+                }
+                loadMyPage();
             }, 5000);
         } else if (data.type === 'game_forfeit') {
             gameActive = false;
@@ -207,9 +209,13 @@ function launchGamePrivate(roomName, maxPoints) {
             ctx.fillText(`Final Score: ${data.final_score.left} - ${data.final_score.right}`, 
                 canvas.width / 2, canvas.height / 2 + 20);
 
-            // Redirection après un délai
             setTimeout(() => {
-                window.location.href = '/mypage';
+                console.log("RELOAD FORFEIT")
+                if (wsPong) {
+                    wsPong.close();
+                    wsPong = null;
+                }
+                loadMyPage();
             }, 3000);
         }
     };
@@ -223,7 +229,6 @@ function launchGamePrivate(roomName, maxPoints) {
         if (!event.wasClean) {
             alert("Connection closed unexpectedly. Game ended.");
         }
-        window.location.href = '/mypage';
     };
 
     function gameLoop() {
@@ -245,9 +250,6 @@ function launchGamePrivate(roomName, maxPoints) {
         if (link) {
             e.preventDefault();
             handleGameExit();
-            setTimeout(() => {
-                window.location.href = link.href;
-            }, 100);
         }
     });
 
@@ -259,6 +261,7 @@ function launchGamePrivate(roomName, maxPoints) {
             }));
             gameActive = false;
             wsPong.close();
+            wsPong = null;
         }
     }
 

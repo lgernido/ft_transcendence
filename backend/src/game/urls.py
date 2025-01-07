@@ -27,7 +27,7 @@ urlpatterns = [
 	path('local/', views.local, name='local'),
     path('tournament/', views.tournament, name='tournament'),
 	
-    path('create_room/', views.create_room, name='create_room'),
+    path('create_roomP/', views.create_roomP, name='create_roomP'),
 	path('join_room/<str:room_name>/', views.join_room, name='join_room'),
 
     path('set_language/', views.set_language, name='set_language'),

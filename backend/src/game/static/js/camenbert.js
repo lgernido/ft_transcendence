@@ -59,19 +59,21 @@ async function displayCardGame(userId) {
 
     function updateIndicators(chunkCount) {
         const indicatorsContainer = document.querySelector(".carousel-indicators");
-        indicatorsContainer.innerHTML = "";
-    
-        for (let i = 0; i < chunkCount; i++) {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.setAttribute("data-bs-target", "#carouselExampleIndicators");
-            button.setAttribute("data-bs-slide-to", i);
-            button.setAttribute("aria-label", `Slide ${i + 1}`);
-            if (i === 0) {
-                button.classList.add("active");
-                button.setAttribute("aria-current", "true");
+        if (indicatorsContainer) {
+            indicatorsContainer.innerHTML = "";
+        
+            for (let i = 0; i < chunkCount; i++) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.setAttribute("data-bs-target", "#carouselExampleIndicators");
+                button.setAttribute("data-bs-slide-to", i);
+                button.setAttribute("aria-label", `Slide ${i + 1}`);
+                if (i === 0) {
+                    button.classList.add("active");
+                    button.setAttribute("aria-current", "true");
+                }
+                indicatorsContainer.appendChild(button);
             }
-            indicatorsContainer.appendChild(button);
         }
     }
 

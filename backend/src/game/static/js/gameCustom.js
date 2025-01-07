@@ -1,5 +1,7 @@
 function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 
+	console.log("Bonjour")
+
 	let ballInterval;
 	let countdownInterval;
 

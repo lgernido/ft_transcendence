@@ -105,13 +105,15 @@ def local(request):
         return render(request, 'partials/gameCustom.html')
     else:
         return redirect('/?next=/gameCustom/')
-    
+
+@csrf_protect
 def tournament(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/tournament.html')
     else:
         return redirect('/?next=/tournament/')
 
+@csrf_protect
 def GameBot(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/game.html')
@@ -135,40 +137,10 @@ def connect(request):
 @csrf_protect
 @login_required
 def game(request):
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
-
-    if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
-
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
-
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
-        else:
-            winner = None
-
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
-        )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
-
-    return render(request, 'partials/game.html', {
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point
-    })
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/game.html')
+    else:
+        return redirect('/?next=/game/')
 
 @csrf_protect
 @login_required
@@ -332,10 +304,8 @@ def extractGame(request):
 from .models import Room
 
 @login_required
-def create_room(request):
+def create_roomP(request):
     if request.method == 'POST':
-        private = request.GET.get('private', 'False')
-        is_private = private.lower() == 'true'
         current_user = request.user
 
         try:
@@ -350,9 +320,9 @@ def create_room(request):
             room = Room.objects.create()
             room.add_player(current_user)
             room.host = current_user
-            room.privateRoom = is_private
+            room.privateRoom = True
             room.save()
-            room_link = f"https://localhost:8443/join_room/{room.name}/"
+            room_link = f"https://10.14.2.7:8443/join_room/{room.name}/"
             request.session['roomName'] = room.name
 
             return JsonResponse({

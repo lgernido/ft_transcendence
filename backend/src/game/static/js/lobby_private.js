@@ -1,4 +1,9 @@
 function lobby_private() {
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
     const playerName1 = document.querySelector('.card-lobby-text-name1');
     const playerName2 = document.querySelector('.card-lobby-text-name2');
 
@@ -6,8 +11,8 @@ function lobby_private() {
     playerName2.classList.add('color-player-green');
     
     const roomName = document.getElementById("check-invite").textContent;
-
-    if (roomName === "False") {
+    console.log("|||| Room name: ", roomName)
+    if (roomName === "Nop" || !roomName) {
         console.log("Create new room");
         createRoomP();
     }
@@ -20,10 +25,11 @@ function lobby_private() {
     handlePointchange();
     handleReadyChange();
     handleQuitButton();
+    handleStartButton();
 }   
 
 function createRoomP() {
-    fetch(`/create_room/?private=True`, {
+    fetch(`/create_roomP/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -106,10 +112,8 @@ function InitWebSocketRoomP(roomName) {
             alert(data.message); // Exemple : afficher un message d'alerte
             return ;
         }
-
-        console.log("data: ", data);
     
-        if (playerName1 && avatarPlayer1 && data.player1) {
+        if (playerName1 && avatarPlayer1 && data.player1 && avatarPlayer1) {
             playerName1.textContent = data.player1.username;
             avatarPlayer1.src = data.player1.avatar;
             updatePlayerColor(playerName1, data.player1.color);
@@ -129,8 +133,8 @@ function InitWebSocketRoomP(roomName) {
         }
 
         // Handle point
+        const pointsLimitInput = document.getElementById("maxPoint");
         if (data.points_limit !== undefined) {
-            const pointsLimitInput = document.getElementById("maxPoint");
             if (pointsLimitInput)
                 pointsLimitInput.value = data.points_limit;
         }
@@ -159,8 +163,23 @@ function InitWebSocketRoomP(roomName) {
             }
         }
 
+        if (data.type === 'start_game') {
+            if (data.player1.ready && data.player2.ready) {
+                sessionStorage.removeItem('roomName');
+                sessionStorage.setItem('roomName', null);
+
+                localStorage.removeItem('roomName');
+                localStorage.setItem('roomName', null);
+                if (socket_roomP) { 
+                    socket_roomP.close();
+                    socket_roomP = null;
+                }
+                loadGamePrivate(roomName, pointsLimitInput.value, data.player1.color, data.player2.color);
+            }
+        }
+
         blockInteract();
-    };   
+    };
 
     socket_roomP.onclose = function () {
         console.log("Disconnected from room:", roomName);
@@ -287,7 +306,7 @@ function copyLink(txt) {
 
     copyButton.addEventListener("click", () => {
         navigator.clipboard.writeText(txt)
-            
+        console.log(txt)
     });
 }
 
@@ -319,4 +338,14 @@ function handleQuitButton() {
             loadMyPage();
         });
     }
+}
+
+function handleStartButton() {
+    const btnReady = document.getElementById("btn-ready");
+
+    btnReady.addEventListener('click', () => {
+        socket_roomP.send(JSON.stringify({
+            type: 'start_game'
+        }));
+    });
 }
