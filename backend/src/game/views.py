@@ -7,6 +7,7 @@ from django.contrib.sessions.models import Session
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.http import HttpResponseForbidden
+import os
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -24,6 +25,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import logging
 logger = logging.getLogger(__name__)
 import uuid
+
+IP_HOST = os.getenv("IP_HOST")
 
 @csrf_protect
 @login_required
@@ -330,39 +333,7 @@ def create_roomP(request):
             room.host = current_user
             room.privateRoom = True
             room.save()
-            room_link = f"https://10.14.2.7:8443/join_room/{room.name}/"
-            request.session['roomName'] = room.name
-
-            return JsonResponse({
-                'success': True, 
-                'room_name': room.name,
-                'room_link': room_link
-            })
-        except Exception as e:
-            return JsonResponse({'error': f"An error occurred: {str(e)}"}, status=500)
-    
-    return JsonResponse({'error': 'Invalid method'}, status=405)
-
-@login_required
-def create_roomPu(request):
-    if request.method == 'POST':
-        current_user = request.user
-
-        try:
-            current_room = Room.objects.filter(players=current_user).first()
-            if current_room:
-                room_name_in_session = request.session.get('roomName')
-                if room_name_in_session and current_room.name != room_name_in_session:
-                    return JsonResponse({
-                        'error': f"You are already in a different room: {current_room.name}."
-                    }, status=400)
-            
-            room = Room.objects.create()
-            room.add_player(current_user)
-            room.host = current_user
-            room.privateRoom = False
-            room.save()
-            room_link = None
+            room_link = f"https://{IP_HOST}:8443/join_room/{room.name}/"
             request.session['roomName'] = room.name
 
             return JsonResponse({

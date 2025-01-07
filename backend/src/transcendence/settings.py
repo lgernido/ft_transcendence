@@ -26,9 +26,11 @@ SECRET_KEY = 'django-insecure-(ezrh!_r8=w4ksnuzvty@@^n$6w%4kn_^!0v8h&kw5yq15=-&r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+IP_HOST = os.getenv("IP_HOST")
+
 # Mettre IP de la machine host
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.14.2.7']
-CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1:8443', 'https://localhost:8443', 'https://10.14.2.7:8443']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', IP_HOST]
+CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1:8443', 'https://localhost:8443', f'https://{IP_HOST}:8443']
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # CSRF_TRUSTED_ORIGINS = [
 #     'https://localhost:8443',

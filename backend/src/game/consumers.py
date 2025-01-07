@@ -170,25 +170,38 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
             room = await self.get_room()
             if room:
                 await self.reset_roomname_for_all_users(room)
-                response_data = {
-                    'type': 'start_game',
-                    'player1': {
-                        'ready': room.player1_ready,
-                        "color": room.player1_color,
-                    },
-                    'player2': {
-                        'ready': room.player2_ready,
-                        "color": room.player2_color,
-                    }
-                }
+                if room.player1_ready and room.player2_ready and room.player1_color != room.player2_color:
+                    host = await self.get_host(room)
+                    
+                    AllPlayers = await self.get_players(room)
+                    player2 = await self.get_second_player(AllPlayers, host.id)
 
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'send_message',
-                        'message': response_data
+                    socialHost = await self.get_social_for_user(host)
+                    socialPlayer2 = await self.get_social_for_user(player2) if player2 else None
+
+                    response_data = {
+                        'type': 'start_game',
+                        'player1': {
+                            "username": host.username,
+                            'ready': room.player1_ready,
+                            "color": room.player1_color,
+                            "avatar": socialHost.avatar.url,
+                        },
+                        'player2': {
+                            "username": player2.username if player2 else "Waiting for player",
+                            'ready': room.player2_ready,
+                            "color": room.player2_color,
+                            "avatar": socialPlayer2.avatar.url if player2 else "/media/avatars/default_avatar.png",
+                        }
                     }
-                )
+
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'send_message',
+                            'message': response_data
+                        }
+                    )
 
 
     async def send_room_state(self):
@@ -219,7 +232,7 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
                 "ready": room.player1_ready
             },
             "player2": {
-                "username": player2.username if player2 else "Guest",
+                "username": player2.username if player2 else "Waiting for player",
                 "avatar": socialPlayer2.avatar.url if player2 else "/media/avatars/default_avatar.png",
                 "color": player2_color if player2 else "",
                 "ready": room.player2_ready

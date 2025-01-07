@@ -801,7 +801,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-// document.addEventListener('DOMContentLoaded', loadConnectPage);
 
 window.addEventListener('load', function () {
     const initialPage = window.location.pathname.split('/').pop() || 'connect';
@@ -921,3 +920,7 @@ function updateStatusIcons() {
         }
     });
 }
+
+window.addEventListener('beforeunload', function(event) {
+    closeAllOpenWebSocket();
+});

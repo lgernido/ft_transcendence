@@ -6,6 +6,7 @@ import math
 import random
 from django.contrib.auth.models import User
 from game.models import Game
+from users.models import Profile
 from channels.db import database_sync_to_async
 
 import logging
@@ -371,6 +372,9 @@ class PongConsumer(AsyncWebsocketConsumer):
                     player1_score=player1_score,
                     player2_score=player2_score
                 )
+                draw = player1_score == player2_score
+                    
+                await self.update_stats(player1, player2, winner, draw)
         except Exception as e:
             logger.error(f"Error saving game result: {e}")
 
@@ -418,3 +422,22 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def game_forfeit(self, event):
         """Envoie le message de forfait aux clients"""
         await self.send(text_data=json.dumps(event))
+
+    @database_sync_to_async
+    def update_stats(self, player1, player2, winner, draw):
+        profileP1 = Profile.objects.get(user=player1)
+        profileP1.games_played += 1
+        profileP2 = Profile.objects.get(user=player2)
+        profileP2.games_played += 1
+        if (draw):
+            profileP1.games_draw += 1
+            profileP2.games_draw += 1
+        elif (winner.id == profileP1.id):
+            profileP1.games_win += 1
+            profileP2.games_lose += 1
+        else:
+            profileP2.games_win += 1
+            profileP1.games_lose += 1
+
+        profileP1.save()
+        profileP2.save()

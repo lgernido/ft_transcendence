@@ -95,7 +95,7 @@ function launchGamePrivate(roomName, maxPoints, colorL, colorR) {
     }
 
     function drawGameOver(winnerId, finalScore) {
-        let countdown = 5; // Initialiser le compte à rebours
+        let countdown = 3; // Initialiser le compte à rebours
         
         function updateGameOverScreen() {
             // Effacer le canvas

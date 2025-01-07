@@ -249,7 +249,7 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
     }
 
     async function moveBall() {
-        const maxSpeed = 0.7;
+        const maxSpeed = 0.8;
         posBallX += speedX;
         posBallY += speedY;
 
@@ -343,13 +343,16 @@ function updatePlayerColor(playerElement1, playerElement2, newColor1, newColor2)
         'color-player-pink', 
         'color-player-gray'
     ];
-    playerElement1.classList.remove(...colorClasses);
-	playerElement2.classList.remove(...colorClasses);
+    
+    if (playerElement1 && playerElement2) {
+        playerElement1.classList.remove(...colorClasses);
+        playerElement2.classList.remove(...colorClasses);
 
-    if (newColor1) {
-        playerElement1.classList.add(newColor1);
-    }
-	if (newColor2) {
-        playerElement2.classList.add(newColor2);
+        if (newColor1) {
+            playerElement1.classList.add(newColor1);
+        }
+        if (newColor2) {
+            playerElement2.classList.add(newColor2);
+        }
     }
 }

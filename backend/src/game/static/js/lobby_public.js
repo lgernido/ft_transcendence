@@ -11,7 +11,7 @@ function lobby_public() {
         createRoomPu();
     }
     else {
-        console.log("Create websocket");
+        console.log("Connect websocket");
         InitWebSocketRoomP(roomName)
     }
 

@@ -11,7 +11,7 @@ function lobby_private() {
         createRoomP();
     }
     else {
-        console.log("Create websocket");
+        console.log("Connect websocket");
         InitWebSocketRoomP(roomName)
     }
 
