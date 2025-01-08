@@ -4,7 +4,7 @@
 <div class="d-flex" style="height: calc(100vh - 80px);">
 	<div class="mx-2 my-2 w-100 d-flex flex-column">
 		<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
-			<button class="btn btn-primary mb-3" id="copyButton">Copy invite link</button>
+			<button class="btn btn-primary mb-3" id="copyButton">{% trans 'Copy invite link' %}</button>
 			<div class="d-flex align-items-center" style="gap: 50px;">
 				<div class="card-lobby">
 					<img src="{{ social.avatar.url }}" class="card-lobby-img-top" alt="img-profil" id="avatarPlayer1" style="width: 100%; height: auto;">
@@ -54,7 +54,7 @@
 						</div>
 						<div class="btn-group mt-2 mb-1" role="group" aria-label="Basic checkbox toggle button group">
 							<input type="checkbox" class="btn-check" id="readyPlayer2" autocomplete="off">
-							<label class="btn btn-outline-secondary" for="readyPlayer2">Ready</label>
+							<label class="btn btn-outline-secondary" for="readyPlayer2">{% trans 'Ready' %}</label>
 						</div>						
 					</div>
 				</div>
@@ -67,7 +67,7 @@
 				<button class="btn btn-primary btn-ready mx-2" id="btn-ready">{%trans 'Launch' %}</button>
 			</div>
 			<div class="w-100 d-flex align-items-center justify-content-center mt-3">
-				<button id="leaveRoomButton" class="btn btn-danger">Quit Room</button>
+				<button id="leaveRoomButton" class="btn btn-danger">{%trans 'Quit Room' %}</button>
 			</div>
 		</div>
 	</div>

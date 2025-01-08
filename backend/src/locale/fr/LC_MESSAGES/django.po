@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-08 08:49+0000\n"
+"POT-Creation-Date: 2025-01-08 10:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: game/templates/partials/amis.html:6
+#: game/templates/partials/amis.html:6 game/templates/partials/chat.html:10
 msgid "Search user"
 msgstr "Rechercher Utilisateur"
 
@@ -65,6 +65,10 @@ msgstr "Bloquer"
 #: game/templates/partials/amis.html:67
 msgid "Unblock"
 msgstr "Débloquer"
+
+#: game/templates/partials/chat.html:25
+msgid "Nothing here, open a conversation"
+msgstr "Rien a voir ici, ouvrez une conversation"
 
 #: game/templates/partials/chat.html:31
 #: game/templates/partials/mini_chat.html:22
@@ -239,6 +243,18 @@ msgstr "Limite de points:"
 msgid "Launch"
 msgstr "Lancer"
 
+#: game/templates/partials/lobby_private.html:7
+msgid "Copy invite link"
+msgstr "Copier le lien d'invitation"
+
+#: game/templates/partials/lobby_private.html:57
+msgid "Ready"
+msgstr "Prêt"
+
+#: game/templates/partials/lobby_private.html:70
+msgid "Quit Room"
+msgstr "Quitter le salon"
+
 #: game/templates/partials/lobby_tournament.html:7
 #: game/templates/partials/mypage.html:6
 msgid "Tournament"
@@ -255,6 +271,14 @@ msgstr "Partie Privée"
 #: game/templates/partials/mypage.html:9
 msgid "Local Game"
 msgstr "Partie Locale"
+
+#: game/templates/partials/stats.html:16
+msgid "Previous"
+msgstr "Précédent"
+
+#: game/templates/partials/stats.html:20
+msgid "Next"
+msgstr "Suivant"
 
 #: game/templates/partials/stats.html:25
 msgid "Player Statistics"
