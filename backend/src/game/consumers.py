@@ -142,6 +142,8 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
                 room = await self.get_room()
                 user = self.scope['user']
 
+                room.is_full = False
+                room.save()
                 await self.remove_player_from_room(room, user)
 
                 await self.channel_layer.group_send(

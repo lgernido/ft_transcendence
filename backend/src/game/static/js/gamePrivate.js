@@ -3,6 +3,8 @@
 function launchGamePrivate(roomName, maxPoints, DATA) {    
     const canvas = document.getElementById('pong');
     const userId = canvas.dataset.userId;
+    const username = canvas.dataset.userUsername;
+    console.log("USername: ", username, " ID: ", userId, " ", DATA.player1.username, " ", DATA.player2.username)
     canvas.width = window.innerWidth * 0.75;
     canvas.height = window.innerHeight * 0.5;
     const ctx = canvas.getContext('2d');
@@ -98,42 +100,33 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     }
 
     function drawGameOver(winnerId, finalScore) {
-        let countdown = 3; // Initialiser le compte à rebours
-        
-        function updateGameOverScreen() {
-            // Effacer le canvas
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        let count = 5; // Initialiser le compte à rebours
+        const elcanvas = document.getElementById("pong")
+        const showScore = document.getElementById("showScore")
 
-            // Afficher le gagnant et le score
-            ctx.font = '40px Arial';
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+        elcanvas.remove()
+        document.getElementById("showScore").classList.remove("d-none");
 
-            const winnerName = winnerId === left_backend ? leftPaddle.name : rightPaddle.name;
-            ctx.fillText(`${winnerName} Wins!`, canvas.width / 2, canvas.height / 2 - 40);
-            ctx.font = '30px Arial';
-            ctx.fillText(`Final Score: ${finalScore.left} - ${finalScore.right}`, canvas.width / 2, canvas.height / 2 + 20);
-            
-            // Afficher le message de redirection avec le décompte
-            ctx.font = '20px Arial';
-            ctx.fillText(`Game will redirect to lobby in ${countdown} seconds...`, canvas.width / 2, canvas.height / 2 + 80);
-        }
+        const winner = document.getElementById("winner")
+        const leftscore =  document.getElementById("leftscore")
+        const rightscore =  document.getElementById("rightscore")
+        const countdown =  document.getElementById("countdown")
 
+        winner.textContent = winnerId === left_backend ? leftPaddle.name : rightPaddle.name;
+        leftscore.textContent = `${finalScore.left}`
+        rightscore.textContent = `${finalScore.right}`
+        countdown.textContent = count
+
+        createConfetti()
         // Mettre à jour le compte à rebours chaque seconde
         const countdownInterval = setInterval(() => {
-            countdown--;
-            drawField();
-            updateGameOverScreen();
+            count--;
+            countdown.textContent = count
             
-            if (countdown <= 0) {
+            if (count <= 0) {
                 clearInterval(countdownInterval);
             }
         }, 1000);
-
-        // Afficher l'écran initial
-        updateGameOverScreen();
     }
 
     function draw() {
@@ -164,15 +157,15 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     // const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
     let his_color;
     let his_hote;
-    if (DATA.player1.username == userId)
+    if (DATA.player1.username == username)
     {
-        his_hote = "true";
-        his_color = DATA.player1.color;
+        his_hote = 1;
+        his_color = DATA.player1.color.split("-")[2]
     } else {
-        his_hote = "false";
-        his_color = DATA.player2.color;
+        his_hote = 0;
+        his_color = DATA.player2.color.split("-")[2]
     }
-    const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/${his_hote}/${his_color}/${maxPoints}`;
+    const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/${his_hote}/${his_color}/${maxPoints}/`;
     wsPong = new WebSocket(wsUrlPong);
 
     wsPong.onmessage = function(event) {
@@ -283,4 +276,24 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     }
 
     draw();
+
+    function randomColor() {
+        const colors = ['#FF6347', '#FF4500', '#FFD700', '#32CD32', '#1E90FF', '#9932CC'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    function createConfetti() {
+        const container = document.querySelector('.confetti-container');
+        const numConfetti = 100;  // Le nombre de confettis
+    
+        for (let i = 0; i < numConfetti; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = `${Math.random() * 100}%`;  // Position aléatoire horizontale
+            confetti.style.animationDuration = `${Math.random() * 2 + 3}s`;  // Durée d'animation aléatoire
+            confetti.style.animationDelay = `${Math.random() * 2}s`;  // Délai d'animation aléatoire
+            confetti.style.backgroundColor = randomColor();  // Couleur aléatoire
+            container.appendChild(confetti);
+        }
+    }
 }

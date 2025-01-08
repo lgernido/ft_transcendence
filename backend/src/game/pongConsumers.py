@@ -221,7 +221,10 @@ class PongConsumer(AsyncWebsocketConsumer):
         ball["y"] = 0.5
         # Direction aléatoire mais vitesse constante
         angle = random.uniform(-45, 45)  # Angle de départ aléatoire entre -45° et 45°
-        ball["speed_x"] = self.BALL_SPEED * math.cos(math.radians(angle))
+        num = random.uniform(-1, 1)  # Générer un nombre aléatoire entre -1 et 1
+        while num == 0:
+            num = random.uniform(-1, 1)
+        ball["speed_x"] = num * self.BALL_SPEED * math.cos(math.radians(angle))
         ball["speed_y"] = self.BALL_SPEED * math.sin(math.radians(angle))
 
     async def handle_collisions(self, state, ball):
