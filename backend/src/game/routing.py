@@ -11,5 +11,5 @@ from .consumers import GameRoomConsumer
 
 websocket_urlpatterns = [
     re_path(r'ws/lobby/(?P<room_name>\w+)/$', GameRoomConsumer.as_asgi()),
-    path("ws/pong/<str:room_name>/", PongConsumer.as_asgi()),
+    path("ws/pong/<str:room_name>/<str:his_hote>/<str:his_color>/<int:score_limit>/", PongConsumer.as_asgi()),
 ]

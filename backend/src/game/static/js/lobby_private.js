@@ -171,7 +171,7 @@ function InitWebSocketRoomP(roomName) {
                     socket_roomP.close();
                     socket_roomP = null;
                 }
-                loadGamePrivate(roomName, pointsLimitInput.value, data.player1.color, data.player2.color);
+                loadGamePrivate(roomName, pointsLimitInput.value, data);
             }
         }
 

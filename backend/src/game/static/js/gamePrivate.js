@@ -1,6 +1,6 @@
 //verifier le calcule de mouvement
 
-function launchGamePrivate(roomName, maxPoints, colorL, colorR) {    
+function launchGamePrivate(roomName, maxPoints, DATA) {    
     const canvas = document.getElementById('pong');
     const userId = canvas.dataset.userId;
     canvas.width = window.innerWidth * 0.75;
@@ -23,14 +23,17 @@ function launchGamePrivate(roomName, maxPoints, colorL, colorR) {
         x: 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
         score: 0,
-        name: ""
+        name: "",
+        color:""
+
     };
 
     const rightPaddle = {
         x: canvas.width - paddleHeight - 0.01 * canvas.width,
         y: (canvas.height - paddleWidth) / 2,
         score: 0,
-        name: ""
+        name: "",
+        color:""
     };
 
     // Gestion des touches
@@ -67,10 +70,10 @@ function launchGamePrivate(roomName, maxPoints, colorL, colorR) {
     }
 
     function drawPaddles() {
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = leftPaddle.color;
         ctx.fillRect(leftPaddle.x, leftPaddle.y, paddleHeight, paddleWidth);
 
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = rightPaddle.color;
         ctx.fillRect(rightPaddle.x, rightPaddle.y, paddleHeight, paddleWidth);
     }
 
@@ -83,12 +86,12 @@ function launchGamePrivate(roomName, maxPoints, colorL, colorR) {
         const scoreY = canvas.height * 0.1;
         const nameY = canvas.height * 0.05;
 
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = leftPaddle.color;
         ctx.fillText(leftPaddle.name || "Player 1", (canvas.width / 2) - 50, nameY);
         ctx.fillStyle = 'white';
         ctx.fillText(leftPaddle.score, (canvas.width / 2) - 50, scoreY);
 
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = rightPaddle.color;
         ctx.fillText(rightPaddle.name || "Player 2", (canvas.width / 2) + 50, nameY);
         ctx.fillStyle = 'white';
         ctx.fillText(rightPaddle.score, (canvas.width / 2) + 50, scoreY);
@@ -157,7 +160,19 @@ function launchGamePrivate(roomName, maxPoints, colorL, colorR) {
 
     // WebSocket setup
     const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
+
+    // const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/`;
+    let his_color;
+    let his_hote;
+    if (DATA.player1.username == userId)
+    {
+        his_hote = "true";
+        his_color = DATA.player1.color;
+    } else {
+        his_hote = "false";
+        his_color = DATA.player2.color;
+    }
+    const wsUrlPong = `${wsScheme}://${window.location.host}/ws/pong/${roomName}/${his_hote}/${his_color}/${maxPoints}`;
     wsPong = new WebSocket(wsUrlPong);
 
     wsPong.onmessage = function(event) {
@@ -181,6 +196,8 @@ function launchGamePrivate(roomName, maxPoints, colorL, colorR) {
         } else if (data.type === 'game_start') {
             left_backend = data.left_paddle.id;
             right_backend = data.right_paddle.id;
+            leftPaddle.color = data.left_paddle.color;
+            rightPaddle.color = data.right_paddle.color;
             requestAnimationFrame(gameLoop);
         } else if (data.type === 'game_over') {
             gameActive = false;

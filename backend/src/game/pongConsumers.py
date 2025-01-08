@@ -22,11 +22,13 @@ class PongConsumer(AsyncWebsocketConsumer):
     PADDLE_HEIGHT = 0.2  # Hauteur des raquettes
     FPS = 60  # Taux de rafraîchissement
     FRAME_TIME = 1.0 / FPS  # Temps entre chaque frame
-    MAX_SCORE = 3  # Score maximum pour gagner
 
     async def connect(self):
         logger.warning(f"Connecting to room: {self.scope['url_route']['kwargs']['room_name']}")
         self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.his_color = self.scope['url_route']['kwargs']['his_color']
+        self.score_limit = int(self.scope['url_route']['kwargs']['score_limit'])
+        self.his_hote = int(self.scope['url_route']['kwargs']['his_hote'])
         self.user = self.scope["user"]
         self.room_group_name = f"pong_{self.room_name}"
 
@@ -51,16 +53,16 @@ class PongConsumer(AsyncWebsocketConsumer):
         # Assigner l'utilisateur à une raquette
         game_state = self.game_states[self.room_name]
         # l'hote 
-        if game_state["left_paddle"]["id"] is None:
+        if self.his_hote:
             game_state["left_paddle"]["id"] = self.user.id
             game_state["left_paddle"]["name"] = self.user.username[:8]
-            # game_state["score_limit"] = ?
-            # game_state["left_paddle"]["color"] = ?
+            game_state["left_paddle"]["color"] = self.his_color
+            game_state["score_limit"] = self.score_limit
         # le guest
-        elif game_state["right_paddle"]["id"] is None:
+        else:
             game_state["right_paddle"]["id"] = self.user.id
             game_state["right_paddle"]["name"] = self.user.username[:8]
-            # game_state["right_paddle"]["color"] = ?
+            game_state["right_paddle"]["color"] = self.his_color
         # Vérifier si les deux joueurs sont connectés
         if game_state["connected_players"] == 2:
             game_state["ball"]["speed_x"] = 0.01
@@ -281,13 +283,13 @@ class PongConsumer(AsyncWebsocketConsumer):
                     "y": state["left_paddle"]["y"],
                     "id": state["left_paddle"]["id"],
                     "score": state["left_paddle"]["score"],
-                    "name": state["left_paddle"]["name"]
+                    "name": state["left_paddle"]["name"],
                 },
                 "right_paddle": {
                     "y": state["right_paddle"]["y"],
                     "id": state["right_paddle"]["id"],
                     "score": state["right_paddle"]["score"],
-                    "name": state["right_paddle"]["name"]
+                    "name": state["right_paddle"]["name"],
                 },
             },
         )
@@ -317,7 +319,7 @@ class PongConsumer(AsyncWebsocketConsumer):
         left_score = state["left_paddle"]["score"]
         right_score = state["right_paddle"]["score"]
         
-        if state["save_game"] == False and (left_score >= self.MAX_SCORE or right_score >= self.MAX_SCORE):
+        if state["save_game"] == False and (left_score >= state["score_limit"] or right_score >= state["score_limit"]):
             state["save_game"] = True
             # Déterminer le gagnant
             winner_id = state["left_paddle"]["id"] if left_score > right_score else state["right_paddle"]["id"]

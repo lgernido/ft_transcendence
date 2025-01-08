@@ -529,7 +529,7 @@ function loadGamePrivateCustom(maxPoints, colorP1, colorP2) {
         });
 }
 
-function loadGamePrivate(roomName, maxPoints, colorR, colorL) {
+function loadGamePrivate(roomName, maxPoints, data) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -553,7 +553,7 @@ function loadGamePrivate(roomName, maxPoints, colorR, colorL) {
                 const state = { page: `game` };
                 history.pushState(state, '', `/game`);
             }
-            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints, colorR, colorL));
+            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints, data));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
