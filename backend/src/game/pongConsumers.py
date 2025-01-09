@@ -229,7 +229,7 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def handle_collisions(self, state, ball):
         # Collision avec les murs
-        if ball["y"] - ball["radius"] <= 0 or ball["y"] + ball["radius"] >= 1:
+        if ball["y"] - ball["radius"] <= 0.02 or ball["y"] + ball["radius"] >= 0.98:
             ball["speed_y"] *= -1  # Simplement inverser la direction Y
 
         # Collision avec les raquettes
