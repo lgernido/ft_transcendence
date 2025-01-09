@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.http import HttpResponseForbidden
 import os
+from itertools import chain
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -283,12 +284,18 @@ def extractGame(request):
     try:
         user = User.objects.get(id=user_id)
 
-        games_as_player1 = Game.objects.filter(player1=user)
-        games_as_player2 = Game.objects.filter(player2=user)
+        games_as_player1 = Game.objects.filter(player1=user).order_by('-date_played')
+        games_as_player2 = Game.objects.filter(player2=user).order_by('-date_played')
+
+        all_games = sorted(
+            chain(games_as_player1, games_as_player2),
+            key=lambda game: game.date_played,
+            reverse=True
+        )
 
         games_data = []
 
-        for game in games_as_player1.union(games_as_player2):
+        for game in all_games:
             opponent = game.player2 if game.player1 == user else game.player1
 
             avatar_url = (
@@ -298,7 +305,7 @@ def extractGame(request):
             )
             games_data.append({
                 "opponent": opponent.username,
-                "winner": game.winner.username if game.winner.username != opponent.username else None,
+                "winner": game.winner.username if game.winner and game.winner != opponent else None,
                 "player1_score": game.player1_score,
                 "player2_score": game.player2_score,
                 "date_played": game.date_played.isoformat(),

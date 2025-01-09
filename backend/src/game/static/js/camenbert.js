@@ -121,7 +121,7 @@ async function displayCardGame(userId) {
                 cardClone.querySelector("[data-winner]").textContent = game.winner ? 'Win' : 'Lose';
                 cardClone.querySelector("[data-score]").textContent = `${game.player1_score} - ${game.player2_score}`;
                 cardClone.querySelector("[data-date]").textContent = game.date_played.split("T")[0] || 'Unknown Date';
-            
+
                 cardContainer.appendChild(cardClone);
             });
             

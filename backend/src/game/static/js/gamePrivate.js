@@ -100,7 +100,7 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     }
 
     function drawGameOver(winnerId, finalScore) {
-        let count = 5; // Initialiser le compte à rebours
+        let count = 3; // Initialiser le compte à rebours
         const elcanvas = document.getElementById("pong")
         const showScore = document.getElementById("showScore")
 
@@ -194,15 +194,16 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
             requestAnimationFrame(gameLoop);
         } else if (data.type === 'game_over') {
             gameActive = false;
+            if (wsPong) {
+                console.log("Clear socket ws")
+                wsPong.close();
+                wsPong = null;
+            }
             drawGameOver(data.winner_id, data.final_score);
             setTimeout(() => {
                 console.log("RELOAD GAME OVER")
-                if (wsPong) {
-                    wsPong.close();
-                    wsPong = null;
-                }
                 loadMyPage();
-            }, 5000);
+            }, 3000);
         } else if (data.type === 'game_forfeit') {
             gameActive = false;
             // Afficher un message de forfait
@@ -219,12 +220,12 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
             ctx.fillText(`Final Score: ${data.final_score.left} - ${data.final_score.right}`, 
                 canvas.width / 2, canvas.height / 2 + 20);
 
+            if (wsPong) {
+                wsPong.close();
+                wsPong = null;
+            }
             setTimeout(() => {
                 console.log("RELOAD FORFEIT")
-                if (wsPong) {
-                    wsPong.close();
-                    wsPong = null;
-                }
                 loadMyPage();
             }, 3000);
         }

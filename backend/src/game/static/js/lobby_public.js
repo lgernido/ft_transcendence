@@ -160,7 +160,7 @@ function InitWebSocketRoomP(roomName) {
 
         if (data.type === 'start_game') {
             if (data.player1.ready && data.player2.ready) {
-                if (socket_roomP) { 
+                if (socket_roomPu) { 
                     socket_roomPu.close();
                     socket_roomPu = null;
                 }
