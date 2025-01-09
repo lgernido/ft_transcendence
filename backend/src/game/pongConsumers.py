@@ -199,6 +199,8 @@ class PongConsumer(AsyncWebsocketConsumer):
                     ball["x"] += ball["speed_x"] * delta_time * self.FPS
                     ball["y"] += ball["speed_y"] * delta_time * self.FPS
 
+                # Limiter la position de la balle pour qu'elle reste dans les limites verticales
+                ball["y"] = max(0.02 + ball["radius"], min(0.98 - ball["radius"], ball["y"]))
                 # Vérifier si un point a été marqué
                 if ball["x"] <= 0:
                     state["right_paddle"]["score"] += 1
@@ -229,8 +231,13 @@ class PongConsumer(AsyncWebsocketConsumer):
 
     async def handle_collisions(self, state, ball):
         # Collision avec les murs
-        if ball["y"] - ball["radius"] <= 0.02 or ball["y"] + ball["radius"] >= 0.98:
-            ball["speed_y"] *= -1  # Simplement inverser la direction Y
+        if ball["y"] - ball["radius"] <= 0.02:  # Collision avec le mur du haut
+            ball["y"] = 0.02 + ball["radius"]  # Réinitialiser la position juste en dessous du mur
+            ball["speed_y"] *= -1  # Inverser la direction Y
+
+        elif ball["y"] + ball["radius"] >= 0.98:  # Collision avec le mur du bas
+            ball["y"] = 0.98 - ball["radius"]  # Réinitialiser la position juste au-dessus du mur
+            ball["speed_y"] *= -1  # Inverser la direction Y
 
         # Collision avec les raquettes
         left_paddle = state["left_paddle"]
@@ -326,6 +333,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             state["save_game"] = True
             # Déterminer le gagnant
             winner_id = state["left_paddle"]["id"] if left_score > right_score else state["right_paddle"]["id"]
+            logging.warning(f"\033[92mLe gagnant est {winner_id}:\n - score_left {left_score} name_left {state["left_paddle"]["name"]} id {state["left_paddle"]["id"]}\n\
+                            - score_left {left_score} name_left {state["left_paddle"]["name"]} id {state["left_paddle"]["id"]}")
             
             # Créer l'entrée dans la base de données
             logging.warning(f"\033[91mleft score {left_score} - right score {right_score}\033[0m")
