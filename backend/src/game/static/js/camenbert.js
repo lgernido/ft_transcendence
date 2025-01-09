@@ -117,9 +117,10 @@ async function displayCardGame(userId) {
                 });
                 
                 cardClone.querySelector("[data-img-opponent]").src = game.avatar;
-                cardClone.querySelector("[data-opponent]").textContent = game.opponent || 'Unknown';
-                cardClone.querySelector("[data-winner]").textContent = game.winner ? 'Win' : 'Lose';
-                cardClone.querySelector("[data-score]").textContent = `${game.player1_score} - ${game.player2_score}`;
+                cardClone.querySelector("[data-opponent]").textContent = game.opponent + " " + (game.winner ? '❌' : '🏆') || 'Unknown';
+                // cardClone.querySelector("[data-winner]").textContent = game.winner ? 'win' : 'loose';
+                cardClone.querySelector("[data-score]").textContent = `${game.player1_name} ${game.player1_score} - ${game.player2_score} ${game.player2_name}`;
+                cardClone.querySelector("[data-winner]").textContent = "· " + game.user + " " + (game.winner ? '🏆' : '❌');
                 cardClone.querySelector("[data-date]").textContent = game.date_played.split("T")[0] || 'Unknown Date';
 
                 cardContainer.appendChild(cardClone);

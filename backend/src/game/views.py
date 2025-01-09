@@ -305,11 +305,14 @@ def extractGame(request):
             )
             games_data.append({
                 "opponent": opponent.username,
+                "opponentId": opponent.id,
+                "user": user.username,
                 "winner": game.winner.username if game.winner and game.winner != opponent else None,
                 "player1_score": game.player1_score,
+                "player1_name": game.player1.username,
                 "player2_score": game.player2_score,
+                "player2_name": game.player2.username,
                 "date_played": game.date_played.isoformat(),
-                "opponentId": opponent.id,
                 "avatar": avatar_url,
             })
 

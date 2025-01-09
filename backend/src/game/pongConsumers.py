@@ -333,8 +333,8 @@ class PongConsumer(AsyncWebsocketConsumer):
             state["save_game"] = True
             # Déterminer le gagnant
             winner_id = state["left_paddle"]["id"] if left_score > right_score else state["right_paddle"]["id"]
-            logging.warning(f"\033[92mLe gagnant est {winner_id}:\n - score_left {left_score} name_left {state["left_paddle"]["name"]} id {state["left_paddle"]["id"]}\n\
-                            - score_left {left_score} name_left {state["left_paddle"]["name"]} id {state["left_paddle"]["id"]}")
+
+            logging.warning(f"\033[92mLe gagnant est {winner_id}:\n\033[92m - score_left {left_score} name_left {state["left_paddle"]["name"]} id {state["left_paddle"]["id"]}\n\033[92m- score_right {right_score} name_right {state["right_paddle"]["name"]} id {state["right_paddle"]["id"]}")
             
             # Créer l'entrée dans la base de données
             logging.warning(f"\033[91mleft score {left_score} - right score {right_score}\033[0m")

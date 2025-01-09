@@ -55,9 +55,9 @@
 <template id="cardGameResume">
 	<div class="card-custom m-3">
 		<img data-img-opponent src="{% static 'img/bob.jpg' %}" class="rounded img-profil-100" alt="img-profil">
-		<h2 data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer;">Bob</h2>
-		<p class="result text-light" data-winner>{%trans 'Win' %}</p>
+		<p data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer; font-size: 1.5rem; font-weight: bold;">Bob</p>
 		<p data-score class="text-light">0 - 0</p>
+		<p class="result text-light" style="font-size: 1.5rem;" data-winner>{%trans 'Win' %}</p>
 		<p data-date class="text-light">{%trans 'Unknown Date' %}</p>
 	</div>
 </template>
