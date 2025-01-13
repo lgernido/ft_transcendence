@@ -188,8 +188,10 @@ def compte(request):
             username = data.get('username')
             password = data.get('password')
             new_avatar = data.get('avatar')
-            
 
+            if len(username) > 12:
+                return JsonResponse({'error': 'Username trop long'}, status=400)
+            
             if not username or not email:
                 return JsonResponse({'error': 'Username and email are required.'}, status=400)
             

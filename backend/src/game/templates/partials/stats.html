@@ -39,14 +39,11 @@
 					</li>
 				</ul>
 			</section>
-			<div class="m-4 align-items-center d-flex justify-content-between">
-				<li class="d-flex fw-bold" style="list-style-type: none;">{%trans 'Games played: ' %}<p id="nb-game"
-						class="mx-2"></p>
+			<div class="m-4 d-flex align-items-center justify-content-center" style="gap: 10%">
+				<li class="d-flex fw-bold" style="list-style-type: none;">
+					{%trans 'Games played: ' %}<p id="nb-game" class="mx-2"></p>
 				</li>
 				<p class="fw-bold" id="win-rate">{%trans 'Win rate :' %}</p>
-				<!-- <p class="fw-bold">{%trans 'Global Ranking :' %} #3</p>
-				<p class="fw-bold">{%trans 'Friends Ranking : '%}#3</p>
-				<p class="fw-bold">{%trans 'Tournaments won :' %} 0</p> -->
 			</div>
 		</div>
 	</div>
@@ -55,9 +52,9 @@
 <template id="cardGameResume">
 	<div class="card-custom m-3">
 		<img data-img-opponent src="{% static 'img/bob.jpg' %}" class="rounded img-profil-100" alt="img-profil">
-		<p data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer; font-size: 1.5rem; font-weight: bold;">Bob</p>
+		<p data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer; font-size: 1.5rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bob</p>
 		<p data-score class="text-light">0 - 0</p>
-		<p class="result text-light" style="font-size: 1.5rem;" data-winner>{%trans 'Win' %}</p>
+		<p class="result text-light" style="font-size: 1.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-winner>{%trans 'Win' %}</p>
 		<p data-date class="text-light">{%trans 'Unknown Date' %}</p>
 	</div>
 </template>

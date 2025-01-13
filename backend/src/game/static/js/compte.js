@@ -57,12 +57,17 @@ async function validChanges() {
     if (validChangesAccount) {
         validChangesAccount.addEventListener('click', function() {
             const email = document.getElementById('modifEmailAccount').value;
-            const username = document.getElementById('modifUsernameAccount').value;
+            const username = document.getElementById('modifUsernameAccount').value.trim();
             const password = document.getElementById('modifPasswordAccount').value;
             const avatar = document.querySelector('.profile-btn img').src;
 
             if (!email || !username) {
                 displayError('Veuillez remplir tous les champs !');
+                return;
+            }
+
+            if (username.length > 12) {
+                displayError('Username trop long !');
                 return;
             }
 

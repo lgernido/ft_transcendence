@@ -32,8 +32,8 @@ function ValidFormCreateAccount() {
         });
 
     document.getElementById('submitButton').addEventListener('click', function() {
-        const emailInput = document.getElementById('floatingInputEmail');
-        const username = document.getElementById('floatingInputUsername').value;
+        const emailInput = document.getElementById('floatingInputEmail').trim();
+        const username = document.getElementById('floatingInputUsername').value.trim();
         const password = document.getElementById('floatingInputPassword').value;
         const password2 = document.getElementById('floatingInputPassword2').value;
         const avatar = document.getElementById('avatar').src;
@@ -47,6 +47,11 @@ function ValidFormCreateAccount() {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(emailInput.value)) {
             displayError('Veuillez entrer une adresse email valide !');
+            return;
+        }
+
+        if (username.length > 12) {
+            displayError('Username trop long !');
             return;
         }
 

@@ -40,6 +40,9 @@ def create_account(request):
         if password != password2:
             return JsonResponse({'error': 'Les mots de passe ne correspondent pas.'}, status=400)
 
+        if len(username) > 12:
+            return JsonResponse({'error': 'Username trop long'}, status=400)
+
         if User.objects.filter(username=username).exists():
             return JsonResponse({'error': 'Ce nom d utilisateur est deja pris.'}, status=400)
         
