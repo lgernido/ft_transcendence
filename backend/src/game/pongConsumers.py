@@ -449,15 +449,16 @@ class PongConsumer(AsyncWebsocketConsumer):
         profileP1.games_played += 1
         profileP2 = Profile.objects.get(user=player2)
         profileP2.games_played += 1
+        logging.warning(f"winner {winner.id} - profile P1: {profileP1.user.id} | profile P2: {profileP2.user.id}")
         if (draw):
             profileP1.games_draw += 1
             profileP2.games_draw += 1
-        elif (winner.id != profileP1.id):
+        elif (winner.id == profileP1.user.id):
             profileP1.games_win += 1
             profileP2.games_lose += 1
         else:
-            profileP2.games_win += 1
             profileP1.games_lose += 1
+            profileP2.games_win += 1
 
         profileP1.save()
         profileP2.save()

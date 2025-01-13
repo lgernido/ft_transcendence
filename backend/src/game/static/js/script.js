@@ -685,7 +685,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     else if (path === '/connect/') {
         loadConnectPage();
-        checkStatus();
     }
     else if (path === '/chat/') {
         loadChat();
@@ -789,7 +788,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if (lastPart === 'connect') {
                 loadConnectPage();
-                checkStatus();
             }
             else if (lastPart === 'chat') {
                 loadChat();
