@@ -56,7 +56,7 @@ async function validChanges() {
     const validChangesAccount = document.getElementById('saveChangesAccount');
     if (validChangesAccount) {
         validChangesAccount.addEventListener('click', function() {
-            const email = document.getElementById('modifEmailAccount').value;
+            const email = document.getElementById('modifEmailAccount').value.trim();
             const username = document.getElementById('modifUsernameAccount').value.trim();
             const password = document.getElementById('modifPasswordAccount').value;
             const avatar = document.querySelector('.profile-btn img').src;
@@ -105,7 +105,6 @@ async function validChanges() {
                     }
                 })
                 .catch(error => {
-                    console.error('Erreur lors de la modification du compte :', error);
                     displayError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
                 });
         });

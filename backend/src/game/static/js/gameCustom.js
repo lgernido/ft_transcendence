@@ -1,7 +1,4 @@
 function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
-
-	console.log("Bonjour")
-
 	let ballInterval;
 	let countdownInterval;
 
@@ -94,7 +91,6 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
 	
 	function resetBall()
 	{
-		console.log("Init/reset ball");
 		posBallX = 50;
 		posBallY = 50;
 		const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
@@ -140,7 +136,6 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
             leftScore: scrorePlayerLeft,
             rightScore: scrorePlayerRight,
         };
-        console.log('Sending game results to the backend:', data);
         fetch('/api/game-results/', {
             method: 'POST',
             headers: {
@@ -156,7 +151,6 @@ function launchGamePrivateCustom(maxPoints, colorP1, colorP2) {
             return response.json();
         })
         .then((data) => {
-            console.log('Game results successfully sent to the backend:', data);
         })
         .catch((error) => {
             console.error('Error sending game results to the backend:', error);

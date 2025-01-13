@@ -4,7 +4,6 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     const canvas = document.getElementById('pong');
     const userId = canvas.dataset.userId;
     const username = canvas.dataset.userUsername;
-    console.log("USername: ", username, " ID: ", userId, " ", DATA.player1.username, " ", DATA.player2.username)
     const ctx = canvas.getContext('2d');
     let left_backend = 0;
     let right_backend = 0;
@@ -193,13 +192,11 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
         } else if (data.type === 'game_over') {
             gameActive = false;
             if (wsPong) {
-                console.log("Clear socket ws")
                 wsPong.close();
                 wsPong = null;
             }
             drawGameOver(data.winner_id, data.final_score);
             setTimeout(() => {
-                console.log("RELOAD GAME OVER")
                 loadMyPage();
             }, 3000);
         } else if (data.type === 'game_forfeit') {
@@ -223,15 +220,12 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
                 wsPong = null;
             }
             setTimeout(() => {
-                console.log("RELOAD FORFEIT")
                 loadMyPage();
             }, 3000);
         }
     };
 
-    wsPong.onopen = function() {
-        console.log("WebSocket connection opened.");
-    };
+    wsPong.onopen = function() {};
 
     wsPong.onclose = function(event) {
         gameActive = false;

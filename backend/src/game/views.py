@@ -7,6 +7,7 @@ from django.contrib.sessions.models import Session
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.http import HttpResponseForbidden
+from django.utils.translation import gettext as _
 import os
 from itertools import chain
 
@@ -56,19 +57,23 @@ def log_user(request):
             username = data.get('username')
             password = data.get('password')
 
+            logging.warning(f"Received data: {data}")
             if not username or not password:
-                return JsonResponse({'error': 'Username and password are required.'}, status=400)
+                return JsonResponse({'error': 'Username and password are required.'}, status=200)
 
             user = authenticate(request, username=username, password=password)
+
+            error1 = _("Username or password invalid")
 
             if user is not None:
                 login(request, user)
                 return JsonResponse({'success': True})
             else:
-                return JsonResponse({'error': 'Username or password invalid'}, status=400)
+                logging.error(f"Failed to authenticate: username={username}, password={password}")
+                return JsonResponse({'error': error1}, status=200)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-    return render(request, 'partials/connect.html')
+            return JsonResponse({'error': 'Invalid JSON data'}, status=200)
+    return JsonResponse({'error': 'Invalid request'}, status=200)
 
 @csrf_protect
 def mypage(request):
@@ -190,13 +195,13 @@ def compte(request):
             new_avatar = data.get('avatar')
 
             if len(username) > 12:
-                return JsonResponse({'error': 'Username trop long'}, status=400)
+                return JsonResponse({'error': 'Username trop long'}, status=200)
             
             if not username or not email:
-                return JsonResponse({'error': 'Username and email are required.'}, status=400)
+                return JsonResponse({'error': 'Username and email are required.'}, status=200)
             
             if User.objects.exclude(pk=request.user.pk).filter(username=username).exists():
-                return JsonResponse({'error': 'Username already used'}, status=400)
+                return JsonResponse({'error': 'Username already used'}, status=200)
 
             user.email = email
             user.username = username

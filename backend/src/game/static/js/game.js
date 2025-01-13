@@ -1,6 +1,4 @@
 function launchGameBot(maxPoints, colorP1, colorP2) {
-    console.log("Load game with bot")
-
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
 
@@ -191,7 +189,6 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             leftScore: scrorePlayerLeft,
             rightScore: scrorePlayerRight,
         };
-        console.log('Sending game results to the backend:', data);
         fetch('/api/game-results/', {
             method: 'POST',
             headers: {
@@ -207,7 +204,6 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             return response.json();
         })
         .then((data) => {
-            console.log('Game results successfully sent to the backend:', data);
         })
         .catch((error) => {
             console.error('Error sending game results to the backend:', error);
@@ -270,7 +266,6 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             const angle = calculateAngle(impactPoint, maxAngle);
 
             const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-            console.log("1 Speed: ", totalSpeed)
             if (totalSpeed < maxSpeed)
                 speedX = Math.cos(angle) * totalSpeed;
                 speedY = Math.sin(angle) * totalSpeed;
@@ -285,7 +280,6 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             const angle = calculateAngle(impactPoint, maxAngle);
         
             const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
-            console.log("2 Speed: ", totalSpeed)
             if (totalSpeed < maxSpeed)
                 speedX = Math.cos(angle) * totalSpeed;
                 speedY = Math.sin(angle) * totalSpeed;

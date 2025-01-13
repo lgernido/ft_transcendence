@@ -1,5 +1,4 @@
 function lobby() {
-	console.log("Local Game")
     const playerName1 = document.querySelector('.card-lobby-text-name1');
     const colorSelect1 = document.getElementById('selectColorPlayer1');
 

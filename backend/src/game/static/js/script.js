@@ -640,7 +640,6 @@ function loadChat() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("R3")
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
@@ -695,7 +694,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.addEventListener('popstate', function(event) {
-        console.log("R2")
         if (event.state) {
             const pageType = event.state.page;
 
@@ -744,7 +742,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("R1")
     window.addEventListener("keydown", function(event) {
         if (event.key === "F5") {
             event.preventDefault();
@@ -835,22 +832,18 @@ function stopAllIntervals() {
     if (paddleInterval) {
         clearInterval(paddleInterval);
         paddleInterval = null;
-        console.log("Paddle clear");
     }
     if (ballInterval) {
         clearInterval(ballInterval);
         ballInterval = null;
-        console.log("ball clear");
     }
     if (moveIaInterval) {
         clearInterval(moveIaInterval);
         moveIaInterval = null;
-        console.log("moveia clear");
     }
     if (calcIaInterval) {
         clearInterval(calcIaInterval);
         calcIaInterval = null;
-        console.log("calcia clear");
     }
 }
 
@@ -860,9 +853,8 @@ function checkStatus() {
     if (!presenceOnline)
         presenceOnline = new WebSocket(wsUrl);
 
-    console.log("CheckStatus");
     presenceOnline.onopen = () => {
-        console.log("WebSocket connecté !");
+        // console.log("WebSocket connecté !");
     };
 
     presenceOnline.onmessage = (event) => {
@@ -888,11 +880,10 @@ function checkStatus() {
 
         // Mise à jour des icônes de statut
         updateStatusIcons();
-        console.log("C'est le user " + OnlineUsers.users.username)
     };
 
     presenceOnline.onclose = () => {
-        console.log("WebSocket déconnecté !");
+        // console.log("WebSocket déconnecté !");
     };
 
     presenceOnline.onerror = (error) => {

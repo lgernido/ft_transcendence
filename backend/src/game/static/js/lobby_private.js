@@ -7,11 +7,11 @@ function lobby_private() {
     
     const roomName = document.getElementById("check-invite").textContent;
     if (roomName === "Nop" || !roomName) {
-        console.log("Create new room");
+        // console.log("Create new room");
         createRoomP();
     }
     else {
-        console.log("Connect websocket");
+        // console.log("Connect websocket");
         InitWebSocketRoomP(roomName)
     }
 
@@ -38,8 +38,8 @@ function createRoomP() {
         }
     })
     .then(data => {
-        console.log("Room created successfully:", data.room_name);
-        console.log("Join the room using this link:", data.room_link);
+        // console.log("Room created successfully:", data.room_name);
+        // console.log("Join the room using this link:", data.room_link);
         copyLink(data.room_link);
         InitWebSocketRoomP(data.room_name);
     })
@@ -56,7 +56,7 @@ function InitWebSocketRoomP(roomName) {
     const currentAvatar = document.getElementById("user-info").dataset.avatar;
 
     socket_roomP.onopen = () => {
-        console.log("WebSocket connection established for room: ", roomName);
+        // console.log("WebSocket connection established for room: ", roomName);
 
         socket_roomP.send(JSON.stringify({
             type: "init",
@@ -96,7 +96,7 @@ function InitWebSocketRoomP(roomName) {
                 },
             }).then(response => {
                 if (response.ok) {
-                    console.log('Session roomName réinitialisée.');
+                    // console.log('Session roomName réinitialisée.');
                 } else {
                     console.error('Erreur lors de la réinitialisation de la session.');
                 }
@@ -179,7 +179,7 @@ function InitWebSocketRoomP(roomName) {
     };
 
     socket_roomP.onclose = function () {
-        console.log("Disconnected from room:", roomName);
+        // console.log("Disconnected from room:", roomName);
     };
 }
 
@@ -253,7 +253,6 @@ function handleColorChange() {
             playerId: playerId,
             color: color
         };
-        console.log("Update couleur: ", message);
         socket_roomP.send(JSON.stringify(message));
     }
 
@@ -303,7 +302,6 @@ function copyLink(txt) {
 
     copyButton.addEventListener("click", () => {
         navigator.clipboard.writeText(txt)
-        console.log(txt)
     });
 }
 
@@ -327,9 +325,7 @@ function handleQuitButton() {
                     'X-CSRFToken': csrfToken,
                 },
             }).then(response => {
-                if (response.ok) {
-                    console.log('Session roomName réinitialisée.');
-                } else {
+                if (!response.ok) {
                     console.error('Erreur lors de la réinitialisation de la session.');
                 }
             });

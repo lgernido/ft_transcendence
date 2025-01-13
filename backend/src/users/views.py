@@ -35,19 +35,19 @@ def create_account(request):
         new_avatar = data.get('avatar')
 
         if not email or not username or not password or not password2:
-            return JsonResponse({'error': 'Tous les champs sont requis.'}, status=400)
+            return JsonResponse({'error': 'Tous les champs sont requis.'}, status=200)
 
         if password != password2:
-            return JsonResponse({'error': 'Les mots de passe ne correspondent pas.'}, status=400)
+            return JsonResponse({'error': 'Les mots de passe ne correspondent pas.'}, status=200)
 
         if len(username) > 12:
-            return JsonResponse({'error': 'Username trop long'}, status=400)
+            return JsonResponse({'error': 'Username trop long'}, status=200)
 
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Ce nom d utilisateur est deja pris.'}, status=400)
+            return JsonResponse({'error': 'Ce nom d utilisateur est deja pris.'}, status=200)
         
         if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Cet email est deja utilise.'}, status=400)
+            return JsonResponse({'error': 'Cet email est deja utilise.'}, status=200)
 
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()

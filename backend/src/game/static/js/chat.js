@@ -6,8 +6,6 @@ function handleChat(){
     .then(data => {
         if (data) {
             current_user = data.current_user;
-            console.log(current_user);
-        } else {
         }
     })
     .catch(error => {
@@ -39,7 +37,6 @@ function handleChat(){
 		const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
 		const wsUrl = `${wsScheme}://${window.location.host}/chat2/chat/private_${channelId}/`;
 		chatSocket = new WebSocket(wsUrl);
-		console.log(chatSocket);
 
 		chatSocket.onopen = function () {
 		};

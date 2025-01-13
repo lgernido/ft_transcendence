@@ -7,11 +7,11 @@ function lobby_public() {
     
     const roomName = document.getElementById("check-invite").textContent;
     if (roomName === "Nop" || !roomName) {
-        console.log("Create new room");
+        // console.log("Create new room");
         createRoomPu();
     }
     else {
-        console.log("Connect websocket");
+        // console.log("Connect websocket");
         InitWebSocketRoomP(roomName)
     }
 
@@ -38,7 +38,7 @@ function createRoomPu() {
         }
     })
     .then(data => {
-        console.log("Room created successfully:", data.room_name);
+        // console.log("Room created successfully:", data.room_name);
         InitWebSocketRoomP(data.room_name);
     })
     .catch(error => {
@@ -54,7 +54,7 @@ function InitWebSocketRoomP(roomName) {
     const currentAvatar = document.getElementById("user-info").dataset.avatar;
 
     socket_roomPu.onopen = () => {
-        console.log("WebSocket connection established for room: ", roomName);
+        // console.log("WebSocket connection established for room: ", roomName);
 
         socket_roomPu.send(JSON.stringify({
             type: "init",
@@ -94,7 +94,7 @@ function InitWebSocketRoomP(roomName) {
                 },
             }).then(response => {
                 if (response.ok) {
-                    console.log('Session roomName réinitialisée.');
+                    // console.log('Session roomName réinitialisée.');
                 } else {
                     console.error('Erreur lors de la réinitialisation de la session.');
                 }
@@ -172,7 +172,7 @@ function InitWebSocketRoomP(roomName) {
     };
 
     socket_roomPu.onclose = function () {
-        console.log("Disconnected from room:", roomName);
+        // console.log("Disconnected from room:", roomName);
     };
 }
 
@@ -246,7 +246,6 @@ function handleColorChange() {
             playerId: playerId,
             color: color
         };
-        console.log("Update couleur: ", message);
         socket_roomPu.send(JSON.stringify(message));
     }
 
@@ -311,9 +310,7 @@ function handleQuitButton() {
                     'X-CSRFToken': csrfToken,
                 },
             }).then(response => {
-                if (response.ok) {
-                    console.log('Session roomName réinitialisée.');
-                } else {
+                if (!response.ok) {
                     console.error('Erreur lors de la réinitialisation de la session.');
                 }
             });

@@ -4,7 +4,7 @@ function ValidConnection() {
     const loginButton = document.getElementById('loginButton')
 
     loginButton.addEventListener('click', function() {
-        const username_connect = document.getElementById('InputUsername').value;
+        const username_connect = document.getElementById('InputUsername').value.trim();
         const password_connect = document.getElementById('InputPassword').value;
 
         if (!username_connect || !password_connect) {
@@ -17,7 +17,7 @@ function ValidConnection() {
             password: password_connect,
         };
 
-        const csrfToken = getCookie('csrftoken');        
+        const csrfToken = getCookie('csrftoken');       
         fetch('/log_user/', {
             method: 'POST',
             body: JSON.stringify(formData),
@@ -27,11 +27,15 @@ function ValidConnection() {
                 'X-CSRFToken': csrfToken
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Request failed with status ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 loadMyPage();
-                checkStatus();
             } else if (data.error) {
                 displayError(data.error);
             }

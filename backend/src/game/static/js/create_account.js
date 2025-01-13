@@ -32,7 +32,7 @@ function ValidFormCreateAccount() {
         });
 
     document.getElementById('submitButton').addEventListener('click', function() {
-        const emailInput = document.getElementById('floatingInputEmail').trim();
+        const emailInput = document.getElementById('floatingInputEmail').value.trim();
         const username = document.getElementById('floatingInputUsername').value.trim();
         const password = document.getElementById('floatingInputPassword').value;
         const password2 = document.getElementById('floatingInputPassword2').value;
