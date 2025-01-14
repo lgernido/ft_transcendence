@@ -97,9 +97,24 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     }
 
     function drawGameOver(winnerId, finalScore) {
-        let count = 3; // Initialiser le compte à rebours
+        let count = 3;
         const elcanvas = document.getElementById("pong")
-        const showScore = document.getElementById("showScore")
+        // const showScore = document.getElementById("showScore")
+        
+        console.log("test")
+        const parentDiv = document.getElementById("showArrow");
+        const arrow = document.getElementById("arrow")
+        if (parentDiv) {
+            console.log("Remove arrow");
+            arrow.style.display = "none";
+            arrow.remove();
+            parentDiv.style.display = "none";
+            parentDiv.remove();
+            console.log(parentDiv)
+        }
+        else {
+            console.log("Not found")
+        }
 
         elcanvas.remove()
         document.getElementById("showScore").classList.remove("d-none");

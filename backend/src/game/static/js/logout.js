@@ -17,9 +17,9 @@ function logoutUser() {
                 })
                 .then(response => {
                     if (response.ok) {
-                        loadConnectPage();
                         closeAllOpenWebSocket();
                         stopAllIntervals();
+                        loadConnectPage();
                     } else {
                         console.error('Erreur lors de la déconnexion');
                     }

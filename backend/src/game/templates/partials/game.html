@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 
-<div class="d-flex justify-content-center align-items-center" id="divCanvas" style="height: calc(100vh - 80px);">
+<div class="d-flex flex-column justify-content-center align-items-center" id="divCanvas" style="height: calc(100vh - 80px);">
 	<canvas id="pong" width="720" height="480" data-user-id="{{ user.id }}" data-user-username="{{ user.username }}">
 		Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
 	</canvas>
@@ -22,6 +22,12 @@
 			<span class="ms-2 fw-bold" id="countdown"></span>
 			<span class="ms-1">seconds...</span>
 		</span>
+	</div>
+	<div class="d-flex align-items-center justify-content-between mb-2 w-100" id="showArrow"></div>
+		<div class="d-flex flex-column border border-dark rounded px-2 py-2 bg-light text-center" id="arrow">
+			<i class="bi bi-arrow-up-square-fill" style="font-size: 50px;"></i>
+			<i class="bi bi-arrow-down-square-fill" style="font-size: 50px;"></i>
+		</div>
 	</div>
 
 	<div class="confetti-container">

@@ -8,6 +8,10 @@ function displayError(message) {
         if (message) {
             errorMessageElement.innerText = message;
             errorMessageElement.style.display = 'block';
+
+            setTimeout(() => {
+                errorMessageElement.style.display = 'none';
+            }, 3000);
         }
         else {
             errorMessageElement.style.display = 'none';
