@@ -106,6 +106,7 @@ function InitWebSocketRoomP(roomName) {
         }
 
         if (data.type === "player_left") {
+            enableAllButtonsHeader();
             alert(data.message); // Exemple : afficher un message d'alerte
             return ;
         }
@@ -171,6 +172,7 @@ function InitWebSocketRoomP(roomName) {
                     socket_roomP.close();
                     socket_roomP = null;
                 }
+                enableAllButtonsHeader();
                 loadGamePrivate(roomName, pointsLimitInput.value, data);
             }
         }
@@ -287,12 +289,24 @@ function handleReadyChange(){
         if (currentUser === playerName1.textContent.trim()) {
             const isReady = e.target.checked;
             sendReadyState('player1', isReady);
+            if (isReady) {
+                disableAllButtonsHeader();
+            }
+            else {
+                enableAllButtonsHeader();
+            }
         }
     });
     readyCheckboxPlayer2.addEventListener('change', function (e) {
         if (currentUser === playerName2.textContent.trim()) {
             const isReady = e.target.checked;
             sendReadyState('player2', isReady);
+            if (isReady) {
+                disableAllButtonsHeader();
+            }
+            else {
+                enableAllButtonsHeader();
+            }
         }
     });
 }
@@ -329,6 +343,7 @@ function handleQuitButton() {
                     console.error('Erreur lors de la réinitialisation de la session.');
                 }
             });
+            enableAllButtonsHeader()
             loadMyPage();
         });
     }
@@ -341,5 +356,33 @@ function handleStartButton() {
         socket_roomP.send(JSON.stringify({
             type: 'start_game'
         }));
+    });
+}
+
+function disableAllButtonsHeader() {
+    const buttonsDiv = document.getElementById('buttons-div');
+    const buttons = buttonsDiv.querySelectorAll('a, button');
+
+    buttons.forEach(button => {
+        if (button.tagName === 'BUTTON') {
+            button.disabled = true;
+        } else if (button.tagName === 'A') {
+            button.style.pointerEvents = 'none';
+            button.classList.add('disabled');
+        }
+    });
+}
+
+function enableAllButtonsHeader() {
+    const buttonsDiv = document.getElementById('buttons-div');
+    const buttons = buttonsDiv.querySelectorAll('a, button');
+
+    buttons.forEach(button => {
+        if (button.tagName === 'BUTTON') {
+            button.disabled = false;
+        } else if (button.tagName === 'A') {
+            button.style.pointerEvents = 'auto';
+            button.classList.remove('disabled');
+        }
     });
 }

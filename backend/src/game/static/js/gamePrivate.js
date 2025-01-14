@@ -101,19 +101,13 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
         const elcanvas = document.getElementById("pong")
         // const showScore = document.getElementById("showScore")
         
-        console.log("test")
         const parentDiv = document.getElementById("showArrow");
         const arrow = document.getElementById("arrow")
         if (parentDiv) {
-            console.log("Remove arrow");
             arrow.style.display = "none";
             arrow.remove();
             parentDiv.style.display = "none";
             parentDiv.remove();
-            console.log(parentDiv)
-        }
-        else {
-            console.log("Not found")
         }
 
         elcanvas.remove()
@@ -199,6 +193,7 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
             ball.y = dataBall.y * canvas.height;
             
         } else if (data.type === 'game_start') {
+            console.log("START")
             left_backend = data.left_paddle.id;
             right_backend = data.right_paddle.id;
             leftPaddle.color = data.left_paddle.color;

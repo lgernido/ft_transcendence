@@ -296,12 +296,14 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             ball.style.top = posBallY - 2 + '%';
             if (posBallX - 1.5 <= 0) {
                 scrorePlayerRight++;
+                updateScore();
                 if (scrorePlayerRight >= maxPoints) {
                     displayWinner('right');
                     return;
                 }
             } else if (posBallX + 1.5 >= 100) {
                 scrorePlayerLeft++;
+                updateScore();
                 if (scrorePlayerLeft >= maxPoints) {
                     displayWinner('left');
                     return;
@@ -309,7 +311,6 @@ function launchGameBot(maxPoints, colorP1, colorP2) {
             }
 
             ball.classList.add('breaking');
-            updateScore();
             await sleep(1000);
             ball.classList.remove('breaking')
             resetBall();

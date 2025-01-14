@@ -253,7 +253,6 @@ async function func_stats() {
         }
         displayName.style.display = "none";
     }
-    console.log(gettext("Bonjour"))
     displayCardGame(userId);
     drawCamembert(userId);
     localStorage.removeItem('opponentId');

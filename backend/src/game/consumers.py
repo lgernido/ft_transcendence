@@ -172,7 +172,7 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
             room = await self.get_room()
             if room:
                 await self.reset_roomname_for_all_users(room)
-                if room.player1_ready and room.player2_ready and room.player1_color != room.player2_color:
+                if room.player1_ready and room.player2_ready and room.player1_color != room.player2_color and room.player1_color != "color-player-default" and room.player2_color != "color-player-default":
                     host = await self.get_host(room)
                     
                     AllPlayers = await self.get_players(room)
@@ -181,6 +181,7 @@ class GameRoomConsumer(AsyncWebsocketConsumer):
                     socialHost = await self.get_social_for_user(host)
                     socialPlayer2 = await self.get_social_for_user(player2) if player2 else None
 
+                    logging.warning(f"cP1: {room.player1_color} cP2: {room.player2_color}")
                     response_data = {
                         'type': 'start_game',
                         'player1': {

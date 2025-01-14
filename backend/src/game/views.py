@@ -195,13 +195,13 @@ def compte(request):
             new_avatar = data.get('avatar')
 
             if len(username) > 12:
-                return JsonResponse({'error': 'Username trop long'}, status=200)
+                return JsonResponse({'error': _('Username too long')}, status=200)
             
             if not username or not email:
-                return JsonResponse({'error': 'Username and email are required.'}, status=200)
+                return JsonResponse({'error': _('Username and email are required.')}, status=200)
             
             if User.objects.exclude(pk=request.user.pk).filter(username=username).exists():
-                return JsonResponse({'error': 'Username already used'}, status=200)
+                return JsonResponse({'error': _('Username already used')}, status=200)
 
             user.email = email
             user.username = username

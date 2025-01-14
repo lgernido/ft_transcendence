@@ -39,13 +39,13 @@ function ValidFormCreateAccount() {
         const avatar = document.getElementById('avatar').src;
 
 
-        if (!emailInput.value || !username || !password || !password2) {
+        if (!emailInput || !username || !password || !password2) {
             displayError(gettext('Fill out all the categories'));
             return;
         }
 
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(emailInput.value)) {
+        if (!emailPattern.test(emailInput)) {
             displayError(gettext('Choose a valid email address'));
             return;
         }
@@ -56,7 +56,7 @@ function ValidFormCreateAccount() {
         }
 
         const formData = {
-            email: emailInput.value,
+            email: emailInput,
             username: username,
             password: password,
             password2: password2,

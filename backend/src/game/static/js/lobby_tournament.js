@@ -71,7 +71,7 @@ function tournament(){
                     <p class="player-number">Joueur ${i + 1}</p>
                 </div>
                 <div class="card-lobby-body d-flex align-items-center justify-content-center">
-                    <input type="text" class="form-control mt-3" placeholder="Enter pseudo" id="player-${i}">
+                    <input type="text" class="form-control mt-3" placeholder="Enter pseudo" id="player-${i}" maxlength="12">
                 </div>
             `;
             cardContainer.appendChild(card);

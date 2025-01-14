@@ -32,6 +32,9 @@ class PongConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
         self.room_group_name = f"pong_{self.room_name}"
 
+        self.is_ball_resetting = False  # Ajout d'un flag pour vérifier l'état de la balle
+        self.reset_time = 0  # Temps du dernier reset
+
         # Ajouter le joueur au groupe
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
@@ -68,6 +71,7 @@ class PongConsumer(AsyncWebsocketConsumer):
             game_state["ball"]["speed_x"] = 0.01
             game_state["ball"]["speed_y"] = 0.01
 
+            logging.warning("Sending start message")
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -83,7 +87,9 @@ class PongConsumer(AsyncWebsocketConsumer):
                     },
                 },
             )
-
+            logging.warning("Message sent. Waiting for 3 seconds...")
+            await asyncio.sleep(3)
+            logging.warning("3 seconds passed. Starting game loop")
             asyncio.create_task(self.game_loop())
 
 
@@ -195,24 +201,29 @@ class PongConsumer(AsyncWebsocketConsumer):
                 state = self.game_states[self.room_name]
                 ball = state["ball"]
                 
-                if ball["speed_x"] != 0 and ball["speed_y"] != 0:
-                    ball["x"] += ball["speed_x"] * delta_time * self.FPS
-                    ball["y"] += ball["speed_y"] * delta_time * self.FPS
+                if self.is_ball_resetting:
+                    if current_time - self.reset_time >= 1:
+                        self.is_ball_resetting = False
 
-                # Limiter la position de la balle pour qu'elle reste dans les limites verticales
-                ball["y"] = max(0.02 + ball["radius"], min(0.98 - ball["radius"], ball["y"]))
-                # Vérifier si un point a été marqué
-                if ball["x"] <= 0:
-                    state["right_paddle"]["score"] += 1
-                    await self.check_winner(state)
-                    self.reset_ball(ball)
-                elif ball["x"] >= 1:
-                    state["left_paddle"]["score"] += 1
-                    await self.check_winner(state)
-                    self.reset_ball(ball)
+                if not self.is_ball_resetting:
+                    if ball["speed_x"] != 0 and ball["speed_y"] != 0:
+                        ball["x"] += ball["speed_x"] * delta_time * self.FPS
+                        ball["y"] += ball["speed_y"] * delta_time * self.FPS
 
-                await self.handle_collisions(state, ball)
-                await self.send_game_state(state)
+                    ball["y"] = max(0.02 + ball["radius"], min(0.98 - ball["radius"], ball["y"]))
+
+                    if ball["x"] <= 0:
+                        state["right_paddle"]["score"] += 1
+                        await self.check_winner(state)
+                        self.reset_ball(ball)
+                    elif ball["x"] >= 1:
+                        state["left_paddle"]["score"] += 1
+                        await self.check_winner(state)
+                        self.reset_ball(ball)
+
+                    await self.handle_collisions(state, ball)
+                    await self.send_game_state(state)
+
                 last_update = current_time
             
             await asyncio.sleep(0.001)
@@ -220,9 +231,13 @@ class PongConsumer(AsyncWebsocketConsumer):
     def reset_ball(self, ball):
         """Réinitialise la position et la vitesse de la balle"""
         ball["x"] = 0.5
-        ball["y"] = 0.4
+        ball["y"] = 0.5
+
+        self.BALL_SPEED = 0.01
+        self.is_ball_resetting = True
+        self.reset_time = asyncio.get_event_loop().time()
         # Direction aléatoire mais vitesse constante
-        angle = random.uniform(-30, 30)  # Angle de départ aléatoire entre -45° et 45°
+        angle = random.uniform(-30, 30)
         num = random.randint(-1, 1)
         if num == 0:
             num = -1
@@ -250,6 +265,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             impact_point = (ball["y"] - left_paddle["y"]) / self.PADDLE_HEIGHT
             angle = 75 * (2 * impact_point - 1)  # Angle entre -75° et 75°
 
+            if self.BALL_SPEED < 0.037:
+                self.BALL_SPEED *= 1.05
+
             # Maintenir une vitesse constante
             ball["speed_x"] = self.BALL_SPEED * math.cos(math.radians(angle))
             ball["speed_y"] = self.BALL_SPEED * math.sin(math.radians(angle))
@@ -265,6 +283,9 @@ class PongConsumer(AsyncWebsocketConsumer):
             impact_point = (ball["y"] - right_paddle["y"]) / self.PADDLE_HEIGHT
             angle = 75 * (2 * impact_point - 1)  # Angle entre -75° et 75°
             
+            if self.BALL_SPEED < 0.037:
+                self.BALL_SPEED *= 1.05
+
             # Maintenir une vitesse constante
             ball["speed_x"] = self.BALL_SPEED * math.cos(math.radians(angle))
             ball["speed_y"] = self.BALL_SPEED * math.sin(math.radians(angle))
