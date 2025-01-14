@@ -8,7 +8,7 @@ function ValidConnection() {
         const password_connect = document.getElementById('InputPassword').value;
 
         if (!username_connect || !password_connect) {
-            displayError('Veuillez remplir tous les champs !');
+            displayError(gettext('Fill out all the categories'));
             return;
         }
 
@@ -38,7 +38,7 @@ function ValidConnection() {
         })
         .catch(error => {
             console.error('Erreur lors de la connexion :', error);
-            displayError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+            displayError(error.message || gettext('An error occurred, please try again'));
         });
     });
 }

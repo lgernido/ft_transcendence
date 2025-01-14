@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-08 10:41+0000\n"
+"POT-Creation-Date: 2025-01-14 10:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -247,6 +247,7 @@ msgstr "Lancer"
 msgid "Copy invite link"
 msgstr "Copier le lien d'invitation"
 
+#: game/templates/partials/lobby_private.html:30
 #: game/templates/partials/lobby_private.html:57
 msgid "Ready"
 msgstr "Prêt"
@@ -327,6 +328,74 @@ msgstr "Date inconnue"
 #: game/templates/partials/stats.html:67
 msgid "Game not found"
 msgstr "Pas de partie trouvée"
+
+#: game/views.py:58
+msgid "Username and password are required."
+msgstr "Pseudo et mot de passe requis."
+
+#: game/views.py:66
+msgid "Username or password invalid"
+msgstr "Pseudo ou mot de passe invalide"
+
+#: game/views.py:197 users/views.py:61
+msgid "Social profile not found."
+msgstr "Pas de profil trouvé"
+
+#: game/views.py:399
+msgid "Room does not exist."
+msgstr "La partie n'existe pas."
+
+#: users/views.py:40
+msgid "All categories are required"
+msgstr "Veuillez remplir tous les champs"
+
+#: users/views.py:43
+msgid "The passwords do not match"
+msgstr "Les mots de passe ne sont pas identiques"
+
+#: users/views.py:46
+msgid "This username is already taken"
+msgstr "Ce pseudo est déjà utilisé"
+
+#: users/views.py:49
+msgid "This email is already used"
+msgstr "Cet email est déjà utilisé"
+
+#: users/views.py:106
+#, python-brace-format
+msgid "User {target_user.user.username} added as a friend."
+msgstr "Utilisateur {target_user.user.username} ajouté en tant qu'ami"
+
+#: users/views.py:109
+#, python-brace-format
+msgid "User {target_user.user.username} removed from friends."
+msgstr "Utilisateur {target_user.user.username} retiré de la liste d'amis"
+
+#: users/views.py:112
+#, python-brace-format
+msgid "User {target_user.user.username} blocked."
+msgstr "Utilisateur {target_user.user.username} bloqué"
+
+#: users/views.py:115
+#, python-brace-format
+msgid "User {target_user.user.username} unblocked."
+msgstr "Utilisateur {target_user.user.username} débloqué"
+
+#: users/views.py:126 users/views.py:169
+msgid "You must be authenticated to perform this action."
+msgstr "Vous devez vous identifier pour faire cette action"
+
+#: users/views.py:197 users/views.py:210 users/views.py:219
+msgid "User not found"
+msgstr "Utilisateur pas trouvé"
+
+#: users/views.py:198 users/views.py:211
+msgid "Username parameter is missing"
+msgstr "Le pseudo est manquant"
+
+#: users/views.py:221
+msgid "User not authenticated"
+msgstr "Utilisateur non authentifié"
 
 #~ msgid "Search a user..."
 #~ msgstr "Rechercher un utilisateur..."

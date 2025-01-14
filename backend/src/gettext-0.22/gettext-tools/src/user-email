@@ -17,7 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Prerequisites for using ${exec_prefix}/lib and ${datarootdir}/locale.
-prefix="/home/lgernido/local"
+prefix="/home/lgernido/.local"
 exec_prefix="${prefix}"
 datarootdir="${prefix}/share"
 datadir="${datarootdir}"

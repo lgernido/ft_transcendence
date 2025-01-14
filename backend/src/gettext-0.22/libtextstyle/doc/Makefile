@@ -341,7 +341,7 @@ am__DIST_COMMON = $(libtextstyle_TEXINFOS) $(srcdir)/Makefile.in \
 	$(top_srcdir)/build-aux/mdate-sh \
 	$(top_srcdir)/build-aux/texinfo.tex
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing' aclocal-1.16
+ACLOCAL = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing' aclocal-1.16
 ALLOCA = 
 ALLOCA_H = alloca.h
 AMTAR = $${TAR-tar}
@@ -351,9 +351,9 @@ AR = ar
 ARFLAGS = cr
 AS = as
 ASSERT_H = 
-AUTOCONF = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing' autoconf
-AUTOHEADER = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing' autoheader
-AUTOMAKE = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing' automake-1.16
+AUTOCONF = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing' autoconf
+AUTOHEADER = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing' autoheader
+AUTOMAKE = ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing' automake-1.16
 AWK = gawk
 BITSIZEOF_PTRDIFF_T = 
 BITSIZEOF_SIG_ATOMIC_T = 
@@ -1264,7 +1264,7 @@ LTLIBTERMINFO = -lncurses
 LTLIBTHREAD = 
 LTLIBXML = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = env LANG= LC_MESSAGES= LC_ALL= LANGUAGE= ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing' makeinfo
+MAKEINFO = env LANG= LC_MESSAGES= LC_ALL= LANGUAGE= ${SHELL} '/home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing' makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
 NAMESPACING = yes
@@ -1634,8 +1634,8 @@ SYS_TIME_H_DEFINES_STRUCT_TIMESPEC = 0
 # Documentation in DVI format.
 
 # Override of automake's definition:
-#TEXI2DVI = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing texi2dvi
-TEXI2DVI = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing texi2dvi $(TEXINCLUDES)
+#TEXI2DVI = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing texi2dvi
+TEXI2DVI = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing texi2dvi $(TEXINCLUDES)
 TIME_H_DEFINES_STRUCT_TIMESPEC = 1
 TIME_H_DEFINES_TIME_UTC = 1
 UINT32_MAX_LT_UINTMAX_MAX = 1
@@ -1653,10 +1653,10 @@ WINDOWS_64_BIT_ST_SIZE = 0
 WINDOWS_STAT_INODES = 0
 WINDOWS_STAT_TIMESPEC = 0
 WINT_T_SUFFIX = 
-abs_builddir = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/doc
-abs_srcdir = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/doc
-abs_top_builddir = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle
-abs_top_srcdir = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle
+abs_builddir = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/doc
+abs_srcdir = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/doc
+abs_top_builddir = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle
+abs_top_srcdir = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -1685,7 +1685,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/install-sh
+install_sh = ${SHELL} /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -1701,7 +1701,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /home/lgernido/local
+prefix = /home/lgernido/.local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -1733,8 +1733,8 @@ MAINTAINERCLEANFILES = libtextstyle_*.html
 # Documentation in Portable Document Format.
 
 # Override of automake's definition:
-#TEXI2PDF = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing texi2dvi --pdf
-TEXI2PDF = /home/lgernido/Documents/ft_transcendence/backend/gettext-0.22/libtextstyle/build-aux/missing texi2dvi --pdf $(TEXINCLUDES)
+#TEXI2PDF = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing texi2dvi --pdf
+TEXI2PDF = /home/lgernido/Documents/ft_transcendence/backend/src/gettext-0.22/libtextstyle/build-aux/missing texi2dvi --pdf $(TEXINCLUDES)
 
 # Documentation in HTML format.
 TEXI2HTML = /usr/bin/perl $(top_srcdir)/build-aux/texi2html

@@ -40,13 +40,13 @@ function ValidFormCreateAccount() {
 
 
         if (!emailInput.value || !username || !password || !password2) {
-            displayError('Veuillez remplir tous les champs !');
+            displayError(gettext('Fill out all the categories'));
             return;
         }
 
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(emailInput.value)) {
-            displayError('Veuillez entrer une adresse email valide !');
+            displayError(gettext('Choose a valid email address'));
             return;
         }
 
@@ -72,7 +72,7 @@ function ValidFormCreateAccount() {
         .then(response => {
             if (!response.ok) {
                 return response.json().then(data => { 
-                    throw new Error(data.error || 'Erreur inconnue'); 
+                    throw new Error(gettext(data.error || 'Unknown error')); 
                 });
             }
             return response.json();
@@ -86,7 +86,7 @@ function ValidFormCreateAccount() {
         })
         .catch(error => {
             console.error('Erreur lors de la création du compte :', error);
-            displayError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+            displayError(error.message || gettext('An error occurred, please try again'));
         });
     });
 }

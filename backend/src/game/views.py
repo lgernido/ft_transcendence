@@ -25,6 +25,8 @@ import logging
 logger = logging.getLogger(__name__)
 import uuid
 
+from django.utils.translation import gettext as _
+
 @csrf_protect
 @login_required
 def store_colors(request):
@@ -53,7 +55,7 @@ def log_user(request):
             password = data.get('password')
 
             if not username or not password:
-                return JsonResponse({'error': 'Username and password are required.'}, status=400)
+                return JsonResponse({'error': _('Username and password are required.')}, status=400)
 
             user = authenticate(request, username=username, password=password)
 
@@ -61,7 +63,7 @@ def log_user(request):
                 login(request, user)
                 return JsonResponse({'success': True})
             else:
-                return JsonResponse({'error': 'Username or password invalid'}, status=400)
+                return JsonResponse({'error': _('Username or password invalid')}, status=400)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
     return render(request, 'partials/connect.html')
@@ -192,7 +194,7 @@ def compte(request):
     try:
         social = Social.objects.get(user=request.user)
     except Social.DoesNotExist:
-        return JsonResponse({'error': 'Social profile not found.'}, status=404)
+        return JsonResponse({'error': _('Social profile not found.')}, status=404)
 
     if request.method == 'POST':
         
@@ -394,7 +396,7 @@ def get_room_status(request, room_name):
         room = Room.objects.get(name=room_name)
         return JsonResponse({'room_name': room.name, 'players': [player.username for player in room.players.all()]})
     except Room.DoesNotExist:
-        return JsonResponse({'error': 'Room does not exist.'}, status=404)
+        return JsonResponse({'error': _('Room does not exist.')}, status=404)
     
 def reset_room_session(request):
     if request.method == "POST":

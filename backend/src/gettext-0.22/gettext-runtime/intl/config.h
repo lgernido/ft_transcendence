@@ -719,7 +719,7 @@
 #define ICONV_CONST 
 
 /* Define to the value of ${prefix}, as a string. */
-#define INSTALLPREFIX "/home/lgernido/local"
+#define INSTALLPREFIX "/home/lgernido/.local"
 
 /* Define if integer division by zero raises signal SIGFPE. */
 #define INTDIV0_RAISES_SIGFPE 1

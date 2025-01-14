@@ -111,13 +111,13 @@ function launchGamePrivate(roomName, maxPoints) {
             ctx.textBaseline = 'middle';
 
             const winnerName = winnerId === left_backend ? leftPaddle.name : rightPaddle.name;
-            ctx.fillText(`${winnerName} Wins!`, canvas.width / 2, canvas.height / 2 - 40);
+            ctx.fillText(gettext('%(winnerName)s Wins!').replace('%(winnerName)s', winnerName), canvas.width / 2, canvas.height / 2 - 40);
             ctx.font = '30px Arial';
-            ctx.fillText(`Final Score: ${finalScore.left} - ${finalScore.right}`, canvas.width / 2, canvas.height / 2 + 20);
+            ctx.fillText(gettext('Final Score: %(left)s - %(right)s').replace('%(left)s', finalScore.left).replace('%(right)s', finalScore.right), canvas.width / 2, canvas.height / 2 + 20);
             
             // Afficher le message de redirection avec le décompte
             ctx.font = '20px Arial';
-            ctx.fillText(`Game will redirect to lobby in ${countdown} seconds...`, canvas.width / 2, canvas.height / 2 + 80);
+            ctx.fillText(gettext('Game will redirect to lobby in %(countdown)s seconds...').replace('%(countdown)s', countdown), canvas.width / 2, canvas.height / 2 + 80);
         }
 
         // Mettre à jour le compte à rebours chaque seconde
@@ -221,7 +221,7 @@ function launchGamePrivate(roomName, maxPoints) {
     wsPong.onclose = function(event) {
         gameActive = false;
         if (!event.wasClean) {
-            alert("Connection closed unexpectedly. Game ended.");
+            alert(gettext("Connection closed unexpectedly. Game ended."));
         }
         window.location.href = '/mypage';
     };

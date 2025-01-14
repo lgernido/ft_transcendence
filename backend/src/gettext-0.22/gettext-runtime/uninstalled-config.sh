@@ -99,15 +99,15 @@ POSUB='po'
 
 # XGETTEXT is a GNU xgettext version ≥ 0.12, if found in $PATH, or ':' if
 # not found.
-XGETTEXT='/home/lgernido/local/bin/xgettext'
+XGETTEXT=':'
 
 # XGETTEXT_015 is a GNU xgettext version ≥ 0.15, if found in $PATH, or ':' if
 # not found.
-XGETTEXT_015='/home/lgernido/local/bin/xgettext'
+XGETTEXT_015=':'
 
 # GMSGFMT is a GNU msgfmt, if found in $PATH, or ':' if not found.
-GMSGFMT='/home/lgernido/local/bin/msgfmt'
+GMSGFMT=':'
 
 # GMSGFMT_015 is a GNU msgfmt version ≥ 0.15, if found in $PATH, or ':' if
 # not found.
-GMSGFMT_015='/home/lgernido/local/bin/msgfmt'
+GMSGFMT_015=':'

@@ -2323,7 +2323,7 @@
 /* #undef ICONV_FLAVOR */
 
 /* Define to the value of ${prefix}, as a string. */
-#define INSTALLPREFIX "/home/lgernido/local"
+#define INSTALLPREFIX "/home/lgernido/.local"
 
 /* Define as the bit index in the word where to find bit 0 of the exponent of
    'long double'. */

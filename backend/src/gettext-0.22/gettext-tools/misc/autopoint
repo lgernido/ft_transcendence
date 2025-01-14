@@ -27,7 +27,7 @@ archive_version=0.22
 
 # Set variables
 # - gettext_datadir     directory where the data files are stored.
-prefix="/home/lgernido/local"
+prefix="/home/lgernido/.local"
 datarootdir="${prefix}/share"
 : ${gettext_datadir="${datarootdir}/gettext"}
 : ${AUTOM4TE=autom4te}
