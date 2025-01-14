@@ -9,7 +9,7 @@ function tournament(){
 
 
         if (selectedNumber === 0 || selectedNumber === null) {
-            alert('Veuillez sélectionner un nombre de joueurs');
+            alert(gettext('Select the number of players'));
             return;
         }
         
@@ -17,7 +17,7 @@ function tournament(){
             const playerInput = document.getElementById(`player-${i}`);
             
             if (playerInput.value === '') {
-                alert('Veuillez renseigner tous les champs');
+                alert(gettext('Fill out all the categories'));
                 selectedNumber = 0;
                 return;
             }
@@ -28,7 +28,7 @@ function tournament(){
         for (let i = 0; i < players.length; i++) {
             for (let j = i + 1; j < players.length; j++) {
                 if (players[i] === players[j]) {
-                    alert('Veuillez renseigner des pseudos différents');
+                    alert(gettext('Choose another name'));
                     selectedNumber = 0;
                     return;
                 }

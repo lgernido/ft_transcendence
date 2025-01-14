@@ -20,6 +20,8 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.utils.translation import gettext as _
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -35,19 +37,16 @@ def create_account(request):
         new_avatar = data.get('avatar')
 
         if not email or not username or not password or not password2:
-            return JsonResponse({'error': 'Tous les champs sont requis.'}, status=200)
+            return JsonResponse({'error': _('All categories are required')}, status=400)
 
         if password != password2:
-            return JsonResponse({'error': 'Les mots de passe ne correspondent pas.'}, status=200)
-
-        if len(username) > 12:
-            return JsonResponse({'error': 'Username trop long'}, status=200)
+            return JsonResponse({'error': _('The passwords do not match')}, status=400)
 
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Ce nom d utilisateur est deja pris.'}, status=200)
+            return JsonResponse({'error': _('This username is already taken')}, status=400)
         
         if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Cet email est deja utilise.'}, status=200)
+            return JsonResponse({'error': _('This email is already used')}, status=400)
 
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
@@ -59,7 +58,7 @@ def create_account(request):
         try:
             social = Social.objects.get(user=user)
         except Social.DoesNotExist:
-            return JsonResponse({'error': 'Social profile not found.'}, status=404)
+            return JsonResponse({'error': _('Social profile not found.')}, status=404)
         if new_avatar:
             if new_avatar.startswith('data:image'):
                 format, imgstr = new_avatar.split(';base64,')
@@ -114,16 +113,16 @@ class FriendshipActionView(APIView):
             
             if action == 'add':
                 current_user_social.add_friend(target_user)
-                return Response({"message": f"User {target_user.user.username} added as a friend."}, status=status.HTTP_200_OK)
+                return Response({"message": _(f"User {target_user.user.username} added as a friend.")}, status=status.HTTP_200_OK)
             elif action == 'remove':
                 current_user_social.remove_friend(target_user)
-                return Response({"message": f"User {target_user.user.username} removed from friends."}, status=status.HTTP_200_OK)
+                return Response({"message": _(f"User {target_user.user.username} removed from friends.")}, status=status.HTTP_200_OK)
             elif action == 'block':
                 current_user_social.block_user(target_user)
-                return Response({"message": f"User {target_user.user.username} blocked."}, status=status.HTTP_200_OK)
+                return Response({"message": _(f"User {target_user.user.username} blocked.")}, status=status.HTTP_200_OK)
             elif action == 'unblock':
                 current_user_social.unblock_user(target_user)
-                return Response({"message": f"User {target_user.user.username} unblocked."}, status=status.HTTP_200_OK)
+                return Response({"message": _(f"User {target_user.user.username} unblocked.")}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -134,7 +133,7 @@ class ContactActionView(APIView):
         # Vérification de l'authentification
         if current_user.is_anonymous:
             return Response(
-                {"error": "You must be authenticated to perform this action."},
+                {"error": _("You must be authenticated to perform this action.")},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
@@ -188,7 +187,7 @@ class GetUsers(APIView):
         # Vérification de l'authentification
         if current_user.is_anonymous:
             return Response(
-                {"error": "You must be authenticated to perform this action."},
+                {"error": _("You must be authenticated to perform this action.")},
                 status=status.HTTP_401_UNAUTHORIZED
             )
         # Vérification du paramètre de requête
@@ -228,8 +227,8 @@ def GetUserByName(request):
                 'username': data_user.username,
             })
         except ObjectDoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-    return JsonResponse({'error': 'Username parameter is missing'}, status=400)
+            return JsonResponse({'error': _('User not found')}, status=404)
+    return JsonResponse({'error': _('Username parameter is missing')}, status=400)
 
 def GetUserById(request):
     user_id = request.GET.get('user_id')
@@ -241,8 +240,8 @@ def GetUserById(request):
                 'username': data_user.username,
             })
         except ObjectDoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-    return JsonResponse({'error': 'Username parameter is missing'}, status=400)
+            return JsonResponse({'error': _('User not found')}, status=404)
+    return JsonResponse({'error': _('Username parameter is missing')}, status=400)
 
 def GetUser42(request):
     if request.user.is_authenticated:
@@ -250,7 +249,7 @@ def GetUser42(request):
             current_user = Social.objects.get(id=request.user.id)
             return JsonResponse({"is_42": current_user.user42})
         except Social.DoesNotExist:
-            return JsonResponse({"error": "L'utilisateur n'existe pas dans Social"}, status=404)
+            return JsonResponse({"error": _("User not found")}, status=404)
     else:
-        return JsonResponse({"error": "Utilisateur non authentifié"}, status=401)
+        return JsonResponse({"error": _("User not authenticated")}, status=401)
 

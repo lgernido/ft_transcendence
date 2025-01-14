@@ -35,7 +35,7 @@ function launchTournament(maxPoints, players) {
         ballElement.classList.add('hidden');
         countdownElement.style.display = 'none';
 
-        roundAnnouncement.innerHTML = `Prochain Round:<br>${player1} VS ${player2}`;
+        roundAnnouncement.innerHTML = `Next Round:<br>${player1} VS ${player2}`;
         roundAnnouncement.style.display = 'block';
 
         playerLeft.classList.remove('slide-in-left');

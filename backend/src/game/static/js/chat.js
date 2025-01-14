@@ -65,7 +65,7 @@ function handleChat(){
 		fetch(`/chat2/load_messages?query=${channelId}`)
 			.then(response => {
 				if (!response.ok) {
-					throw new Error("Failed to load messages");
+					throw new Error(gettext("Failed to load messages"));
 				}
 				return response.json();
 			})
@@ -82,7 +82,7 @@ function handleChat(){
 			})
 			.catch(error => {
 			console.error("Erreur lors du chargement des messages :", error);
-			messagesContainer.innerHTML = "<p>Impossible de charger les messages. Essayez plus tard.</p>";
+			messagesContainer.innerHTML = gettext("<p>Impossible to load messages, try again later.</p>");
 		});
 	}
 
@@ -157,7 +157,7 @@ function handleChat(){
 				<img src="${user.avatar}" alt="Avatar" class="img-fluid rounded-circle me-3" style="width: 50px; height: 50px;">
 				<div data_user_id='${user.id}'>
 					<div class="user-details"><strong>${user.username}</strong></div>
-					<div class="last-message text-muted">${user.last_message || "Aucun message"}</div>
+					<div class="last-message text-muted">${user.last_message || gettext("No message")}</div>
 				</div>
 			`;
 			userEntry.addEventListener("click", () => handleUserClick(user)); // Attacher l'événement clic

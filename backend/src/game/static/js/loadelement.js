@@ -4,7 +4,7 @@ function loadheader()
 	fetch('/header/')
 	.then(response => {
 		if (!response.ok) {
-			throw new Error('Error network response');
+			throw new Error(gettext('Error network response'));
 		}
 		return response.text();
 	})

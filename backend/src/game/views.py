@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 import uuid
 
 IP_HOST = os.getenv("IP_HOST")
+from django.utils.translation import gettext as _
 
 @csrf_protect
 @login_required
@@ -59,7 +60,7 @@ def log_user(request):
 
             logging.warning(f"Received data: {data}")
             if not username or not password:
-                return JsonResponse({'error': 'Username and password are required.'}, status=200)
+                return JsonResponse({'error': _('Username and password are required.')}, status=200)
 
             user = authenticate(request, username=username, password=password)
 
@@ -69,8 +70,7 @@ def log_user(request):
                 login(request, user)
                 return JsonResponse({'success': True})
             else:
-                logging.error(f"Failed to authenticate: username={username}, password={password}")
-                return JsonResponse({'error': error1}, status=200)
+                return JsonResponse({'error': _('Username or password invalid')}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=200)
     return JsonResponse({'error': 'Invalid request'}, status=200)
@@ -181,7 +181,7 @@ def compte(request):
     try:
         social = Social.objects.get(user=request.user)
     except Social.DoesNotExist:
-        return JsonResponse({'error': 'Social profile not found.'}, status=404)
+        return JsonResponse({'error': _('Social profile not found.')}, status=404)
 
     if request.method == 'POST':
         
@@ -258,6 +258,7 @@ def logout_view(request):
 def check_user_status(request):
     return JsonResponse({'authenticated': request.user.is_authenticated})
 
+@csrf_protect
 def set_language(request):
     if request.method == 'POST':
         lang = request.POST.get('language')
@@ -419,7 +420,7 @@ def get_room_status(request, room_name):
         room = Room.objects.get(name=room_name)
         return JsonResponse({'room_name': room.name, 'players': [player.username for player in room.players.all()]})
     except Room.DoesNotExist:
-        return JsonResponse({'error': 'Room does not exist.'}, status=404)
+        return JsonResponse({'error': _('Room does not exist.')}, status=404)
     
 def reset_room_session(request):
     if request.method == "POST":

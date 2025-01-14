@@ -62,7 +62,7 @@ async function validChanges() {
             const avatar = document.querySelector('.profile-btn img').src;
 
             if (!email || !username) {
-                displayError('Veuillez remplir tous les champs !');
+                displayError(gettext('Fill out all the categories'));
                 return;
             }
 
@@ -92,7 +92,7 @@ async function validChanges() {
                 .then(response => {
                     if (!response.ok) {
                         return response.json().then(data => {
-                            throw new Error(data.error || 'Erreur inconnue');
+                            throw new Error(getttext(data.error || 'Unknown error'));
                         });
                     }
                     return response.json();
@@ -105,7 +105,8 @@ async function validChanges() {
                     }
                 })
                 .catch(error => {
-                    displayError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+                    console.error('Erreur lors de la modification du compte :', error);
+                    displayError(gettext(error.message || 'An error occurred, please try again'));
                 });
         });
     }

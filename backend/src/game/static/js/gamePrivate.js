@@ -245,7 +245,7 @@ function launchGamePrivate(roomName, maxPoints, DATA) {
     wsPong.onclose = function(event) {
         gameActive = false;
         if (!event.wasClean) {
-            alert("Connection closed unexpectedly. Game ended.");
+            alert(gettext("Connection closed unexpectedly. Game ended."));
         }
     };
 

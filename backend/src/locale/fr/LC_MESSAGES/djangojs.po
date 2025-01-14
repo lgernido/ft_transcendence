@@ -8,7 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2025-01-13 14:08+0000\n"
+=======
+"POT-Creation-Date: 2025-01-14 08:52+0000\n"
+>>>>>>> origin/lilbokit
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +21,126 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+<<<<<<< HEAD
 #: src/game/static/js/camenbert.js:256
 msgid "Bonjour"
 msgstr "Bonjour"
+=======
+
+#: game/static/js/amis.js:63
+msgid "Failed to delete the user"
+msgstr "L'utilisateur n'a pas été supprimé"
+
+#: game/static/js/amis.js:72
+msgid "An error occurred while removing the user."
+msgstr "Une erreur s'est produite au moment de retirer l'utilisateur"
+
+#: game/static/js/amis.js:98
+msgid "Failed to block the user"
+msgstr "L'utilisateur n'a pas été bloqué"
+
+#: game/static/js/amis.js:107
+msgid "An error occurred while blocking the user."
+msgstr "Une erreur s'est produite au moment de bloquer l'utilisateur"
+
+#: game/static/js/amis.js:133
+msgid "Failed to unblock the user"
+msgstr "L'utilisateur n'a pas été débloqué"
+
+#: game/static/js/amis.js:142
+msgid "An error occurred while unblocking the user."
+msgstr "Une erreur s'est produite au moment de débloquer l'utilisateur"
+
+#: game/static/js/amis.js:171
+msgid "Error while looking for the users"
+msgstr "Une erreur s'est produite au moment de récupérer les utilisateurs"
+
+#: game/static/js/amis.js:179 game/static/js/amis.js:202
+msgid "No user found"
+msgstr "Aucun utilisateur trouvé"
+
+#: game/static/js/amis.js:184 game/static/js/amis.js:194
+msgid "An error occurred while getting the data"
+msgstr "Une erreur s'est produite au moment de récupérer les données"
+
+#: game/static/js/amis.js:207
+msgid "Can not load friends list"
+msgstr "Impossible de charger la liste d'amis"
+
+#: game/static/js/amis.js:234
+msgid "An error occurred : "
+msgstr "Une erreur s'est produite : "
+
+#: game/static/js/amis.js:277 game/static/js/camenbert.js:8
+#: game/static/js/camenbert.js:31
+msgid "Failed to fetch profile data"
+msgstr "Erreur pour récupérer les informations du profil"
+
+#: game/static/js/camenbert.js:244
+msgid "Failed to fetch user ID"
+msgstr "Impossible de récupérer l'ID utilisateur"
+
+#: game/static/js/chat.js:71
+msgid "Failed to load messages"
+msgstr "Les messages n'ont pas pu être chargés"
+
+#: game/static/js/chat.js:88
+msgid "<p>Impossible to load messages, try again later.</p>"
+msgstr "Impossible de charger les messages, essayer plus tard"
+
+#: game/static/js/chat.js:163
+msgid "No message"
+msgstr "Pas de message"
+
+#: game/static/js/compte.js:65 game/static/js/create_account.js:43
+#: game/static/js/lobby_tournament.js:20 game/static/js/valid_login.js:11
+msgid "Fill out all the categories"
+msgstr "Veuillez remplir tout les champs"
+
+#: game/static/js/compte.js:104 game/static/js/create_account.js:89
+#: game/static/js/valid_login.js:41
+msgid "An error occurred, please try again"
+msgstr "Une erreur s'est produite, veuillez réessayer"
+
+#: game/static/js/create_account.js:49
+msgid "Choose a valid email address"
+msgstr "Veuillez renseigner une adresse email valide"
+
+#: game/static/js/create_account.js:75
+msgid "Unknown error"
+msgstr "Error inconnue"
+
+#: game/static/js/game.js:198 game/static/js/gameCustom.js:152
+#: game/static/js/script.js:86 game/static/js/script.js:127
+#: game/static/js/script.js:210
+msgid "Network response was not ok"
+msgstr "Erreur réseau"
+
+#: game/static/js/gamePrivate.js:114
+msgid "%(winnerName)s Wins!"
+msgstr "%(winnerName)s gagne !"
+
+#: game/static/js/gamePrivate.js:116
+msgid "Final Score: %(left)s - %(right)s"
+msgstr "Score Final: %(left)s - %(right)s"
+
+#: game/static/js/gamePrivate.js:120
+msgid "Game will redirect to lobby in %(countdown)s seconds..."
+msgstr "Retour au lobby dans %(countdown)s secondes..."
+
+#: game/static/js/gamePrivate.js:224
+msgid "Connection closed unexpectedly. Game ended."
+msgstr "La connexion a été coupée de manière inattendue. Fin de la partie."
+
+#: game/static/js/loadelement.js:7
+msgid "Error network response"
+msgstr "Erreur réseau"
+
+#: game/static/js/lobby_tournament.js:12
+msgid "Select the number of players"
+msgstr "Sélectionner le nombre de joueurs"
+
+#: game/static/js/lobby_tournament.js:31
+msgid "Choose another name"
+msgstr "Entrer un autre pseudo"
+>>>>>>> origin/lilbokit

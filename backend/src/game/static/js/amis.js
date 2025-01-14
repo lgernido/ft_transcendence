@@ -46,7 +46,7 @@ function deleteUser(userId) {
         return;
     }
     
-    if (confirm(`Are you sure you want to remove user ${userId} from your list?`)) {
+    if (confirm(gettext(`Are you sure you want to remove user ${userId} from your list?`))) {
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -60,16 +60,16 @@ function deleteUser(userId) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to delete the user');
+                throw new Error(gettext('Failed to delete the user'));
             }
             return response.json();
         })
         .then(data => {
-            alert(`User ${userId} has been removed successfully!`);
+            alert(gettext(`User ${userId} has been removed successfully!`));
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while removing the user.');
+            alert(gettext('An error occurred while removing the user.'));
         });
     }
 }
@@ -81,7 +81,7 @@ function blockUser(userId) {
         return;
     }
     
-    if (confirm(`Are you sure you want to block user ${userId}?`)) {
+    if (confirm(gettext(`Are you sure you want to block user ${userId}?`))) {
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -95,16 +95,16 @@ function blockUser(userId) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to block the user');
+                throw new Error(gettext('Failed to block the user'));
             }
             return response.json();
         })
         .then(data => {
-            alert(`User ${userId} has been blocked successfully!`);
+            alert(gettext(`User ${userId} has been blocked successfully!`));
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while blocking the user.');
+            alert(gettext('An error occurred while blocking the user.'));
         });
     }
 }
@@ -116,7 +116,7 @@ function unblockUser(userId) {
         return;
     }
     
-    if (confirm(`Are you sure you want to unblock user ${userId}?`)) {
+    if (confirm(gettext(`Are you sure you want to unblock user ${userId}?`))) {
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -130,7 +130,7 @@ function unblockUser(userId) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to unblock the user');
+                throw new Error(gettext('Failed to unblock the user'));
             }
             return response.json();
         })
@@ -139,7 +139,7 @@ function unblockUser(userId) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while unblocking the user.');
+            alert(gettext('An error occurred while unblocking the user.'));
         });
     }
 }
@@ -168,7 +168,7 @@ function getUsers() {
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Erreur lors de la récupération des utilisateurs');
+                        throw new Error(gettext('Error while looking for the users'));
                     }
                     return response.json();
                 })
@@ -176,12 +176,12 @@ function getUsers() {
                     if (data && Array.isArray(data)) {
                         displayUserList(data, '');
                     } else {
-                        alert('Aucun utilisateur trouvé.');
+                        alert(gettext('No user found'));
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la récupération des données.');
+                    alert(gettext('An error occurred while getting the data'));
                 });
         }
     });
@@ -191,7 +191,7 @@ function loadFriendsList() {
     fetch('/users/user_profiles/')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des données');
+                throw new Error(gettext('An error occurred while getting the data'));
             }
             return response.json();
         })
@@ -199,12 +199,12 @@ function loadFriendsList() {
             if (data && Array.isArray(data)) {
                 displayUserList(data, 'users');
             } else {
-                alert('Aucun utilisateur trouvé.');
+                alert(gettext('No user found'));
             }
         })
         .catch(error => {
             console.error('Erreur:', error);
-            alert('Impossible de charger la liste d\'amis.');
+            alert(gettext('Can not load friends list'));
         });
 }
 
@@ -221,7 +221,7 @@ function fetchUserList(action) {
     .then(response => {
         
         if (!response.ok) {
-            throw new Error(`Erreur HTTP : ${response.status}`);
+            throw new Error(gettext(`HTTP Error : ${response.status}`));
         }
 
         return response.json();
@@ -231,7 +231,7 @@ function fetchUserList(action) {
     })
     .catch(error => {
         console.error("Erreur lors de la requête :", error);
-        alert("Une erreur est survenue : " + error.message);
+        alert(gettext("An error occurred : " + error.message));
     });
 }
 
@@ -274,7 +274,7 @@ async function extractValueProfileFriends(userId) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch profile data');
+            throw new Error(gettext('Failed to fetch profile data'));
         }
 
         const data = await response.json();

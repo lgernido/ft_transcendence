@@ -5,7 +5,7 @@ async function extractValueProfile(userId) {
         const profileResponse = await fetch(`/extractProfile/?user_id=${userId}`);
 
         if (!profileResponse.ok) {
-            throw new Error('Failed to fetch profile data');
+            throw new Error(gettext('Failed to fetch profile data'));
         }
 
         const profileData = await profileResponse.json();
@@ -28,7 +28,7 @@ async function extractValueGame(userId) {
         const profileResponse = await fetch(`/extractGame/?user_id=${userId}`);
 
         if (!profileResponse.ok) {
-            throw new Error('Failed to fetch profile data');
+            throw new Error(gettext('Failed to fetch profile data'));
         }
 
         const GameData = await profileResponse.json();
@@ -238,13 +238,13 @@ async function func_stats() {
     if (idUser) {
         userId = idUser;
         displayName.style.display = "block";
-        displayName.textContent = `Page de: ${nameUser}`;
+        displayName.textContent = gettext(`Page de: ${nameUser}`);
     }
     else {
         try {
             const userResponse = await fetch('/GetUserId/');
             if (!userResponse.ok) {
-                throw new Error('Failed to fetch user ID');
+                throw new Error(gettext('Failed to fetch user ID'));
             }
             const userData = await userResponse.json();
             userId = userData.user_id;

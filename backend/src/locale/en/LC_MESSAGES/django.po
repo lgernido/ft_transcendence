@@ -8,7 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2025-01-13 14:22+0000\n"
+=======
+"POT-Creation-Date: 2025-01-14 10:14+0100\n"
+>>>>>>> origin/lilbokit
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +22,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+<<<<<<< HEAD
 #: src/game/templates/index.html:56
 msgid "..."
 msgstr ""
 
 #: src/game/templates/partials/amis.html:6
+=======
+#: game/templates/partials/amis.html:6 game/templates/partials/chat.html:10
+>>>>>>> origin/lilbokit
 msgid "Search user"
 msgstr "Search user"
 
@@ -38,6 +46,7 @@ msgstr "Display friends"
 msgid "Display blocked users"
 msgstr "Display blocked users"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/amis.html:29
 msgid "Games Played"
 msgstr "Games Played"
@@ -132,6 +141,94 @@ msgid "Colors :"
 msgstr "Colors :"
 
 #: src/game/templates/partials/compte.html:39
+=======
+#: game/templates/partials/amis.html:29
+msgid "Games Played"
+msgstr "Games Played"
+
+#: game/templates/partials/amis.html:32
+msgid "Wins"
+msgstr "Wins"
+
+#: game/templates/partials/amis.html:37
+msgid "Losses "
+msgstr "Losses"
+
+#: game/templates/partials/amis.html:40
+msgid "Ratio "
+msgstr "Ratio"
+
+#: game/templates/partials/amis.html:55
+msgid "Add"
+msgstr "Add"
+
+#: game/templates/partials/amis.html:59
+msgid "Remove"
+msgstr "Remove"
+
+#: game/templates/partials/amis.html:63
+msgid "Block"
+msgstr "Block"
+
+#: game/templates/partials/amis.html:67
+msgid "Unblock"
+msgstr "Unblock"
+
+#: game/templates/partials/chat.html:25
+msgid "Nothing here, open a conversation"
+msgstr "Nothing here, open a conversation"
+
+#: game/templates/partials/chat.html:31
+#: game/templates/partials/mini_chat.html:22
+msgid "Start a chat with someone"
+msgstr "Start a chat with someone"
+
+#: game/templates/partials/compte.html:18
+#: game/templates/partials/create_account.html:17
+msgid "Email address"
+msgstr "Email address"
+
+#: game/templates/partials/compte.html:23
+#: game/templates/partials/create_account.html:21
+msgid "Username"
+msgstr "Username"
+
+#: game/templates/partials/compte.html:27
+#: game/templates/partials/connect.html:16
+#: game/templates/partials/create_account.html:25
+msgid "Password"
+msgstr "Password"
+
+#: game/templates/partials/compte.html:31 game/templates/partials/lobby.html:14
+#: game/templates/partials/lobby.html:37
+#: game/templates/partials/lobby_private.html:15
+#: game/templates/partials/lobby_private.html:42
+msgid "Red"
+msgstr "Red"
+
+#: game/templates/partials/compte.html:32 game/templates/partials/lobby.html:16
+#: game/templates/partials/lobby.html:39
+#: game/templates/partials/lobby_private.html:17
+#: game/templates/partials/lobby_private.html:44
+msgid "Blue"
+msgstr "Blue"
+
+#: game/templates/partials/compte.html:33 game/templates/partials/lobby.html:15
+#: game/templates/partials/lobby.html:38
+#: game/templates/partials/lobby_private.html:16
+#: game/templates/partials/lobby_private.html:43
+msgid "Green"
+msgstr "Green"
+
+#: game/templates/partials/compte.html:35 game/templates/partials/lobby.html:25
+#: game/templates/partials/lobby.html:48
+#: game/templates/partials/lobby_private.html:26
+#: game/templates/partials/lobby_private.html:53
+msgid "Colors :"
+msgstr "Colors :"
+
+#: game/templates/partials/compte.html:39
+>>>>>>> origin/lilbokit
 msgid "Save changes"
 msgstr "Save changes"
 
@@ -139,7 +236,11 @@ msgstr "Save changes"
 msgid "Login"
 msgstr "Login"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/connect.html:19
+=======
+#: game/templates/partials/connect.html:20
+>>>>>>> origin/lilbokit
 msgid "Log in with 42"
 msgstr "Sign in with 42"
 
@@ -151,6 +252,7 @@ msgstr "Log in"
 msgid "Create an account"
 msgstr "Create an account"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/create_account.html:29
 msgid "Confirm Password"
 msgstr "Type the password again"
@@ -168,6 +270,23 @@ msgstr "Go back"
 #: src/game/templates/partials/lobby_private.html:39
 #: src/game/templates/partials/lobby_public.html:39
 #: src/game/templates/partials/tournament.html:8
+=======
+#: game/templates/partials/create_account.html:29
+msgid "Confirm Password"
+msgstr "Type the password again"
+
+#: game/templates/partials/create_account.html:33
+msgid "Create account"
+msgstr "Create account"
+
+#: game/templates/partials/create_account.html:34
+msgid "Go back"
+msgstr "Go back"
+
+#: game/templates/partials/gameCustom.html:9
+#: game/templates/partials/lobby_private.html:39
+#: game/templates/partials/tournament.html:8
+>>>>>>> origin/lilbokit
 msgid "Guest"
 msgstr "Guest"
 
@@ -187,6 +306,7 @@ msgstr "Friends"
 msgid "Settings"
 msgstr "Settings"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/lobby.html:17
 #: src/game/templates/partials/lobby.html:40
 #: src/game/templates/partials/lobby_private.html:18
@@ -278,6 +398,91 @@ msgstr "Launch"
 
 #: src/game/templates/partials/lobby_tournament.html:7
 #: src/game/templates/partials/mypage.html:6
+=======
+#: game/templates/partials/lobby.html:17 game/templates/partials/lobby.html:40
+#: game/templates/partials/lobby_private.html:18
+#: game/templates/partials/lobby_private.html:45
+msgid "Yellow"
+msgstr "Yellow"
+
+#: game/templates/partials/lobby.html:18 game/templates/partials/lobby.html:41
+#: game/templates/partials/lobby_private.html:19
+#: game/templates/partials/lobby_private.html:46
+msgid "Cyan"
+msgstr "Cyan"
+
+#: game/templates/partials/lobby.html:19 game/templates/partials/lobby.html:42
+#: game/templates/partials/lobby_private.html:20
+#: game/templates/partials/lobby_private.html:47
+msgid "Magenta"
+msgstr "Magenta"
+
+#: game/templates/partials/lobby.html:20 game/templates/partials/lobby.html:43
+#: game/templates/partials/lobby_private.html:21
+#: game/templates/partials/lobby_private.html:48
+msgid "Orange"
+msgstr "Orange"
+
+#: game/templates/partials/lobby.html:21 game/templates/partials/lobby.html:44
+#: game/templates/partials/lobby_private.html:22
+#: game/templates/partials/lobby_private.html:49
+msgid "Purple"
+msgstr "Purple"
+
+#: game/templates/partials/lobby.html:22 game/templates/partials/lobby.html:45
+#: game/templates/partials/lobby_private.html:23
+#: game/templates/partials/lobby_private.html:50
+msgid "Pink"
+msgstr "Pink"
+
+#: game/templates/partials/lobby.html:23 game/templates/partials/lobby.html:46
+#: game/templates/partials/lobby_private.html:24
+#: game/templates/partials/lobby_private.html:51
+msgid "Gray"
+msgstr "Gray"
+
+#: game/templates/partials/lobby.html:52
+msgid "Player"
+msgstr "Player"
+
+#: game/templates/partials/lobby.html:53
+msgid "Bot"
+msgstr ""
+
+#: game/templates/partials/lobby.html:55
+#, fuzzy
+#| msgid "Select Number player"
+msgid "Select Player Type"
+msgstr "Select Number player"
+
+#: game/templates/partials/lobby.html:63
+#: game/templates/partials/lobby_private.html:64
+#: game/templates/partials/lobby_tournament.html:26
+msgid "Points limit :"
+msgstr "Points limit :"
+
+#: game/templates/partials/lobby.html:66
+#: game/templates/partials/lobby_private.html:67
+#: game/templates/partials/lobby_tournament.html:30
+msgid "Launch"
+msgstr "Launch"
+
+#: game/templates/partials/lobby_private.html:7
+msgid "Copy invite link"
+msgstr "Copy invite link"
+
+#: game/templates/partials/lobby_private.html:30
+#: game/templates/partials/lobby_private.html:57
+msgid "Ready"
+msgstr "Ready"
+
+#: game/templates/partials/lobby_private.html:70
+msgid "Quit Room"
+msgstr "Quit Room"
+
+#: game/templates/partials/lobby_tournament.html:7
+#: game/templates/partials/mypage.html:6
+>>>>>>> origin/lilbokit
 msgid "Tournament"
 msgstr "Tournament"
 
@@ -289,11 +494,27 @@ msgstr "Quick Game"
 msgid "Private Game"
 msgstr "Private Game"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/mypage.html:9
 msgid "Local Game"
 msgstr "Local Game"
 
 #: src/game/templates/partials/stats.html:25
+=======
+#: game/templates/partials/mypage.html:9
+msgid "Local Game"
+msgstr "Local Game"
+
+#: game/templates/partials/stats.html:16
+msgid "Previous"
+msgstr "Previous"
+
+#: game/templates/partials/stats.html:20
+msgid "Next"
+msgstr "Next"
+
+#: game/templates/partials/stats.html:25
+>>>>>>> origin/lilbokit
 msgid "Player Statistics"
 msgstr "Player Statistics"
 
@@ -317,7 +538,23 @@ msgstr "Games played :"
 msgid "Win rate : "
 msgstr "Win rate :"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/stats.html:59
+=======
+#: game/templates/partials/stats.html:47
+msgid "Global Ranking :"
+msgstr "Global Ranking :"
+
+#: game/templates/partials/stats.html:48
+msgid "Friends Ranking : "
+msgstr "Friends Ranking :"
+
+#: game/templates/partials/stats.html:49
+msgid "Tournaments won :"
+msgstr "Tournaments won :"
+
+#: game/templates/partials/stats.html:59
+>>>>>>> origin/lilbokit
 msgid "Win"
 msgstr "Win"
 
@@ -325,6 +562,7 @@ msgstr "Win"
 msgid "Unknown Date"
 msgstr "Unknown Date"
 
+<<<<<<< HEAD
 #: src/game/templates/partials/stats.html:66
 msgid "Game not found"
 msgstr "Game not found"
@@ -351,6 +589,89 @@ msgstr "Username or password invalid"
 #~ msgid "Language :"
 #~ msgstr "Language :"
 
+=======
+#: game/templates/partials/stats.html:67
+msgid "Game not found"
+msgstr "Game not found"
+
+#: game/views.py:58
+msgid "Username and password are required."
+msgstr "Username and password are required."
+
+#: game/views.py:66
+msgid "Username or password invalid"
+msgstr "Username or password invalid"
+
+#: game/views.py:197 users/views.py:61
+msgid "Social profile not found."
+msgstr "Social profile not found."
+
+#: game/views.py:399
+msgid "Room does not exist."
+msgstr "Room does not exist"
+
+#: users/views.py:40
+msgid "All categories are required"
+msgstr "All categories are required"
+
+#: users/views.py:43
+msgid "The passwords do not match"
+msgstr "The passwords do not match"
+
+#: users/views.py:46
+msgid "This username is already taken"
+msgstr "This username is already taken"
+
+#: users/views.py:49
+msgid "This email is already used"
+msgstr "This email is already used"
+
+#: users/views.py:106
+#, python-brace-format
+msgid "User {target_user.user.username} added as a friend."
+msgstr "User {target_user.user.username} added as a friend."
+
+#: users/views.py:109
+#, python-brace-format
+msgid "User {target_user.user.username} removed from friends."
+msgstr "User {target_user.user.username} removed from friends."
+
+#: users/views.py:112
+#, python-brace-format
+msgid "User {target_user.user.username} blocked."
+msgstr "User {target_user.user.username} blocked."
+
+#: users/views.py:115
+#, python-brace-format
+msgid "User {target_user.user.username} unblocked."
+msgstr "User {target_user.user.username} unblocked."
+
+#: users/views.py:126 users/views.py:169
+msgid "You must be authenticated to perform this action."
+msgstr "You must be authenticated to perform this action."
+
+#: users/views.py:197 users/views.py:210 users/views.py:219
+msgid "User not found"
+msgstr "User not found"
+
+#: users/views.py:198 users/views.py:211
+msgid "Username parameter is missing"
+msgstr "Username parameter is missing"
+
+#: users/views.py:221
+msgid "User not authenticated"
+msgstr "User not authenticated"
+
+#~ msgid "Search a user..."
+#~ msgstr "Search a user..."
+
+#~ msgid "No messages"
+#~ msgstr "No messages"
+
+#~ msgid "Write your best win 😈"
+#~ msgstr "Write your best win 😈"
+
+>>>>>>> origin/lilbokit
 #~ msgid "Loading..."
 #~ msgstr "Loading..."
 
@@ -360,6 +681,7 @@ msgstr "Username or password invalid"
 #~ msgid "Points limit : "
 #~ msgstr "Points limit :"
 
+<<<<<<< HEAD
 #~ msgid "Global Ranking :"
 #~ msgstr "Global Ranking :"
 
@@ -372,6 +694,23 @@ msgstr "Username or password invalid"
 #~ msgid "Rechercher un utilisateur..."
 #~ msgstr "Display all users"
 
+=======
+#~ msgid "Rechercher un utilisateur..."
+#~ msgstr "Display all users"
+
+#~ msgid "English"
+#~ msgstr "English"
+
+#~ msgid "French"
+#~ msgstr "French"
+
+#~ msgid "Spanish"
+#~ msgstr "Spanish"
+
+#~ msgid "Language :"
+#~ msgstr "Language :"
+
+>>>>>>> origin/lilbokit
 #~ msgid "Play against :"
 #~ msgstr "Play against :"
 
@@ -410,9 +749,6 @@ msgstr "Username or password invalid"
 
 #~ msgid "Loss"
 #~ msgstr "Loss"
-
-#~ msgid "Send message"
-#~ msgstr "Send message"
 
 #~ msgid "Invite"
 #~ msgstr "Invite"
