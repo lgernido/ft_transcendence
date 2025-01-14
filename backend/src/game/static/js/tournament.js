@@ -3,24 +3,25 @@ function launchTournament(maxPoints, players) {
     let currentMatchIndex = 0; 
     let currentRound = [...players];
     let matchPlayers = [...players];
-    const barSpeed = 1.5;
-    const paddleWidth = 2;
-    const ballRadius = 1;
-    const paddleHeight = 20;
+
+    const ball = document.querySelector('.ball');
+
+	let posBallX = 50;
+	let posBallY = 50;
+	let speedX = 0.3;
+	let speedY = 0.2;
+
+	let ballSpeed = 0.3;
+
+	let scrorePlayerLeft = 0;
+	let scrorePlayerRight = 0;
+
+	let resettingBall = false;
 
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
     const countdownElement = document.getElementById('countdown');
     const winnerMessage = document.getElementById('winnerMessage');
-
-    const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
-    const gameState = {
-        leftBarPos: 50,
-        rightBarPos: 50,
-        ball: { x: 50, y: 50, speedX: 0.8, speedY: 0.8 },
-        leftScore: 0,
-        rightScore: 0
-    };
 
     function startMatch(player1, player2) {
         isActive = false; 
@@ -46,44 +47,203 @@ function launchTournament(maxPoints, players) {
         }, 500);
 
         setTimeout(() => {
+            scrorePlayerLeft = 0;
+		    scrorePlayerRight = 0;
+            updateScore();
+            resetBars();
+            resetBall();
             roundAnnouncement.style.display = 'none';
-            resetGameState();
             displayCountdown(() => {
                 isActive = true;
-                updateGame();
+                startGame();
             });
         }, 5000);
     }
 
-    function resetGameState() {
-        const initialSpeed = 0.8;
-        const leftBar = document.querySelector('.left-barre');
+	const leftBarre = document.querySelector('.left-barre');
+	const rightBarre = document.querySelector('.right-barre');
 
-        if (leftBar === null){
-            isActive = false;
-            return;
-        };
+	let leftBarrePosition = 50;
+	let rightBarrePosition = 50;
 
-        gameState.leftBarPos = 50;
-        gameState.rightBarPos = 50;
-        gameState.ball = { 
-            x: 50,
-            y: 50, 
-            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed,
-            speedY: (Math.random() * 1.5 - 0.75)
-        };
-        gameState.leftScore = 0;
-        gameState.rightScore = 0;
+	const barreSpeed = 1;
+	const barreHeight = 15;
+	
+	const keys = {}; 
 
-        document.querySelector('.left-barre').style.top = '50%';
-        document.querySelector('.right-barre').style.top = '50%';
-        document.querySelector('.ball').style.left = '50%';
-        document.querySelector('.ball').style.top = '50%';
-        document.getElementById('scorePLeft').innerText = 0;
-        document.getElementById('scorePRight').innerText = 0;
+	function moveBarre(barre, position, direction) {
+		const maxPosition = 100 - (barreHeight * 0.5);
+		position += direction * barreSpeed;
+		position = Math.max(barreHeight * 0.5, Math.min(maxPosition, position));
+		barre.style.top = position + '%';
+		return position;
+	}
 
-        document.querySelector('.ball').classList.add('hidden');
+	document.addEventListener('keydown', (e) => {
+		keys[e.key] = true;
+	});
+
+	document.addEventListener('keyup', (e) => {
+		keys[e.key] = false;
+	});
+
+	const moveValue = 0.5;
+	paddleInterval = setInterval(() => {
+		if (keys['w']) {
+			leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
+		}
+		if (keys['s']) {
+			leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
+		}
+		if (keys['ArrowUp']) {
+			rightBarrePosition = moveBarre(rightBarre, rightBarrePosition, -moveValue);
+		}
+		if (keys['ArrowDown']) {
+			rightBarrePosition = moveBarre(rightBarre, rightBarrePosition, moveValue);
+		}
+	}, 10);
+
+	const increaseSpeed = 1.1;
+	const maxAngle = Math.PI / 4; // angle max
+
+	function calculateAngle(impactPoint, maxAngle) {
+        return maxAngle * (2 * impactPoint - 1);
     }
+	
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+	
+	function updateScore() {
+		document.getElementById("scorePLeft").textContent = scrorePlayerLeft;
+		document.getElementById("scorePRight").textContent = scrorePlayerRight;
+	}
+
+	updateScore();
+	
+    function resetBars() {
+        leftBarrePosition = 50; 
+        rightBarrePosition = 50;
+        leftBarre.style.top = leftBarrePosition + '%';
+        rightBarre.style.top = rightBarrePosition + '%';
+    }
+
+	function resetBall() {
+        posBallX = 50; 
+        posBallY = 50;  
+        ball.style.left = posBallX + '%'; 
+        ball.style.top = posBallY + '%';  
+
+        const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
+        const directionX = Math.random() > 0.5 ? 1 : -1;
+        const directionY = Math.random() > 0.5 ? 1 : -1;
+        
+        speedX = ballSpeed * Math.cos(angle) * directionX;
+        speedY = ballSpeed * Math.sin(angle) * directionY;
+    }
+
+	function startGame()
+	{
+		scrorePlayerLeft = 0;
+		scrorePlayerRight = 0;
+        resettingBall = false;
+		updateScore();
+        // resetBars();
+		resetBall();
+		ballInterval = setInterval(moveBall, 10);
+	}
+
+    function toggleBallVisibility(isHidden) {
+        if (isHidden) {
+            ball.classList.add('hidden');
+        } else {
+            ball.classList.remove('hidden');
+        }
+    }
+
+	async function moveBall() {
+        const maxSpeed = 0.7;
+        posBallX += speedX;
+        posBallY += speedY;
+    
+        const ballRect = ball.getBoundingClientRect();
+        const leftBarreRect = leftBarre.getBoundingClientRect();
+        const rightBarreRect = rightBarre.getBoundingClientRect();
+    
+        if (resettingBall) return;
+    
+        if (posBallY - 2 <= 0 || posBallY + 2 >= 100)
+            speedY *= -1;
+    
+        if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
+        {
+            posBallX = posBallX + 1;
+    
+            const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
+            const angle = calculateAngle(impactPoint, maxAngle);
+    
+            const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
+            if (totalSpeed < maxSpeed)
+                speedX = Math.cos(angle) * totalSpeed;
+                speedY = Math.sin(angle) * totalSpeed;
+            speedX = Math.abs(speedX);
+        }
+    
+        if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
+        {
+            posBallX = posBallX - 1;
+    
+            const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;
+            const angle = calculateAngle(impactPoint, maxAngle);
+    
+            const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
+            if (totalSpeed < maxSpeed)
+                speedX = Math.cos(angle) * totalSpeed;
+                speedY = Math.sin(angle) * totalSpeed;
+    
+            speedX = -Math.abs(speedX);
+        }
+    
+        if (posBallX - 1 <= 0 || posBallX + 1 >= 100)
+        {
+            resettingBall = true;
+            clearInterval(ballInterval); // Clear current ball interval before resetting
+    
+            ball.style.left = posBallX - 1 + '%';
+            ball.style.top = posBallY - 2 + '%';
+            if (posBallX - 1.5 <= 0) {
+                scrorePlayerRight++;
+                updateScore();
+                if (scrorePlayerRight >= maxPoints) {
+                    displayWinner('right');
+                    endMatch('right');
+                    return;
+                }
+            } else if (posBallX + 1.5 >= 100) {
+                scrorePlayerLeft++;
+                updateScore();
+                if (scrorePlayerLeft >= maxPoints) {
+                    displayWinner('left');
+                    endMatch('left');
+                    return;
+                }
+            }
+    
+            ball.classList.add('breaking');
+            updateScore();
+            await sleep(1000);
+            ball.classList.remove('breaking');
+    
+            resetBall();  // Reset ball position
+    
+            resettingBall = false;
+            ballInterval = setInterval(moveBall, 10); // Restart the ball movement interval after reset
+        }
+    
+        ball.style.left = posBallX + '%';
+        ball.style.top = posBallY + '%';
+    }
+    
 
     function displayCountdown(callback) {
         let countdown = 5;
@@ -121,86 +281,6 @@ function launchTournament(maxPoints, players) {
                 callback();
             }
         }, 1000);
-    }
-
-    function updateGame() {
-        if (!isActive) return;
-
-        const scorePLeft = document.getElementById('scorePLeft');
-
-        if (scorePLeft === null) {
-            isActive = false;
-            return;
-        }
-
-        if (keysPressed.w) gameState.leftBarPos = Math.max(0 + 8, gameState.leftBarPos - barSpeed);
-        if (keysPressed.s) gameState.leftBarPos = Math.min(100 - 8, gameState.leftBarPos + barSpeed);
-        if (keysPressed.ArrowUp) gameState.rightBarPos = Math.max(0 + 8, gameState.rightBarPos - barSpeed);
-        if (keysPressed.ArrowDown) gameState.rightBarPos = Math.min(100 - 8, gameState.rightBarPos + barSpeed);
-
-        gameState.ball.x += gameState.ball.speedX;
-        gameState.ball.y += gameState.ball.speedY;
-
-        handleBallCollision();
-
-        document.getElementById('scorePLeft').innerText = gameState.leftScore;
-        document.getElementById('scorePRight').innerText = gameState.rightScore;
-
-        document.querySelector('.left-barre').style.top = `${gameState.leftBarPos}%`;
-        document.querySelector('.right-barre').style.top = `${gameState.rightBarPos}%`;
-        document.querySelector('.ball').style.left = `${gameState.ball.x}%`;
-        document.querySelector('.ball').style.top = `${gameState.ball.y}%`;
-
-        if (gameState.leftScore >= maxPoints || gameState.rightScore >= maxPoints) {
-            const winner = gameState.leftScore >= maxPoints ? "left" : "right";
-            displayWinner(winner);
-            endMatch(winner);
-        } else {
-            requestAnimationFrame(updateGame);
-        }
-    }
-
-    function handleBallCollision() {
-        const ball = gameState.ball;
-    
-        if (ball.y - ballRadius <= 0 || ball.y + ballRadius >= 100) {
-            ball.speedY *= -1;
-            ball.y = ball.y - ballRadius <= 0 ? ballRadius : 100 - ballRadius;
-        }
-    
-        if (ball.x - ballRadius <= paddleWidth) {
-            const distanceFromCenter = Math.abs(gameState.leftBarPos - ball.y);
-            if (distanceFromCenter <= paddleHeight / 2) {
-                ball.speedX *= -1.1; 
-                ball.speedY += (ball.y - gameState.leftBarPos) * 0.05;
-                ball.x = paddleWidth + ballRadius;
-            } else {
-                gameState.rightScore++;
-                resetBall();
-            }
-        }
-    
-        if (ball.x + ballRadius >= 100 - paddleWidth) {
-            const distanceFromCenter = Math.abs(gameState.rightBarPos - ball.y);
-            if (distanceFromCenter <= paddleHeight / 2) {
-                ball.speedX *= -1.1;
-                ball.speedY += (ball.y - gameState.rightBarPos) * 0.05;
-                ball.x = 100 - paddleWidth - ballRadius;
-            } else {
-                gameState.leftScore++;
-                resetBall();
-            }
-        }
-    }
-
-    function resetBall() {
-        const initialSpeed = 0.8;
-        gameState.ball = {
-            x: 50,
-            y: 50,
-            speedX: Math.random() > 0.5 ? initialSpeed : -initialSpeed,
-            speedY: (Math.random() * 1.5 - 0.75)
-        };
     }
 
     function displayWinner(winner) {
@@ -256,16 +336,5 @@ function launchTournament(maxPoints, players) {
         }, 3000);
     }
 
-    // Gestion des entrées clavier
-    document.addEventListener('keydown', (event) => {
-        if (event.key in keysPressed) keysPressed[event.key] = true;
-    });
-    document.addEventListener('keyup', (event) => {
-        if (event.key in keysPressed) keysPressed[event.key] = false;
-    });
-
     startMatch(currentRound[currentMatchIndex * 2], currentRound[currentMatchIndex * 2 + 1]);
 }
-
-
-
