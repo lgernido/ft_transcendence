@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-14 10:14+0100\n"
+"POT-Creation-Date: 2025-01-14 11:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -341,7 +341,19 @@ msgstr "Pseudo ou mot de passe invalide"
 msgid "Social profile not found."
 msgstr "Pas de profil trouvé"
 
-#: game/views.py:399
+#: game/views.py:211
+msgid "Username too long"
+msgstr "Nom d'utilisateur trop long"
+
+#: game/views.py:214
+msgid "Username and email are required."
+msgstr "Pseudo et email requis."
+
+#: game/views.py:217
+msgid "Username already used"
+msgstr "Ce pseudo déjà utilisé"
+
+#: game/views.py:401
 msgid "Room does not exist."
 msgstr "La partie n'existe pas."
 
