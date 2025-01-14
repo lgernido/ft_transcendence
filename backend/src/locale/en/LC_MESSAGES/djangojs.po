@@ -8,11 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2025-01-13 14:08+0000\n"
-=======
 "POT-Creation-Date: 2025-01-14 08:52+0000\n"
->>>>>>> origin/lilbokit
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,11 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-<<<<<<< HEAD
-#: src/game/static/js/camenbert.js:256
-msgid "Bonjour"
-msgstr "Hello"
-=======
 
 #: game/static/js/amis.js:63
 msgid "Failed to delete the user"
@@ -143,4 +134,3 @@ msgstr "Select the number of players"
 #: game/static/js/lobby_tournament.js:31
 msgid "Choose another name"
 msgstr "Choose another name"
->>>>>>> origin/lilbokit
