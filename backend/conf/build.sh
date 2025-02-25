@@ -2,8 +2,9 @@
 # Script de démarrage pour Django
 
 echo "Appliquer les migrations..."
-python src/manage.py makemigrations #--noinput
-python src/manage.py migrate #--noinput
+  python src/manage.py makemigrations
+python src/manage.py migrate
+python src/manage.py collectstatic
 
 echo "Créer un super utilisateur..."
 python src/manage.py shell -c "
@@ -24,7 +25,7 @@ from users.models import Profile  # Assurez-vous de remplacer 'your_app' par le 
 User = get_user_model()
 
 # Liste des noms d'utilisateur
-users = ['sam', 'bob', 'coc', 'she', 'luc', 'dil', 'oce', 'kyks', 'oxt', 'tho', 'invite', 'bot']
+users = ['sam', 'bob', 'coc', 'she', 'luc', 'dil', 'oce', 'kyks', 'oxt', 'tho']
 
 # Création des utilisateurs et de leurs profils
 for username in users:

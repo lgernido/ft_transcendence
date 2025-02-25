@@ -1,18 +1,15 @@
-from django.urls import path
-from .consumers import GameConsumer
-from .consumers import LobbyConsumer
-from .consumers import DynamicGameConsumer
-from .bot import GameBOTConsumer
-from .custom import GameCustomConsumer
+# from django.urls import re_path, path
+# from .pongConsumers import PongConsumer
+
+# websocket_urlpatterns = [
+#     path("ws/pong/<str:room_name>/", PongConsumer.as_asgi()),
+# ]
+
+from django.urls import path, re_path
+from .pongConsumers import PongConsumer
+from .consumers import GameRoomConsumer
 
 websocket_urlpatterns = [
-    path('ws/gamebot/<str:room_name>/', GameBOTConsumer.as_asgi()),
-    path('ws/game/<str:room_name>/', GameConsumer.as_asgi()),
-    path('ws/gameCustom/<str:room_name>/', GameCustomConsumer.as_asgi()),
-    path('ws/dynamic_game/<str:room_name>/', DynamicGameConsumer.as_asgi()),
-    path('ws/dynamic_game/', DynamicGameConsumer.as_asgi()),
-    path('ws/game/', GameConsumer.as_asgi()),
-    path('ws/gamebot/', GameBOTConsumer.as_asgi()),
-    path('ws/lobby/', LobbyConsumer.as_asgi()),
-
+    re_path(r'ws/lobby/(?P<room_name>\w+)/$', GameRoomConsumer.as_asgi()),
+    path("ws/pong/<str:room_name>/<int:his_hote>/<str:his_color>/<int:score_limit>/", PongConsumer.as_asgi()),
 ]

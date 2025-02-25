@@ -1,148 +1,379 @@
 function lobby_private() {
     const playerName1 = document.querySelector('.card-lobby-text-name1');
-    const colorSelect1 = document.getElementById('selectColorPlayer1');
-
     const playerName2 = document.querySelector('.card-lobby-text-name2');
-    const colorSelect2 = document.getElementById('selectColorPlayer2');
 
     playerName1.classList.add('color-player-red');
     playerName2.classList.add('color-player-green');
+    
+    if (!roomNameGlobal) {
+        createRoomP();
+    }
+    else {
+        InitWebSocketRoomPr(roomNameGlobal)
+    }
+}   
 
-    const maxPointsInput = document.getElementById('maxPoint');
-	maxPointsInput.addEventListener('input', (event) => {
-		if (maxPointsInput.value < 1)
-			maxPointsInput.value = 1;
-		else if (maxPointsInput.value > 40)
-			maxPointsInput.value = 40;
-	});
-
-    colorSelect1.addEventListener('change', (event) => {
-        playerName1.classList.remove(
-            'color-player-red',
-            'color-player-green',
-            'color-player-blue',
-            'color-player-yellow',
-            'color-player-cyan',
-            'color-player-magenta',
-            'color-player-orange',
-            'color-player-purple',
-            'color-player-pink',
-            'color-player-gray',
-            'color-player-none'
-        );
-        
-        playerName1.classList.add(event.target.value);
+function createRoomP() {
+    fetch(`/create_roomP/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            displayError(gettext("Failed to create room"));
+        }
+    })
+    .then(data => {
+        InitWebSocketRoomPr(data.room_name);
+    })
+    .catch(error => {
+        loadMyPage();
+        displayError(gettext("Error creating room:", error));
     });
+}
 
-    colorSelect2.addEventListener('change', (event) => {
-        playerName2.classList.remove(
-            'color-player-red',
-            'color-player-green',
-            'color-player-blue',
-            'color-player-yellow',
-            'color-player-cyan',
-            'color-player-magenta',
-            'color-player-orange',
-            'color-player-purple',
-            'color-player-pink',
-            'color-player-gray',
-            'color-player-none'
-        );
+function InitWebSocketRoomPr(roomName) {
+    if (socket_roomPu) {
+        socket_roomPu.close();
+        socket_roomPu = null;
+    }
+    socket_roomP = new WebSocket(`wss://${window.location.host}/ws/lobby/${roomName}/`);
+
+    const currentUser = document.getElementById("user-info").dataset.username;
+    const currentAvatar = document.getElementById("user-info").dataset.avatar;
+
+    roomNameGlobal = roomName;
+    socket_roomP.onopen = () => {
+        handleColorChange();
+        handlePointchange();
+        handleReadyChange();
+        handleQuitButton();
+        handleStartButton();
+    };
+
+    socket_roomP.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         
-        playerName2.classList.add(event.target.value);
-    });
-
-    document.getElementById('btn-custom').addEventListener('click', function() {
-        const player1Color = document.getElementById('selectColorPlayer1').value;
-        const player2Color = document.getElementById('selectColorPlayer2').value;
-        const maxPoint = document.getElementById('maxPoint').value;
-        const userInfoDiv = document.getElementById('user-info');
-        const username = userInfoDiv.getAttribute('data-username');
-        const roomName = `${username}_room`;
-
-        if (player1Color !== 'color-player-none' && player2Color !== 'color-player-none' && player1Color != player2Color && maxPoint > 0 && maxPoint < 40) {
-            fetch("create_custom/", {
+        const playerName1 = document.getElementById("playerName1");
+        const playerName2 = document.getElementById("playerName2");
+        const avatarPlayer1 = document.getElementById("avatarPlayer1");
+        const avatarPlayer2 = document.getElementById("avatarPlayer2");
+        const readyCheckboxPlayer1 = document.getElementById('readyPlayer1');
+        const readyCheckboxPlayer2 = document.getElementById('readyPlayer2');
+        const selectColorPlayer1 = document.getElementById('selectColorPlayer1');
+        const selectColorPlayer2 = document.getElementById('selectColorPlayer2');
+        
+        if (!data || !playerName1 || !avatarPlayer1 || !readyCheckboxPlayer1 || !selectColorPlayer1 || !playerName2 || !avatarPlayer2 || !readyCheckboxPlayer2 || !selectColorPlayer2) {
+            return;
+        }
+        
+        if (data.type === 'room_closed') {
+            displayError(data.message);
+            roomNameGlobal = null;
+            if (socket_roomP) {
+                socket_roomP.close();
+                socket_roomP = null;
+            }
+            const csrfToken = getCookie('csrftoken');
+            fetch('/reset_room_session/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-CSRFToken': csrfToken,
                 },
-                body: JSON.stringify({
-                    roomName: roomName,
-                    player1Color: player1Color,
-                    player2Color: player2Color,
-                    maxPoint: maxPoint,
-                }),
-            })
-                .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
-                .then(({ status, body }) => {
-                    if (status === 200) {
-                        loadGamePrivateCustom(roomName, maxPoint);
-                    } else {
-                        alert(body.error || 'Failed to create room');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Fetch error:', error);
-                    alert('Failed to create room');
-            });
-        } else {
-            alert('Please select differents colors for both players OR a limit point betwenn 0 and 40.');
-        }
-    });
-
-	document.getElementById('btn-ready').addEventListener('click', function() {
-        const player1Color = document.getElementById('selectColorPlayer1').value;
-        const player2Color = document.getElementById('selectColorPlayer2').value;
-        const maxPoint = document.getElementById('maxPoint').value;
-        const userInfoDiv = document.getElementById('user-info');
-        const username = userInfoDiv.getAttribute('data-username');
-        const roomName = `${username}_room`;
-
-        if (player1Color !== 'color-player-none' && player2Color !== 'color-player-none' && player1Color != player2Color && maxPoint > 0 && maxPoint < 40) {
-            fetch("create_room/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify({
-                    roomName: roomName,
-                    player1Color: player1Color,
-                    player2Color: player2Color,
-                    maxPoint: maxPoint,
-                }),
-            })
-                .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
-                .then(({ status, body }) => {
-                    if (status === 200) {
-                        loadGamePrivate(roomName, maxPoint);
-                    } else {
-                        alert(body.error || 'Failed to create room');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Fetch error:', error);
-                    alert('Failed to create room');
-            });
-        } else {
-            alert('Please select differents colors for both players OR a limit point betwenn 0 and 40.');
-        }
-    });
-	    
-    // Fonction pour récupérer le token CSRF
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+            }).then(response => {
+                if (response.ok) {
+                    // console.log('Session roomName réinitialisée.');
+                } else {
+                    console.error('Erreur lors de la réinitialisation de la session.');
                 }
+            });
+            loadMyPage();
+            return;
+        }
+
+        if (data.type === "player_left") {
+            const readyCheckboxPlayer1 = document.getElementById('readyPlayer1');
+            const readyCheckboxPlayer2 = document.getElementById('readyPlayer2');
+            if (readyCheckboxPlayer1)
+                readyCheckboxPlayer1.checked = false;
+            if (readyCheckboxPlayer2)
+                readyCheckboxPlayer2.checked = false;
+            enableAllButtonsHeader();
+            displayError(data.message);
+            return ;
+        }
+    
+        if (playerName1 && avatarPlayer1 && data.player1 && avatarPlayer1) {
+            playerName1.textContent = data.player1.username;
+            avatarPlayer1.src = data.player1.avatar;
+            updatePlayerColorPr(playerName1, data.player1.color);
+            selectColorPlayer1.value = data.player1.color;
+        }
+    
+        if (playerName2 && avatarPlayer2) {
+            if (data.player2) {
+                playerName2.textContent = data.player2.username;
+                avatarPlayer2.src = data.player2.avatar;
+                updatePlayerColorPr(playerName2, data.player2.color);
+                selectColorPlayer2.value = data.player2.color;
+            } else {
+                playerName2.textContent = "Waiting Player";
+                avatarPlayer2.src = "/media/avatars/default_avatar.png";
             }
         }
-        return cookieValue;
+
+        // Handle point
+        const pointsLimitInput = document.getElementById("maxPoint");
+        if (data.points_limit !== undefined) {
+            if (pointsLimitInput)
+                pointsLimitInput.value = data.points_limit;
+        }
+
+        // Handle ready button
+        if (data.player1.ready && data.player1.ready !== undefined) {
+            readyCheckboxPlayer1.checked = data.player1.ready;
+            const label1 = document.querySelector('label[for="readyPlayer1"]');
+            if (data.player1.ready) {
+                label1.classList.remove('btn-outline-secondary');
+                label1.classList.add('btn-outline-success');
+            } else {
+                label1.classList.remove('btn-outline-success');
+                label1.classList.add('btn-outline-secondary');
+            }
+        }
+        if (data.player2.ready && data.player2.ready !== undefined) {
+            readyCheckboxPlayer2.checked = data.player2.ready;
+            const label2 = document.querySelector('label[for="readyPlayer2"]');
+            if (data.player2.ready) {
+                label2.classList.remove('btn-outline-secondary');
+                label2.classList.add('btn-outline-success');
+            } else {
+                label2.classList.remove('btn-outline-success');
+                label2.classList.add('btn-outline-secondary');
+            }
+        }
+
+        if (data.type === 'start_game') {
+            if (data.player1.ready && data.player2.ready) {
+                sessionStorage.removeItem('roomName');
+                sessionStorage.setItem('roomName', null);
+
+                localStorage.removeItem('roomName');
+                localStorage.setItem('roomName', null);
+                if (socket_roomP) { 
+                    socket_roomP.close();
+                    socket_roomP = null;
+                }
+                enableAllButtonsHeader();
+                loadGamePrivate(roomName, pointsLimitInput.value, data);
+            }
+        }
+
+        blockInteract();
+    };
+
+    socket_roomP.onclose = function () {
+        // console.log("Disconnected from room:", roomName);
+    };
+}
+
+
+function updatePlayerColorPr(playerElement, newColor) {
+    const colorClasses = [
+        'color-player-red', 
+        'color-player-green', 
+        'color-player-blue', 
+        'color-player-yellow', 
+        'color-player-cyan', 
+        'color-player-magenta', 
+        'color-player-orange', 
+        'color-player-purple', 
+        'color-player-pink', 
+        'color-player-gray'
+    ];
+    playerElement.classList.remove(...colorClasses);
+
+    if (newColor) {
+        playerElement.classList.add(newColor);
     }
+}
+
+function blockInteract() {
+    const currentUser = document.getElementById("user-info").dataset.username;
+    const isPlayer1 = playerName1.textContent.trim();
+    const isPlayer2 = playerName2.textContent.trim();
+
+    const selectPlayer1 = document.getElementById('selectColorPlayer1');
+    const selectPlayer2 = document.getElementById('selectColorPlayer2');
+
+    const readyCheckboxPlayer1 = document.getElementById('readyPlayer1');
+    const readyCheckboxPlayer2 = document.getElementById('readyPlayer2');
+
+    if (isPlayer1 == currentUser) {
+        selectPlayer2.disabled = true;
+        readyCheckboxPlayer2.disabled = true;
+    } else if (isPlayer2 == currentUser) {
+        selectPlayer1.disabled = true;
+        readyCheckboxPlayer1.disabled = true;
+    } else {
+        selectPlayer1.disabled = true;
+        selectPlayer2.disabled = true;
+        readyCheckboxPlayer1.disabled = true;
+        readyCheckboxPlayer2.disabled = true;
+    }
+}
+
+function handlePointchange() {
+    document.getElementById("maxPoint").addEventListener("input", function(event) {
+        const maxPoints = event.target.value;
+        
+        if (maxPoints.value < 1)
+            maxPoints.value = 1;
+        else if (maxPoints.value > 40)
+            maxPoints.value = 40;
+
+        socket_roomP.send(JSON.stringify({
+            type: 'points_limit_change',
+            points_limit: maxPoints
+        }));
+    });
+}
+
+function handleColorChange() {
+    function sendColorChange(playerId, color) {
+        const message = {
+            type: "color_change",
+            playerId: playerId,
+            color: color
+        };
+        socket_roomP.send(JSON.stringify(message));
+    }
+
+    document.getElementById('selectColorPlayer1').addEventListener('change', function (e) {
+        const newColor = e.target.value;
+        playerName1.classList.add(newColor);
+        sendColorChange('player1', newColor);
+    });
+
+    document.getElementById('selectColorPlayer2').addEventListener('change', function (e) {
+        const newColor = e.target.value;
+        playerName2.classList.add(newColor);
+        sendColorChange('player2', newColor);
+    });
+}
+
+function handleReadyChange(){
+    function sendReadyState(playerId, isReady) {
+        const message = {
+            type: "ready_state_change",
+            playerId: playerId,
+            ready: isReady
+        };
+        socket_roomP.send(JSON.stringify(message));
+    }
+
+    const currentUser = document.getElementById("user-info").dataset.username;
+    const readyCheckboxPlayer1 = document.getElementById('readyPlayer1');
+    const readyCheckboxPlayer2 = document.getElementById('readyPlayer2');
+
+    readyCheckboxPlayer1.addEventListener('change', function (e) {
+        if (currentUser === playerName1.textContent.trim()) {
+            const isReady = e.target.checked;
+            sendReadyState('player1', isReady);
+            if (isReady) {
+                disableAllButtonsHeader();
+            }
+            else {
+                enableAllButtonsHeader();
+            }
+        }
+    });
+    readyCheckboxPlayer2.addEventListener('change', function (e) {
+        if (currentUser === playerName2.textContent.trim()) {
+            const isReady = e.target.checked;
+            sendReadyState('player2', isReady);
+            if (isReady) {
+                disableAllButtonsHeader();
+            }
+            else {
+                enableAllButtonsHeader();
+            }
+        }
+    });
+}
+
+function handleQuitButton() {
+    const leaveBtn = document.getElementById("leaveRoomButton");
+    if (leaveBtn) {
+        leaveBtn.addEventListener("click", () => {
+            if (socket_roomP) {
+                socket_roomP.close();
+                socket_roomP = null;
+            }
+            if (socket_roomPu) {
+                socket_roomPu.close();
+                socket_roomPu = null;
+            }
+            socket_roomP = null;
+            const csrfToken = getCookie('csrftoken');
+            fetch('/reset_room_session/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Erreur lors de la réinitialisation de la session.');
+                }
+            });
+            roomNameGlobal = null;
+            enableAllButtonsHeader()
+            loadMyPage();
+        });
+    }
+}
+
+function handleStartButton() {
+    const btnReady = document.getElementById("btn-ready");
+
+    btnReady.addEventListener('click', () => {
+        socket_roomP.send(JSON.stringify({
+            type: 'start_game'
+        }));
+    });
+}
+
+function disableAllButtonsHeader() {
+    const buttonsDiv = document.getElementById('buttons-div');
+    const buttons = buttonsDiv.querySelectorAll('a, button');
+
+    buttons.forEach(button => {
+        if (button.tagName === 'BUTTON') {
+            button.disabled = true;
+        } else if (button.tagName === 'A') {
+            button.style.pointerEvents = 'none';
+            button.classList.add('disabled');
+        }
+    });
+}
+
+function enableAllButtonsHeader() {
+    const buttonsDiv = document.getElementById('buttons-div');
+    const buttons = buttonsDiv.querySelectorAll('a, button');
+
+    buttons.forEach(button => {
+        if (button.tagName === 'BUTTON') {
+            button.disabled = false;
+        } else if (button.tagName === 'A') {
+            button.style.pointerEvents = 'auto';
+            button.classList.remove('disabled');
+        }
+    });
 }

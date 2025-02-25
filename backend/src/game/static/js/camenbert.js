@@ -5,7 +5,7 @@ async function extractValueProfile(userId) {
         const profileResponse = await fetch(`/extractProfile/?user_id=${userId}`);
 
         if (!profileResponse.ok) {
-            throw new Error('Failed to fetch profile data');
+            throw new Error(gettext('Failed to fetch profile data'));
         }
 
         const profileData = await profileResponse.json();
@@ -28,7 +28,7 @@ async function extractValueGame(userId) {
         const profileResponse = await fetch(`/extractGame/?user_id=${userId}`);
 
         if (!profileResponse.ok) {
-            throw new Error('Failed to fetch profile data');
+            throw new Error(gettext('Failed to fetch profile data'));
         }
 
         const GameData = await profileResponse.json();
@@ -59,19 +59,21 @@ async function displayCardGame(userId) {
 
     function updateIndicators(chunkCount) {
         const indicatorsContainer = document.querySelector(".carousel-indicators");
-        indicatorsContainer.innerHTML = "";
-    
-        for (let i = 0; i < chunkCount; i++) {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.setAttribute("data-bs-target", "#carouselExampleIndicators");
-            button.setAttribute("data-bs-slide-to", i);
-            button.setAttribute("aria-label", `Slide ${i + 1}`);
-            if (i === 0) {
-                button.classList.add("active");
-                button.setAttribute("aria-current", "true");
+        if (indicatorsContainer) {
+            indicatorsContainer.innerHTML = "";
+        
+            for (let i = 0; i < chunkCount; i++) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.setAttribute("data-bs-target", "#carouselExampleIndicators");
+                button.setAttribute("data-bs-slide-to", i);
+                button.setAttribute("aria-label", `Slide ${i + 1}`);
+                if (i === 0) {
+                    button.classList.add("active");
+                    button.setAttribute("aria-current", "true");
+                }
+                indicatorsContainer.appendChild(button);
             }
-            indicatorsContainer.appendChild(button);
         }
     }
 
@@ -115,11 +117,12 @@ async function displayCardGame(userId) {
                 });
                 
                 cardClone.querySelector("[data-img-opponent]").src = game.avatar;
-                cardClone.querySelector("[data-opponent]").textContent = game.opponent || 'Unknown';
-                cardClone.querySelector("[data-winner]").textContent = game.winner ? 'Win' : 'Lose';
-                cardClone.querySelector("[data-score]").textContent = `${game.player1_score} - ${game.player2_score}`;
+                cardClone.querySelector("[data-opponent]").textContent = game.opponent + " " + (game.winner ? '❌' : '🏆') || 'Unknown';
+                // cardClone.querySelector("[data-winner]").textContent = game.winner ? 'win' : 'loose';
+                cardClone.querySelector("[data-score]").textContent = `${game.player1_name} ${game.player1_score} - ${game.player2_score} ${game.player2_name}`;
+                cardClone.querySelector("[data-winner]").textContent = "· " + game.user + " " + (game.winner ? '🏆' : '❌');
                 cardClone.querySelector("[data-date]").textContent = game.date_played.split("T")[0] || 'Unknown Date';
-            
+
                 cardContainer.appendChild(cardClone);
             });
             
@@ -235,13 +238,13 @@ async function func_stats() {
     if (idUser) {
         userId = idUser;
         displayName.style.display = "block";
-        displayName.textContent = `Page de: ${nameUser}`;
+        displayName.textContent = gettext(`Page de: ${nameUser}`);
     }
     else {
         try {
             const userResponse = await fetch('/GetUserId/');
             if (!userResponse.ok) {
-                throw new Error('Failed to fetch user ID');
+                throw new Error(gettext('Failed to fetch user ID'));
             }
             const userData = await userResponse.json();
             userId = userData.user_id;
@@ -250,7 +253,6 @@ async function func_stats() {
         }
         displayName.style.display = "none";
     }
-
     displayCardGame(userId);
     drawCamembert(userId);
     localStorage.removeItem('opponentId');

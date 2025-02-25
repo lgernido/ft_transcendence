@@ -7,7 +7,7 @@
 				
 				<form class="mb-4">
 					<div class="input-group border rounded">
-						<input type="text" class="form-control" id="userSearchInput" placeholder="{% trans 'Search a user...' %}" aria-label="Recherche">
+						<input type="text" class="form-control" id="userSearchInput" placeholder="{%trans 'Search user' %}" aria-label="Recherche">
 						<span class="input-group-text">
 							<i class="bi bi-search"></i> 
 						</span>
@@ -19,20 +19,25 @@
 					
 				</div>
 			</div>
-			<div id="chat-area" class="border rounded">
+			<div id="chat-area" class="border rounded" style="visibility: hidden;">
+
+				<p id="no-conversation" class="align-middle" style="display: flex; align-items: center; justify-content: center; height: 100%; margin: 0; visibility: visible;">
+					{%trans 'Nothing here, open a conversation' %}
+				</p>
 				<div class="chat-header d-flex align-items-center border rounded">
 					
-					<img src="media/avatars/default_avatar.png" alt="" class="rounded-circle me-3" id="imgContact"> 
+					<img id="avatarFriend" src="" alt="" class="rounded-circle me-3">
 					<div class="contact-details">
 						<strong>{%trans 'Start a chat with someone'%}</strong>
 					</div>
 				</div>
 				<div class="messages-container">
+					
 
 				</div>
 				<div class="chat-footer">
 					<form id="message-form" class="d-flex">
-						<textarea type="text" id="message-input" class="form-control me-2" placeholder="{% trans 'Write your best win 😈' %}" autocomplete="off" required></textarea>
+						<textarea type="text" id="message-input" class="form-control me-2" placeholder="Write your best win 😈" autocomplete="off" required></textarea>
 						<button type="submit" class="btn btn-primary" id="sendMSG">
 							<img src="{% static 'chat/img/envoyer.png' %}" alt="Envoyer">
 						</button>

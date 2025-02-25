@@ -8,6 +8,7 @@ import requests
 import time
 import os
 import logging
+logging = logging.getLogger(__name__)
 
 # Gestion des stats
 class Profile(models.Model):
@@ -64,9 +65,6 @@ class Social(models.Model):
             # logging.warning(f"L'utilisateur {other_user} n'est pas bloqué.")
 
 
-    import logging
-    logger = logging.getLogger(__name__)
-
     def update_avatar(self, new_avatar):
         # Supprimer l'ancien avatar si ce n'est pas le défaut
         if self.avatar and self.avatar.name != 'avatars/default_avatar.png':
@@ -111,3 +109,12 @@ def create_user_profiles(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profiles(sender, instance, **kwargs):
     instance.social.save()
+
+
+class UserPresence(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_online = models.BooleanField(default=False)
+    last_seen = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {'Online' if self.is_online else 'Offline'}"

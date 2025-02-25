@@ -1,12 +1,15 @@
 import json
 import asyncio
-import logging
 import uuid
 import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .botGame import PongGameBOT
 from .utils import serialize_game_state
 from asyncio import sleep
+from .models import Game
+from users.models import Profile
+from django.contrib.auth.models import User 
+from asgiref.sync import sync_to_async
 
 class GameBOTConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -124,6 +127,28 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
             max_points = int(text_data_json.get("max_points", 5))
             self.game.limit_points = max_points
 
+        if text_data_json["type"] == "over_game":
+            user = await sync_to_async(User.objects.get)(username=text_data_json["user1"])
+            profile = await sync_to_async(Profile.objects.get)(user=user)
+            
+            profile.games_played += 1
+            if text_data_json["winner"] == "left":
+                profile.games_win += 1
+            else:
+                profile.games_lose += 1
+
+            await sync_to_async(profile.save)()
+
+            player2 = await sync_to_async(User.objects.get)(username="bot")
+            game = await sync_to_async(Game.objects.create)(
+                player1=user,
+                player2=player2,
+                winner=user if text_data_json["winner"] == "left" else player2,
+                player1_score=self.game.left_score,
+                player2_score=self.game.right_score,
+                date_played=time.strftime('%Y-%m-%d %H:%M:%S'),
+            )
+
         if text_data_json["type"] == "move":
             player = text_data_json["player"]
             direction = text_data_json["direction"]
@@ -199,3 +224,6 @@ class GameBOTConsumer(AsyncWebsocketConsumer):
             "type": "game_over",
             "winner": winner,
         }))
+
+    async def close_socket(self, event):
+        await self.close()

@@ -1,9 +1,0 @@
-server.ssl.enabled: true
-elasticsearch.ssl.verificationMode: none
-elasticsearch.ssl.certificateAuthorities: "/usr/share/kibana/config/certs/ca.crt"
-server.ssl.key: "/usr/share/kibana/config/certs/elasticsearch.key"
-server.ssl.certificate: "/usr/share/kibana/config/certs/elasticsearch.crt"
-server.ssl.cipherSuites:
-  - TLS_AES_128_GCM_SHA256
-  - TLS_AES_256_GCM_SHA384
-

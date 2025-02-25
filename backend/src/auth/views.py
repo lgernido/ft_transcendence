@@ -33,9 +33,6 @@ def login_with_42(request):
     client = oauth.create_client('42')
     return client.authorize_redirect(request, redirect_uri)
 
-import logging
-logger = logging.getLogger(__name__)
-
 def update_avatar_from_42_api(user_info, social):
     img_data = user_info['image']['link']  # L'URL de l'image
     response = requests.get(img_data)
@@ -66,6 +63,10 @@ def callback(request):
             )
             profile = Profile.objects.create(user=user)
             profile.save()
+        else:
+            social2 = Social.objects.get(user=user)
+            if social2.user42 == False:
+                return redirect('/connect')
             
 
         if not request.user.is_authenticated:
@@ -81,10 +82,5 @@ def callback(request):
         request.session['access_token'] = access_token
         request.session.save()
 
-        if user.username:
-            logging.warning(f"\n User name: {user.username}")
-            logging.warning(f" Avatar URL: {social.avatar.name}\n")
-        else:
-            logging.warning(f"\n User has no name")
         return redirect('/mypage')
     return HttpResponse('Authorization failed.', status=401)

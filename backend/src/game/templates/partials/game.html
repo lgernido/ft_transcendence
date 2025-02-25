@@ -1,33 +1,44 @@
 {% load i18n %}
-<div class="d-flex" style="height: calc(100vh - 80px);">
-	<div class="mx-2 my-2 w-100 d-flex flex-column">
-		<div class="border border-dark rounded d-flex flex-column align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
-			<div class="fs-5 fw-bold mt-3 d-flex">
-				<div class="player-name player-left" id="playerLeft">{{ user.username }}</div>
-				<span class="vs">VS</span>
-				<div class="player-name player-right" id="playerRight">{% trans 'Guest' %}</div>
-				
-			</div>
-			<div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
-				<div class="game-window  position-relative">
-					<div class="winner-message" id="winnerMessage" style="display: none"></div>
-					<div id="countdown" class="countdown">3</div>
-					<div class="left-barre position-absolute {{ player1_color }}"></div>
-					<div class="right-barre position-absolute {{ player2_color }}"></div>
-					<div class="ball hidden"></div>
-					<div class="center-line"></div>
-				</div>
-			</div>
-			<div class="text fs-5 fw-bold mb-4 px-3 show-score d-flex">
-				<p class="mx-2" id="scorePLeft">0</p>
-				<span class="mx-2">-</span>
-				<p class="mx-2" id="scorePRight">0</p>
-			</div>
+{% load static %}
+
+<div class="d-flex flex-column justify-content-center align-items-center" id="divCanvas" style="height: calc(100vh - 80px);">
+	<canvas id="pong" width="700" height="400" data-user-id="{{ user.id }}" data-user-username="{{ user.username }}">
+		Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
+	</canvas>
+	<div id="showScore" style="background-color: rgb(0, 0, 0); color: #dedede;" class="border border-dark rounded p-3 d-flex flex-column align-items-center text-center d-none">
+		<span class="d-flex align-items-center">
+			<span>Winner is:</span>
+			<span class="ms-2 fw-bold" id="winner"></span>
+		</span>
+		
+		<span class="d-flex align-items-center my-2">
+			<span id="leftscore" class="me-2"></span>
+			<span>-</span>
+			<span id="rightscore" class="ms-2"></span>
+		</span>
+		
+		<span class="d-flex align-items-center">
+			<span>Game will redirect to lobby in</span>
+			<span class="ms-2 fw-bold" id="countdown"></span>
+			<span class="ms-1">seconds...</span>
+		</span>
+	</div>
+	<div class="d-flex align-items-center justify-content-between mb-2 w-100" id="showArrow"></div>
+		<div class="d-flex flex-column border border-dark rounded px-2 py-2 bg-light text-center" id="arrow">
+			<i class="bi bi-arrow-up-square-fill" style="font-size: 50px;"></i>
+			<i class="bi bi-arrow-down-square-fill" style="font-size: 50px;"></i>
 		</div>
+	</div>
+
+	<div class="confetti-container">
+		<div class="confetti"></div>
+		<div class="confetti"></div>
+		<div class="confetti"></div>
+		<div class="confetti"></div>
+		<div class="confetti"></div>
 	</div>
 </div>
 
 <script>
 	const roomName = "{{ room_name }}";
 </script>
-	

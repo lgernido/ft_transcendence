@@ -1,190 +1,198 @@
-let socketBOT;
-
-function launchGameBot(roomName, maxPoints) {
-    let isActive = false;
-
+function launchGameBot(maxPoints, colorP1, colorP2) {
     const playerLeft = document.getElementById('playerLeft');
     const playerRight = document.getElementById('playerRight');
 
-    playerRight.innerHTML = 'OpenAI';
-
-    const selectRightBar = document.querySelector('.right-barre');
-    selectRightBar.classList.add('bar-transition');
+    if (!playerLeft || !playerRight)
+        return
 
     setTimeout(() => {
         playerLeft.classList.add('slide-in-left');
         playerRight.classList.add('slide-in-right');
     }, 500);
 
-    socketBOT = new WebSocket(
-        `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/game/${roomName}/`
-    );
-    if (socketBOT.readyState === WebSocket.CLOSED) {
+    const leftBarre = document.querySelector('.left-barre');
+    const rightBarre = document.querySelector('.right-barre');
+
+    if (!leftBarre || !rightBarre)
+        return
+
+    updatePlayerColorG(leftBarre, rightBarre, colorP1, colorP2);
+
+    let leftBarrePosition = 50;
+    let rightBarrePosition = 50;
+
+    const barreSpeed = 1;
+    const barreHeight = 15;
+
+    const keys = {}; 
+
+    function moveBarre(barre, position, direction) {
+        const maxPosition = 100 - (barreHeight * 0.5);
+        position += direction * barreSpeed;
+        position = Math.max(barreHeight * 0.5, Math.min(maxPosition, position));
+        barre.style.top = position + '%';
+        return position;
     }
 
-    socketBOT.onopen = () => {
-        socketBOT.send(JSON.stringify({
-            type: 'set_max_points',
-            max_points: maxPoints
-        }));
-    };
-
-    function sendStopGame() {
-        socketBOT.send(JSON.stringify({ type: 'stop_game' }));
-        isActive = false;
-    }
-
-    window.addEventListener('beforeunload', () => {
-        sendStopGame();
-        socketBOT.close();
+    document.addEventListener('keydown', (e) => {
+        keys[e.key] = true;
     });
 
-    window.addEventListener('popstate', () => {
-        if (socketBOT.readyState === WebSocket.OPEN) {
-            sendStopGame();
-            socketBOT.close();
-        }
+    document.addEventListener('keyup', (e) => {
+        keys[e.key] = false;
     });
 
-    const targetPaths = ['/mypage', '/stats', '/amis', '/chat', '/compte'];
-
-    const observer = new MutationObserver(() => {
-        if (targetPaths.includes(window.location.pathname)) {
-            if (socketBOT) {
-                sendStopGame();
-                socketBOT.close();
-            }
-        }
-    });
-
-    const playerActions = { left: 0, right: 0 }; 
-    const keysPressed = { w: false, s: false, ArrowUp: false, ArrowDown: false };
-    const barSpeed = 1.5; 
+    const moveValue = 0.5;
     
-    function updateBarPositions() {
-        if (!isActive) return;
+    const ball = document.querySelector('.ball');
+    const ballRadius = 2;
+    const gameSetup = document.querySelector('.game-window');
 
+    let posBallX = 50;
+    let posBallY = 50;
+    let speedX = 0.3;
+    let speedY = 0.2;
 
-        const leftBar = document.querySelector('.left-barre');
-        const rightBar = document.querySelector('.right-barre');
-        const ball = document.querySelector('.ball');
+    let ballSpeed = 0.3;
 
-        if (leftBar === null || rightBar === null) {
-            if (socketBOT) {
-                sendStopGame();
-                socketBOT.close();
-            }
-        } 
+    let scrorePlayerLeft = 0;
+    let scrorePlayerRight = 0;
 
-        if (keysPressed.w) {
-            playerActions.left = -barSpeed;
-            sendMove("left", -barSpeed);
-        } else if (keysPressed.s) {
-            playerActions.left = barSpeed;
-            sendMove("left", barSpeed);
+    let resettingBall = false;
+
+    const increaseSpeed = 1.1;
+    const maxAngle = Math.PI / 4;
+
+    function calculateAngle(impactPoint, maxAngle) {
+        return maxAngle * (2 * impactPoint - 1);
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function updateScore() {
+        document.getElementById("scorePLeft").textContent = scrorePlayerLeft;
+        document.getElementById("scorePRight").textContent = scrorePlayerRight;
+    }
+
+    updateScore();
+    
+    function resetBall()
+    {
+        posBallX = 50;
+        posBallY = 50;
+        const angle = Math.random() * Math.PI / 4 + Math.PI / 8;
+        const directionX = Math.random() > 0.5 ? 1 : -1;
+        const directionY = Math.random() > 0.5 ? 1 : -1;
+        
+        speedX = ballSpeed * Math.cos(angle) * directionX;
+        speedY = ballSpeed * Math.sin(angle) * directionY;
+    }
+
+    var aiBar = { y: rightBarrePosition, height: barreHeight };
+    let predictedBallY = posBallY;
+
+    function aiMove() {
+        let difference = predictedBallY - aiBar.y;
+    
+        const maxMove = barreSpeed/2;
+    
+        if (Math.abs(difference) > maxMove) {
+            aiBar.y += Math.sign(difference) * maxMove;
         } else {
-            playerActions.left = 0;
-            sendMove("left", 0);
-        }
-
-        const ballTop = parseFloat(ball.style.top);
-        const rightBarTop = parseFloat(rightBar.style.top);
-
-        if (ballTop > rightBarTop + 3) {
-            playerActions.right = barSpeed;
-            sendMove("right", barSpeed);
-        }
-        else if (ballTop < rightBarTop - 3) {
-            playerActions.right = -barSpeed;
-            sendMove("right", -barSpeed);
-        }
-        else {
-            playerActions.right = 0;
-            sendMove("right", 0);
+            aiBar.y = predictedBallY;
         }
     
-        requestAnimationFrame(updateBarPositions);
+        aiBar.y = Math.max(barreHeight / 2, Math.min(100 - barreHeight / 2, aiBar.y));
+    
+        rightBarre.style.top = aiBar.y + '%';
     }
-
-    document.addEventListener('keydown', (event) => {
-        if (!isActive) return;
-
-
-        if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            keysPressed[event.key] = true;
-        }
-    });
     
-    document.addEventListener('keyup', (event) => {
-        if (!isActive) return;
-
-
-        if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            keysPressed[event.key] = false;
-        }
-    });
+    function predict_ball_position() {
+        let bx = posBallX;
+        let by = posBallY;
+        let bdx = speedX;
+        let bdy = speedY;
         
-    function sendMove(player, direction) {
-        if (socketBOT.readyState !== WebSocket.OPEN) {
-            return;
-        }
-
-        socketBOT.send(JSON.stringify({
-            type: 'move',
-            player: player,
-            direction: direction
-        }));
-    }
-    
-    socketBOT.onclose = (event) => {
-    }
-    
-    socketBOT.onmessage = (message) => {
-        const data = JSON.parse(message.data);
-    
-        if (data.type === "game_state" || data.type === "game_update") {
-            updateGameState(data);
-        } else if (data.type === "game_over") {
-            displayWinner(data.winner);
-            if (socketBOT.readyState === WebSocket.OPEN) {
-                sendStopGame();
-                socketBOT.close();
+        for (let i = 0; i < 100; i++) {
+            bx += bdx;
+            by += bdy;
+            
+            if (by + 1 >= 100 || by - 1 <= 0) {
+                bdy = -bdy * getRandomNumber(0.6, 1.4);
+                by += bdy;
             }
-        } else if (data.type === "close_socket") {
-            if (socketBOT.readyState === WebSocket.OPEN) {
-                sendStopGame();
-                socketBOT.close();
+            
+            if (bx + 1 >= 100 - 5) {
+                bx = 100 - 5;
+                break;
+            }
+            
+            if (bx - 1 <= 5) {
+                bdx = -bdx * getRandomNumber(0.6, 1.4);
+                bx += bdx;
             }
         }
-    };
+        predictedBallY = by;
+    }
     
-    function updateGameState(state) {
-        const leftBar = document.querySelector('.left-barre');
-        const rightBar = document.querySelector('.right-barre');
-
-        if (leftBar === null || rightBar === null) {
-            if (socketBOT) {
-                sendStopGame();
-                socketBOT.close();
-            }
-            return;
+    paddleInterval = setInterval(() => {
+        if (keys['w']) {
+            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, -moveValue);
+        }
+        if (keys['s']) {
+            leftBarrePosition = moveBarre(leftBarre, leftBarrePosition, moveValue);
         }
 
-        document.querySelector('.left-barre').style.top = `${state.left_bar_pos}%`;
-        document.querySelector('.right-barre').style.top = `${state.right_bar_pos}%`;
-        document.querySelector('.ball').style.left = `${state.ball_pos.x}%`;
-        document.querySelector('.ball').style.top = `${state.ball_pos.y}%`;
-    
-        document.getElementById('scorePLeft').innerText = state.left_score;
-        document.getElementById('scorePRight').innerText = state.right_score;
+    }, 10);
+
+    calcIaInterval = setInterval(predict_ball_position, 1000);
+
+    moveIaInterval = setInterval(aiMove, 10);
+
+    function getRandomNumber(min, max) {
+        return Math.random() * (max - min) + min;
     }
 
-        
+    function startGame() {
+        scrorePlayerLeft = 0;
+        scrorePlayerRight = 0;
+        updateScore();
+        resetBall();
+        ballInterval = setInterval(moveBall, 10);
+    }
+
+    const countdownElement = document.getElementById('countdown');
+    let countdown = 5;
+    function startCountdown() {
+        toggleBallVisibility(true);
+        countdownElement.textContent = countdown;
+        const countdownInterval = setInterval(() => { 
+            countdown -= 1;
+            countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
+            
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.style.display = 'none';
+                toggleBallVisibility(false);
+                startGame();
+            }
+        }, 1000);
+    }
+
+    function getCSRFToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        return csrfToken;
+    }
+
     function displayWinner(winner) {
         isActive = false;
-        document.querySelector('.ball').classList.add('hidden');
+        toggleBallVisibility(true);
+        const winnerName = winner === "left" ? playerLeft.innerText : playerRight.innerText;
+
         const winnerMessage = document.getElementById('winnerMessage');
-        winnerMessage.innerText = winner === "left" ? "Player 1 Wins!" : "OpenAI Wins!";
+        winnerMessage.innerText = `${winnerName} Wins!`;
         winnerMessage.style.display = 'block';
         winnerMessage.style.position = 'absolute';
         winnerMessage.style.top = '50%';
@@ -196,37 +204,119 @@ function launchGameBot(roomName, maxPoints) {
         winnerMessage.style.padding = '20px';
         winnerMessage.style.borderRadius = '10px';
     }
-    
-    const countdownElement = document.getElementById('countdown');
-    let countdown = 5;
-    function startCountdown() {
-        countdownElement.textContent = countdown;
-        countdownElement.style.display = 'block';
-        const countdownInterval = setInterval(() => { 
-            countdown -= 1;
-            countdownElement.textContent = countdown > 0 ? countdown : 'GO!';
-            
-            if (countdown <= 0) {
-                const ball = document.querySelector('.ball');
 
-                if (ball === null) {
-                    if (socketBOT) {
-                        sendStopGame();
-                        socketBOT.close();
-                    }
+    function toggleBallVisibility(isHidden) {
+        if (isHidden) {
+            ball.classList.add('hidden');
+        } else {
+            ball.classList.remove('hidden');
+        }
+    }
 
+    async function moveBall() {
+        const maxSpeed = 0.8;
+        posBallX += speedX;
+        posBallY += speedY;
+
+        const ballRect = ball.getBoundingClientRect();
+        const leftBarreRect = leftBarre.getBoundingClientRect();
+        const rightBarreRect = rightBarre.getBoundingClientRect();
+
+        if (resettingBall) return;
+
+        if (posBallY - ballRadius <= 0 || posBallY + ballRadius >= 100)
+            speedY *= -1;
+
+        if (ballRect.left <= leftBarreRect.right && ballRect.bottom >= leftBarreRect.top && ballRect.top <= leftBarreRect.bottom)
+        {
+            posBallX = posBallX + 1;
+
+            const impactPoint = (ballRect.top + ballRect.height / 2 - leftBarreRect.top) / leftBarreRect.height;
+            const angle = calculateAngle(impactPoint, maxAngle);
+
+            const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
+            if (totalSpeed < maxSpeed)
+                speedX = Math.cos(angle) * totalSpeed;
+                speedY = Math.sin(angle) * totalSpeed;
+            speedX = Math.abs(speedX);
+        }
+
+        if (ballRect.right >= rightBarreRect.left && ballRect.bottom >= rightBarreRect.top && ballRect.top <= rightBarreRect.bottom)
+        {
+            posBallX = posBallX - 1;
+
+            const impactPoint = (ballRect.top + ballRect.height / 2 - rightBarreRect.top) / rightBarreRect.height;
+            const angle = calculateAngle(impactPoint, maxAngle);
+        
+            const totalSpeed = Math.hypot(speedX, speedY) * increaseSpeed;
+            if (totalSpeed < maxSpeed)
+                speedX = Math.cos(angle) * totalSpeed;
+                speedY = Math.sin(angle) * totalSpeed;
+        
+            speedX = -Math.abs(speedX);
+        }
+
+        if (posBallX - 1 <= 0 || posBallX + 1 >= 100)
+        {
+            resettingBall = true;
+            clearInterval(ballInterval);
+
+            ball.style.left = posBallX - 1 + '%';
+            ball.style.top = posBallY - 2 + '%';
+            if (posBallX - 1.5 <= 0) {
+                scrorePlayerRight++;
+                updateScore();
+                if (scrorePlayerRight >= maxPoints) {
+                    displayWinner('right');
                     return;
                 }
-
-                clearInterval(countdownInterval);
-                countdownElement.style.display = 'none';
-                document.querySelector('.ball').classList.remove('hidden'); 
-                isActive = true;
-                socketBOT.send(JSON.stringify({ type: 'start_game' }));
-                updateBarPositions();
+            } else if (posBallX + 1.5 >= 100) {
+                scrorePlayerLeft++;
+                updateScore();
+                if (scrorePlayerLeft >= maxPoints) {
+                    displayWinner('left');
+                    return;
+                }
             }
-        }, 1000);
+
+            ball.classList.add('breaking');
+            await sleep(1000);
+            ball.classList.remove('breaking')
+            resetBall();
+            resettingBall = false;
+            ballInterval = setInterval(moveBall, 10);
+        }
+
+        ball.style.left = posBallX + '%';
+        ball.style.top = posBallY + '%';
     }
-    
+
     startCountdown();
+}
+
+function updatePlayerColorG(playerElement1, playerElement2, newColor1, newColor2) {
+    const colorClasses = [
+        'color-player-red', 
+        'color-player-green', 
+        'color-player-blue', 
+        'color-player-yellow', 
+        'color-player-cyan', 
+        'color-player-magenta', 
+        'color-player-orange', 
+        'color-player-purple', 
+        'color-player-pink', 
+        'color-player-gray'
+    ];
+    
+    if (playerElement1 && playerElement2) {
+        playerElement1.classList.remove(...colorClasses);
+        playerElement2.classList.remove(...colorClasses);
+
+        if (newColor1) {
+            playerElement1.classList.add(newColor1);
+        }
+        if (newColor2) {
+            playerElement2.classList.add(newColor2);
+        }
+    }
 }

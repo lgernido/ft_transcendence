@@ -51,11 +51,11 @@
 }
 
 .chat-header img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
     border-radius: 50%;
-    background: transparent;
+    background-color: #e9ecef;
 }
 
 .chat-header .contact-details {
@@ -126,4 +126,37 @@
 .messages-container::-webkit-scrollbar-thumb:hover,
 #sidebar::-webkit-scrollbar-thumb:hover {
     background: #888;
+}
+
+
+/* Styles pour les messages */
+.send {
+    background-color: #d4edda; /* Vert clair pour les messages envoyés */
+    color: #155724; /* Couleur du texte vert foncé */
+    align-self: flex-end; /* Aligne le message à droite */
+    padding: 10px;
+    border-radius: 15px;
+    max-width: 70%; /* Limite la largeur */
+    word-wrap: break-word; /* Permet le retour à la ligne */
+}
+
+.receive {
+    background-color: #cccbcb; /* Gris clair pour les messages reçus */
+    color: #333; /* Couleur du texte */
+    align-self: flex-start; /* Aligne le message à gauche */
+    padding: 10px;
+    border-radius: 15px;
+    max-width: 70%; /* Limite la largeur */
+    word-wrap: break-word; /* Permet le retour à la ligne */
+}
+
+/* Conteneur des messages */
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacement entre les messages */
+    padding: 15px;
+    background-color: #f1f1f1;
+    overflow-y: auto;
+    height: calc(100vh - 160px); /* Ajuster en fonction de l'interface */
 }

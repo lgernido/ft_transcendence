@@ -24,11 +24,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         elif self.channel_id.startswith("private_"):  # Canal privé
             user2_id = self.channel_id[8:]  # Retirer le préfixe "#"       
-            self.user1, self.user2 = await self.get_users(str(self.user.id), user2_id)
+            self.user1, self.user2 = await self.get_users(self.user.id, int(user2_id))
             
             if not self.user1 or not self.user2:
                 await self.close(code=4002)
-            self.channel = await self.get_or_create_channel(str(self.user.id), user2_id)
+            self.channel = await self.get_or_create_channel(self.user.id, int(user2_id))
         else:
             await self.close(code=4001)
 

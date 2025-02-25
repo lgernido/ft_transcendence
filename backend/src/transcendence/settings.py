@@ -21,12 +21,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(ezrh!_r8=w4ksnuzvty@@^n$6w%4kn_^!0v8h&kw5yq15=-&r'
+SECRET_KEY = os.getenv("DJANGO_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+IP_HOST = os.getenv("IP_HOST")
+
+# Mettre IP de la machine host
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', IP_HOST]
+CSRF_TRUSTED_ORIGINS = ['https://127.0.0.1:8443', 'https://localhost:8443', f'https://{IP_HOST}:8443']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://localhost:8443',
+# ]
 
 PORT = 8000
 
@@ -103,9 +111,9 @@ MEDIA_URL = '/media/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "superpongdb",
-        'USER': "superpong",
-        'PASSWORD': "gnoprepus",
+        'NAME': os.getenv("POSTGRES_DB"),
+        'USER': os.getenv("POSTGRES_USER"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
         'HOST': "db",
         'PORT': "5432",
     }
@@ -145,7 +153,7 @@ PASSWORD_HASHERS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'fr'
+LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
     ('en', 'English'),
@@ -203,10 +211,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:8443',
-]
-
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
     # os.path.join(BASE_DIR, 'backend/src/auth/locale'),
@@ -221,32 +225,3 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 3600  # Expire après 1 heure
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-# Sécurisation des cookies CSRF
-# CSRF_COOKIE_SECURE = True
-# CSRF_COOKIE_HTTPONLY = True
-# CSRF_COOKIE_SAMESITE = 'Lax'
-
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'yourapp': {  # Loggez depuis une application spécifique
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': False,
-#         },
-#     },
-# }

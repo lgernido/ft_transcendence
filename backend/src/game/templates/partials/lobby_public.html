@@ -1,0 +1,80 @@
+{% load static %}
+{% load i18n %}
+<div id="header-placeholder"></div>
+<div class="d-flex" style="height: calc(100vh - 80px);">
+	<div class="mx-2 my-2 w-100 d-flex flex-column">
+		<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
+			<!-- <button class="btn btn-primary mb-3" id="copyButton">Copy invite link</button> -->
+			<div class="d-flex align-items-center" style="gap: 50px;">
+				<div class="card-lobby">
+					<img src="{{ social.avatar.url }}" class="card-lobby-img-top" alt="img-profil" id="avatarPlayer1" style="width: 100%; height: auto;">
+					<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
+						<p class="card-lobby-text-name1" id="playerName1">{{ user.username }}</p>
+						<div class="form-floating mb-1 w-75">
+							<select class="form-select" id="selectColorPlayer1">
+								<option value="color-player-red" selected>{%trans 'Red' %}</option>
+								<option value="color-player-green">{%trans 'Green' %}</option>
+								<option value="color-player-blue">{%trans 'Blue' %}</option>
+								<option value="color-player-yellow">{%trans 'Yellow' %}</option>
+								<option value="color-player-cyan">{%trans 'Cyan' %}</option>
+								<option value="color-player-magenta">{%trans 'Magenta' %}</option>
+								<option value="color-player-orange">{%trans 'Orange' %}</option>
+								<option value="color-player-purple">{%trans 'Purple' %}</option>
+								<option value="color-player-pink">{%trans 'Pink' %}</option>
+								<option value="color-player-gray">{%trans 'Gray' %}</option>
+							</select>
+							<label for="selectColorPlayer1">{%trans 'Colors :' %}</label>
+						</div>
+						<div class="btn-group mt-2 mb-1" role="group" aria-label="Basic checkbox toggle button group">
+							<input type="checkbox" class="btn-check" id="readyPlayer1" autocomplete="off">
+							<label class="btn btn-outline-secondary" for="readyPlayer1">Ready</label>
+						</div>						
+					</div>
+				</div>
+				
+				<!-- Joueur 2 -->
+				<div class="card-lobby">
+					<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil" id="avatarPlayer2" style="width: 100%; height: auto;">
+					<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
+						<p class="card-lobby-text-name2" id="playerName2">{%trans 'Guest' %}</p>
+						<div class="form-floating mb-1 w-75">
+							<select class="form-select" id="selectColorPlayer2">
+								<option value="color-player-red">{%trans 'Red' %}</option>
+								<option value="color-player-green" selected>{%trans 'Green' %}</option>
+								<option value="color-player-blue">{%trans 'Blue' %}</option>
+								<option value="color-player-yellow">{%trans 'Yellow' %}</option>
+								<option value="color-player-cyan">{%trans 'Cyan' %}</option>
+								<option value="color-player-magenta">{%trans 'Magenta' %}</option>
+								<option value="color-player-orange">{%trans 'Orange' %}</option>
+								<option value="color-player-purple">{%trans 'Purple' %}</option>
+								<option value="color-player-pink">{%trans 'Pink' %}</option>
+								<option value="color-player-gray">{%trans 'Gray' %}</option>
+							</select>
+							<label for="selectColorPlayer2">{%trans 'Colors :' %}</label>
+						</div>
+						<div class="btn-group mt-2 mb-1" role="group" aria-label="Basic checkbox toggle button group">
+							<input type="checkbox" class="btn-check" id="readyPlayer2" autocomplete="off">
+							<label class="btn btn-outline-secondary" for="readyPlayer2">Ready</label>
+						</div>						
+					</div>
+				</div>
+			</div>
+			<div id="user-info" data-username="{{ user.username }}" data-avatar="{{ social.avatar.url }}"></div>
+			<div class="w-25 d-flex flex-row align-items-center justify-content-center my-3 text-light">
+				{%trans 'Points limit :'%} <input class="inputMaxPoint ms-2 w-25" id="maxPoint" type="number" max="40" value="5">
+			</div>
+			<div class="w-100 d-flex align-items-center justify-content-center">
+				<button class="btn btn-primary btn-ready mx-2" id="btn-ready">{%trans 'Launch' %}</button>
+			</div>
+			<div class="w-100 d-flex align-items-center justify-content-center mt-3">
+				<button id="leaveRoomButton" class="btn btn-danger">Quit Room</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% if request.session.roomName %}
+    <p id="check-invite" hidden>{{ request.session.roomName }}</p>
+{% else %}
+    <p id="check-invite" hidden>Nop</p>
+{% endif %}

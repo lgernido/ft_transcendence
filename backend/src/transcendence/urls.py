@@ -19,6 +19,7 @@ from django.urls import include, path, re_path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from oauth2_provider import urls as oauth2_urls
 from django.conf.urls.i18n import i18n_patterns
+from django.views.i18n import JavaScriptCatalog
 from django.conf import settings
 from django.conf.urls.static import static
 import game
@@ -35,10 +36,5 @@ urlpatterns = [
 	path('users/', include('users.urls')),
 	path('chat2/', include('chat.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-# urlpatterns += [
-# 	# Route SPA
-#     re_path(r'^(?!admin|chat2|users/).*$', game.views.home, name='spa_home'),
-# ]

@@ -1,5 +1,5 @@
 .player-name {
-    opacity: 0; /* Démarre transparent */
+    opacity: 0;
     font-size: 24px;
     font-weight: bold;
     color: white;
@@ -131,7 +131,7 @@
 	left: 0;
 	top: 50%;
 	transform: translateY(-50%);
-	/* background-color: red; */
+	background-color: red;
 	margin-left: 3px;
 }
 
@@ -139,8 +139,13 @@
 	right: 0;
 	top: 50%;
 	transform: translateY(-50%);
-	/* background-color: green; */
+	background-color: green; 
 	margin-right: 3px;
+}
+
+#tlbar #trbar {
+    transform: translateY(-50%);
+    top: clamp(0%, calc(var(--bar-position, 50%) - 50px), calc(100% - 50px));
 }
 
 .center-line {

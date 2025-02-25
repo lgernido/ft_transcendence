@@ -33,7 +33,7 @@ function inviteUser(userId) {
     })
     .then(response => response.json())
     .then(data => {
-        alert(`User ${userId} has been add || ${data}`);
+        displayError(gettext(`User has been added`));
     })
     .catch(error => {
         console.error('Error:', error);
@@ -46,7 +46,6 @@ function deleteUser(userId) {
         return;
     }
     
-    if (confirm(`Are you sure you want to remove user ${userId} from your list?`)) {
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -60,19 +59,18 @@ function deleteUser(userId) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to delete the user');
+                throw new Error(gettext('Failed to delete the user'));
             }
             return response.json();
         })
         .then(data => {
-            alert(`User ${userId} has been removed successfully!`);
+            displayError(gettext(`User has been removed successfully!`));
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while removing the user.');
+            displayError(gettext('An error occurred while removing the user.'));
         });
     }
-}
 
 // Fonction pour bloquer un utilisateur
 function blockUser(userId) {
@@ -81,7 +79,7 @@ function blockUser(userId) {
         return;
     }
     
-    if (confirm(`Are you sure you want to block user ${userId}?`)) {
+
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -95,19 +93,18 @@ function blockUser(userId) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to block the user');
+                throw new Error(gettext('Failed to block the user'));
             }
             return response.json();
         })
         .then(data => {
-            alert(`User ${userId} has been blocked successfully!`);
+            displayError(gettext(`User has been blocked successfully!`));
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while blocking the user.');
+            displayError(gettext('An error occurred while blocking the user.'));
         });
     }
-}
 
 // Fonction pour débloquer un utilisateur
 function unblockUser(userId) {
@@ -116,7 +113,7 @@ function unblockUser(userId) {
         return;
     }
     
-    if (confirm(`Are you sure you want to unblock user ${userId}?`)) {
+
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -130,19 +127,18 @@ function unblockUser(userId) {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to unblock the user');
+                throw new Error(gettext('Failed to unblock the user'));
             }
             return response.json();
         })
         .then(data => {
-            alert(`User ${userId} has been unblocked successfully!`);
+            displayError(gettext(`User has been unblocked successfully!`));
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while unblocking the user.');
+            displayError(gettext('An error occurred while unblocking the user.'));
         });
     }
-}
 function getUsers() {
 
     const search_user = document.getElementById('search_user'); // Utilisez `document.getElementById`
@@ -168,7 +164,7 @@ function getUsers() {
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Erreur lors de la récupération des utilisateurs');
+                        throw new Error(gettext('Error while looking for the users'));
                     }
                     return response.json();
                 })
@@ -176,12 +172,12 @@ function getUsers() {
                     if (data && Array.isArray(data)) {
                         displayUserList(data, '');
                     } else {
-                        alert('Aucun utilisateur trouvé.');
+                        displayError(gettext('No user found'));
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la récupération des données.');
+                    displayError(gettext('An error occurred while getting the data'));
                 });
         }
     });
@@ -191,7 +187,7 @@ function loadFriendsList() {
     fetch('/users/user_profiles/')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Erreur lors de la récupération des données');
+                throw new Error(gettext('An error occurred while getting the data'));
             }
             return response.json();
         })
@@ -199,12 +195,12 @@ function loadFriendsList() {
             if (data && Array.isArray(data)) {
                 displayUserList(data, 'users');
             } else {
-                alert('Aucun utilisateur trouvé.');
+                displayError(gettext('No user found'));
             }
         })
         .catch(error => {
             console.error('Erreur:', error);
-            alert('Impossible de charger la liste d\'amis.');
+            displayError(gettext('Can not load friends list'));
         });
 }
 
@@ -221,7 +217,7 @@ function fetchUserList(action) {
     .then(response => {
         
         if (!response.ok) {
-            throw new Error(`Erreur HTTP : ${response.status}`);
+            throw new Error(gettext(`HTTP Error : ${response.status}`));
         }
 
         return response.json();
@@ -231,7 +227,7 @@ function fetchUserList(action) {
     })
     .catch(error => {
         console.error("Erreur lors de la requête :", error);
-        alert("Une erreur est survenue : " + error.message);
+        displayError(gettext("An error occurred : " + error.message));
     });
 }
 
@@ -274,7 +270,7 @@ async function extractValueProfileFriends(userId) {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch profile data');
+            throw new Error(gettext('Failed to fetch profile data'));
         }
 
         const data = await response.json();
@@ -291,8 +287,15 @@ async function extractValueProfileFriends(userId) {
 
 async function generateUserHTML(user, action) {
     const userTemplate = document.getElementById('user-template').content.cloneNode(true);
-    // const isOnline = OnlineUsers.users.some(onlineUser => onlineUser.username === user.username);
-    
+    const isOnline = OnlineUsers.users.some(onlineUser => onlineUser.username === user.username);
+
+    const userData = userTemplate.querySelector("[data-user-name]");
+    userData.addEventListener("click", function() {
+        localStorage.setItem('opponentName', user.username);
+        localStorage.setItem('opponentId', user.id);
+        loadStats();
+    });
+
     const { gamesWin, gamesLose, gamesDraw } = await extractValueProfileFriends(user.id);
     const totalGame = gamesWin + gamesLose + gamesDraw;
     
@@ -306,8 +309,8 @@ async function generateUserHTML(user, action) {
     
     userTemplate.querySelector('[data-user-name]').textContent = user.username || 'Unknown';
     userTemplate.querySelector('[data-user-avatar]').src = user.avatar_url;
-    // userTemplate.querySelector('[data-icon]').classList = `status bi bi-circle-fill ${isOnline ? 'text-success' : 'text-secondary'}`;
-    // userTemplate.querySelector('[data-icon]').setAttribute("data_name", user.username);
+    userTemplate.querySelector('[data-icon]').classList = `status bi bi-circle-fill ${isOnline ? 'text-success' : 'text-secondary'}`;
+    userTemplate.querySelector('[data-icon]').setAttribute("data_name", user.username);
     
     const gamesPlayedElement = userTemplate.querySelector('[data-game-played]');
     const winsElement = userTemplate.querySelector('[data-win]');
@@ -322,6 +325,14 @@ async function generateUserHTML(user, action) {
     const buttonsContainer = userTemplate.querySelector('[data-action-buttons]');
     const actionButtons = createActionButtons(user.id, action);
     buttonsContainer.appendChild(actionButtons);
+
+    const inviteButton = userTemplate.querySelector("#invitePlayer");
+    inviteButton.addEventListener("click", function() {
+        if (socket_roomP && roomNameGlobal)
+            sendInvitation(user);
+        else
+            displayError(gettext("You are not in a private room"));
+    });
     
     return userTemplate;
 }
@@ -334,6 +345,20 @@ async function displayUserList(users, action) {
         const userHTML = await generateUserHTML(user, action);
         userListContainer.appendChild(userHTML);
     }
+}
+
+async function sendInvitation(user) {
+    if (!presenceOnline || presenceOnline.readyState !== WebSocket.OPEN) {
+        return;
+    }
+
+    const message = "Tu as été invité à rejoindre le lobby !";
+    presenceOnline.send(JSON.stringify({
+        type: 'send_invitation',
+        user_id: user.id,
+        message: message,
+        room_name: roomNameGlobal
+    }));
 }
 
 

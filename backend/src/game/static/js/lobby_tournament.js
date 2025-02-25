@@ -4,21 +4,12 @@ function tournament(){
     const btnStart = document.getElementById('btn-ready');
     let selectedNumber = 0;
 
-    function generateRandomString(length = 8) {
-		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		let result = '';
-		for (let i = 0; i < length; i++) {
-			result += characters.charAt(Math.floor(Math.random() * characters.length));
-		}
-		return result;
-	}
-
     btnStart.addEventListener('click', (event) => {
         const players = [];
 
 
         if (selectedNumber === 0 || selectedNumber === null) {
-            alert('Veuillez sélectionner un nombre de joueurs');
+            displayError(gettext('Select the number of players'));
             return;
         }
         
@@ -26,7 +17,7 @@ function tournament(){
             const playerInput = document.getElementById(`player-${i}`);
             
             if (playerInput.value === '') {
-                alert('Veuillez renseigner tous les champs');
+                displayError(gettext('Fill out all the categories'));
                 selectedNumber = 0;
                 return;
             }
@@ -37,42 +28,14 @@ function tournament(){
         for (let i = 0; i < players.length; i++) {
             for (let j = i + 1; j < players.length; j++) {
                 if (players[i] === players[j]) {
-                    alert('Veuillez renseigner des pseudos différents');
+                    displayError(gettext('Choose another name'));
                     selectedNumber = 0;
                     return;
                 }
             }
         };
-
-        const generateUUID = generateRandomString(8);
-		const roomName = `${generateUUID}_room`;
         const maxPoint = maxPointsInput.value;
-
-        fetch("create_tournament/", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),
-            },
-            body: JSON.stringify({
-                roomName: roomName,
-                player1Color: 'color-player-red',
-                player2Color: 'color-player-blue',
-                maxPoint: maxPoint,
-            }),
-        })
-            .then((response) => response.json().then((data) => ({ status: response.status, body: data })))
-            .then(({ status, body }) => {
-                if (status === 200) {
-                    loadGameTournament(roomName, maxPoint, players);
-                } else {
-                    alert(body.error || 'Failed to create room');
-                }
-            })
-            .catch((error) => {
-                console.error('Fetch error:', error);
-                alert('Failed to create room');
-        });
+        loadGameTournament(maxPoint, players);
     });
 
 	document.querySelectorAll('.btn-primary').forEach(button => {
@@ -108,7 +71,7 @@ function tournament(){
                     <p class="player-number">Joueur ${i + 1}</p>
                 </div>
                 <div class="card-lobby-body d-flex align-items-center justify-content-center">
-                    <input type="text" class="form-control mt-3" placeholder="Enter pseudo" id="player-${i}">
+                    <input type="text" class="form-control mt-3" placeholder="Enter pseudo" id="player-${i}" maxlength="12">
                 </div>
             `;
             cardContainer.appendChild(card);
@@ -116,28 +79,28 @@ function tournament(){
     }
 }
 
-function updateTournamentContent(selectedValue) {
-    const cardContainer = document.getElementById('cardContainerTournament');
+// function updateTournamentContent(selectedValue) {
+//     const cardContainer = document.getElementById('cardContainerTournament');
 
-    cardContainer.innerHTML = '';
+//     cardContainer.innerHTML = '';
 
-    fetch('/lobby_tournament/')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur de réseau : ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            data.forEach(player => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'player-card';
-                playerCard.innerHTML = `<p>${player.name}</p>`;
-                cardContainer.appendChild(playerCard);
-            });
-        })
-        .catch(error => {
-            console.error('Erreur lors de la récupération des données :', error);
-            cardContainer.innerHTML = `<p>Une erreur est survenue : ${error.message}</p>`;
-        });
-}
+//     fetch('/lobby_tournament/')
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error('Erreur de réseau : ' + response.statusText);
+//             }
+//             return response.json();
+//         })
+//         .then(data => {
+//             data.forEach(player => {
+//                 const playerCard = document.createElement('div');
+//                 playerCard.className = 'player-card';
+//                 playerCard.innerHTML = `<p>${player.name}</p>`;
+//                 cardContainer.appendChild(playerCard);
+//             });
+//         })
+//         .catch(error => {
+//             console.error('Erreur lors de la récupération des données :', error);
+//             cardContainer.innerHTML = `<p>Une erreur est survenue : ${error.message}</p>`;
+//         });
+// }

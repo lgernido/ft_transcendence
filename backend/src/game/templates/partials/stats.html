@@ -3,23 +3,23 @@
 <div class="d-flex" style="height: calc(100vh - 100px);">
 	<div class="border border-dark rounded m-2 w-100 px-5 flex-grow-1 d-flex flex-column align-items-center overflow-auto">
 		<div class="fw-bold fs-2 text-light" id="nameUserStats" style="display: none; position: absolute; top: 100px; left: 50px;">Nom de l'utilisateur</div>
-		<div class="d-flex" id="containerCardGameResume">
-			<div id="carouselExampleIndicators" class="carousel slide">
-			<div class="carousel-indicators">
+			<div class="d-flex" id="containerCardGameResume">
+				<div id="carouselExampleIndicators" class="carousel slide">
+				<div class="carousel-indicators">
 
+				</div>
+				<div class="carousel-inner">
+				
+				</div>
+				<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">{%trans 'Previous' %}</span>
+				</button>
+				<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">{%trans 'Next' %}</span>
+				</button>
 			</div>
-			<div class="carousel-inner">
-			
-			</div>
-			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-				<span class="visually-hidden">Previous</span>
-			</button>
-			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-				<span class="carousel-control-next-icon" aria-hidden="true"></span>
-				<span class="visually-hidden">Next</span>
-			</button>
-		</div>
 		</div>
 		<div class="w-100 my-5 stat-container">
 			<h3 class="m-4 fw-bold">{%trans 'Player Statistics' %}</h3>
@@ -39,14 +39,13 @@
 					</li>
 				</ul>
 			</section>
-			<div class="m-4 align-items-center d-flex justify-content-between">
-				<li class="d-flex fw-bold" style="list-style-type: none;">{%trans 'Games played: ' %}<p id="nb-game"
-						class="mx-2"></p>
+			<div class="m-4 d-flex align-items-center justify-content-center" style="gap: 10%">
+				<li class="d-flex fw-bold" style="list-style-type: none;">
+					{%trans 'Games played: ' %}<p id="nb-game" class="mx-2"></p>
 				</li>
-				<p class="fw-bold" id="win-rate">{%trans 'Win rate :' %}</p>
-				<p class="fw-bold">{%trans 'Global Ranking :' %} #3</p>
-				<p class="fw-bold">{%trans 'Friends Ranking : '%}#3</p>
-				<p class="fw-bold">{%trans 'Tournaments won :' %} 0</p>
+				<li class="d-flex fw-bold" style="list-style-type: none;">
+					{%trans 'Win rate : ' %}<p class="fw-bold mx-2" id="win-rate"></p>
+				</li>
 			</div>
 		</div>
 	</div>
@@ -55,9 +54,9 @@
 <template id="cardGameResume">
 	<div class="card-custom m-3">
 		<img data-img-opponent src="{% static 'img/bob.jpg' %}" class="rounded img-profil-100" alt="img-profil">
-		<h2 data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer;">Bob</h2>
-		<p class="result text-light" data-winner>{%trans 'Win' %}</p>
+		<p data-opponent class="mt-2 text-light flex-wrap" style="cursor: pointer; font-size: 1.5rem; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bob</p>
 		<p data-score class="text-light">0 - 0</p>
+		<p class="result text-light" style="font-size: 1.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-winner>{%trans 'Win' %}</p>
 		<p data-date class="text-light">{%trans 'Unknown Date' %}</p>
 	</div>
 </template>

@@ -7,23 +7,29 @@ from django.contrib.sessions.models import Session
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.http import HttpResponseForbidden
+from django.utils.translation import gettext as _
+import os
+from itertools import chain
+from django.shortcuts import get_object_or_404
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Game
-from users.models import Social
-from .models import Profile, Game
+from users.models import Social, Profile
+from .models import Game, Room
 import json
 
 import base64
+import time
 from io import BytesIO
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 
-import logging
-logger = logging.getLogger(__name__)
 import uuid
+
+IP_HOST = os.getenv("IP_HOST")
+
 import logging
+logging = logging.getLogger(__name__)
 
 @csrf_protect
 @login_required
@@ -53,18 +59,20 @@ def log_user(request):
             password = data.get('password')
 
             if not username or not password:
-                return JsonResponse({'error': 'Username and password are required.'}, status=400)
+                return JsonResponse({'error': _('Username and password are required.')}, status=200)
 
             user = authenticate(request, username=username, password=password)
+
+            error1 = _("Username or password invalid")
 
             if user is not None:
                 login(request, user)
                 return JsonResponse({'success': True})
             else:
-                return JsonResponse({'error': 'Username or password invalid'}, status=400)
+                return JsonResponse({'error': _('Username or password invalid')}, status=200)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-    return render(request, 'partials/connect.html')
+            return JsonResponse({'error': 'Invalid JSON data'}, status=200)
+    return JsonResponse({'error': 'Invalid request'}, status=200)
 
 @csrf_protect
 def mypage(request):
@@ -82,7 +90,15 @@ def lobby_private(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/lobby_private.html')
     else:
-        return redirect('/?next=/lobby_Pr/')
+        return redirect('/?next=/lobby_private/')
+
+@csrf_protect
+@login_required
+def lobby_public(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/lobby_public.html')
+    else:
+        return redirect('/?next=/lobby_public/')
 
 @csrf_protect
 @login_required
@@ -90,7 +106,7 @@ def lobby_tournament(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/lobby_tournament.html')
     else:
-        return redirect('/?next=/lobby_T/')
+        return redirect('/?next=/lobby_tournament/')
 
 @csrf_protect
 def stats(request):
@@ -98,6 +114,27 @@ def stats(request):
         return render(request, 'partials/stats.html')
     else:
         return redirect('/?next=/stats/')
+
+@csrf_protect
+def local(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/gameCustom.html')
+    else:
+        return redirect('/?next=/gameCustom/')
+
+@csrf_protect
+def tournament(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/tournament.html')
+    else:
+        return redirect('/?next=/tournament/')
+
+@csrf_protect
+def GameBot(request):
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/gameBot.html')
+    else:
+        return redirect('/?next=/gameBot/')
 
 @csrf_protect
 @login_required
@@ -116,40 +153,10 @@ def connect(request):
 @csrf_protect
 @login_required
 def game(request):
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
-
-    if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
-
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
-
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
-        else:
-            winner = None
-
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
-        )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
-
-    return render(request, 'partials/game.html', {
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point
-    })
+    if request.headers.get('X-Fetch-Request') == 'true':
+        return render(request, 'partials/game.html')
+    else:
+        return redirect('/?next=/game/')
 
 @csrf_protect
 @login_required
@@ -157,7 +164,7 @@ def lobby(request):
     if request.headers.get('X-Fetch-Request') == 'true':
         return render(request, 'partials/lobby.html')
     else:
-        return redirect('/?next=/lobby_Pu/')
+        return redirect('/?next=/lobby/')
 
 @csrf_protect
 def amis(request):
@@ -173,7 +180,7 @@ def compte(request):
     try:
         social = Social.objects.get(user=request.user)
     except Social.DoesNotExist:
-        return JsonResponse({'error': 'Social profile not found.'}, status=404)
+        return JsonResponse({'error': _('Social profile not found.')}, status=404)
 
     if request.method == 'POST':
         
@@ -185,13 +192,15 @@ def compte(request):
             username = data.get('username')
             password = data.get('password')
             new_avatar = data.get('avatar')
-            
 
+            if len(username) > 12:
+                return JsonResponse({'error': _('Username too long')}, status=200)
+            
             if not username or not email:
-                return JsonResponse({'error': 'Username and email are required.'}, status=400)
+                return JsonResponse({'error': _('Username and email are required.')}, status=200)
             
             if User.objects.exclude(pk=request.user.pk).filter(username=username).exists():
-                return JsonResponse({'error': 'Username already used'}, status=400)
+                return JsonResponse({'error': _('Username already used')}, status=200)
 
             user.email = email
             user.username = username
@@ -199,16 +208,13 @@ def compte(request):
             if new_avatar:
                 current_avatar_name = social.avatar.url.split('/')[-1]  # Nom du fichier actuel de l'avatar
                 new_avatar_name = new_avatar.split('/')[-1]  # Nom du fichier de l'avatar proposé
-                logging.warning("NEW avatar: ", current_avatar_name, " ", new_avatar_name, new_avatar)
 
                 if current_avatar_name != new_avatar_name:
-                    # logging.warning("Avatar name: ", new_avatar_name, " ", current_avatar_name)
                     # Vérification si l'avatar est une chaîne base64
                     if new_avatar.startswith('data:image'):
                         format, imgstr = new_avatar.split(';base64,')
                         ext = format.split('/')[1]
                         image_data = ContentFile(base64.b64decode(imgstr), name=f"{user.username}_avatar.{ext}")
-                        logging.warning("Different", image_data)
                         social.update_avatar(image_data)
                     else:
                         # Si ce n'est pas base64, assumez qu'il s'agit d'une URL ou d'un chemin d'image
@@ -248,6 +254,7 @@ def logout_view(request):
 def check_user_status(request):
     return JsonResponse({'authenticated': request.user.is_authenticated})
 
+@csrf_protect
 def set_language(request):
     if request.method == 'POST':
         lang = request.POST.get('language')
@@ -281,12 +288,18 @@ def extractGame(request):
     try:
         user = User.objects.get(id=user_id)
 
-        games_as_player1 = Game.objects.filter(player1=user)
-        games_as_player2 = Game.objects.filter(player2=user)
+        games_as_player1 = Game.objects.filter(player1=user).order_by('-date_played')
+        games_as_player2 = Game.objects.filter(player2=user).order_by('-date_played')
+
+        all_games = sorted(
+            chain(games_as_player1, games_as_player2),
+            key=lambda game: game.date_played,
+            reverse=True
+        )
 
         games_data = []
 
-        for game in games_as_player1.union(games_as_player2):
+        for game in all_games:
             opponent = game.player2 if game.player1 == user else game.player1
 
             avatar_url = (
@@ -296,12 +309,14 @@ def extractGame(request):
             )
             games_data.append({
                 "opponent": opponent.username,
-                "winner": game.winner.username if game.winner.username != opponent.username else None,
-                "player1_score": game.player1_score,
-                "player2_score": game.player2_score,
-                "date_played": game.date_played.isoformat(),
-                "duration": str(game.duration) if game.duration else None,
                 "opponentId": opponent.id,
+                "user": user.username,
+                "winner": game.winner.username if game.winner and game.winner != opponent else None,
+                "player1_score": game.player1_score,
+                "player1_name": game.player1.username,
+                "player2_score": game.player2_score,
+                "player2_name": game.player2.username,
+                "date_played": game.date_played.isoformat(),
                 "avatar": avatar_url,
             })
 
@@ -310,309 +325,118 @@ def extractGame(request):
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-
-    return redirect(request.META.get('HTTP_REFERER', '/')) 
-
-logger = logging.getLogger(__name__)
-
-@csrf_protect
 @login_required
-def create_dynamic_room(request):
+def create_roomP(request):
     if request.method == 'POST':
+        current_user = request.user
+
         try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+            current_room = Room.objects.filter(players=current_user).first()
+            if current_room:
+                room_name_in_session = request.session.get('roomName')
+                if room_name_in_session and current_room.name != room_name_in_session:
+                    return JsonResponse({
+                        'error': f"You are already in a different room: {current_room.name}."
+                    }, status=200)
+            
+            room = Room.objects.create()
+            room.add_player(current_user)
+            room.host = current_user
+            room.privateRoom = True
+            room.save()
+            request.session['roomName'] = room.name
+            request.session.save()
 
-        room_name = data.get('roomName')
-        player1_color = data.get('player1Color')
-        player2_color = data.get('player2Color')
-        max_point = data.get('maxPoint')
-
-        if not all([room_name, player1_color, player2_color, max_point]):
-            return JsonResponse({'error': 'Missing required fields'}, status=400)
-
-        request.session['player1_color'] = player1_color
-        request.session['player2_color'] = player2_color
-        request.session['max_point'] = max_point
-
-        return JsonResponse({'redirect': True, 'url': f'/dynamic_game/{room_name}/'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@csrf_protect
-@login_required
-def dynamic_game_room(request, room_name):
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
-
-    if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
-
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
-
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
-        else:
-            winner = None
-
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
-        )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
-
-    return render(request, 'partials/game.html', {
-        'room_name': room_name,
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point,
-    })
-
-@csrf_protect
-@login_required
-def create_custom(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-        room_name = data.get('roomName')
-        player1_color = data.get('player1Color')
-        player2_color = data.get('player2Color')
-        max_point = data.get('maxPoint')
-
-        if not all([room_name, player1_color, player2_color, max_point]):
-            return JsonResponse({'error': 'Missing required fields'}, status=400)
-
-        request.session['player1_color'] = player1_color
-        request.session['player2_color'] = player2_color
-        request.session['max_point'] = max_point
-
-        return JsonResponse({'redirect': True, 'url': f'/game/{room_name}'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@csrf_protect
-@login_required
-def game_custom(request, room_name):
-    if not room_name.endswith("_room"):
-        room_name += "_room"
-    # if room_name != f"{request.user.username}_room":
-        # return JsonResponse({"error": "You cannot access this room."}):
+            return JsonResponse({
+                'success': True, 
+                'room_name': room.name,
+            })
+        except Exception as e:
+            return JsonResponse({'error': f"An error occurred: {str(e)}"}, status=500)
     
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
+    return JsonResponse({'error': 'Invalid method'}, status=405)
 
-    if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
+@login_required
+def find_or_create_room(request):
+    current_user = request.user
 
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
+    room = Room.objects.filter(is_full=False, privateRoom=False).first()
 
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
+    if room:
+        added = room.add_player(current_user)
+        if added:
+            room.is_full = True
+            room.save()
         else:
-            winner = None
-
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
+            return JsonResponse({"success": False, "error": "Room could not add player."}, status=200)
+    else:
+        room = Room.objects.create(
+            host=current_user,
+            privateRoom=False
         )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
+        room.add_player(current_user)
+        room.save()
+        request.session['roomName'] = room.name
+        request.session.save()
 
-    return render(request, 'partials/gameCustom.html', {
-        'room_name': room_name,
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point,
+    return JsonResponse({
+        "success": True,
+        "room_name": room.name,
     })
 
-@csrf_protect
+
 @login_required
-def create_room(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-        room_name = data.get('roomName')
-        player1_color = data.get('player1Color')
-        player2_color = data.get('player2Color')
-        max_point = data.get('maxPoint')
+def join_room(request, room_name):
+    try:
+        room = get_object_or_404(Room, name=room_name)
+        
+        request.session['roomName'] = room.name
 
-        if not all([room_name, player1_color, player2_color, max_point]):
-            return JsonResponse({'error': 'Missing required fields'}, status=400)
+        if room.add_player(request.user):
+            if request.method == 'POST':
+                return JsonResponse({"success": True, "message": "You joined the room."})
+            elif request.method == 'GET':
+                return render(request, 'partials/lobby_private.html')
 
-        request.session['player1_color'] = player1_color
-        request.session['player2_color'] = player2_color
-        request.session['max_point'] = max_point
+        error_message = "Room is full"
+        if request.method == 'POST':
+            return JsonResponse({"success": False, "error": error_message})
 
-        return JsonResponse({'redirect': True, 'url': f'/game/{room_name}'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    except Room.DoesNotExist:
+        error_message = "Room not found"
+        if request.method == 'POST':
+            return JsonResponse({"success": False, "error": error_message})
 
-@csrf_protect
-@login_required
-def game_room(request, room_name):
-    if not room_name.endswith("_room"):
-        room_name += "_room"
-    # if room_name != f"{request.user.username}_room":
-        # return JsonResponse({"error": "You cannot access this room."}):
+    except Exception as e:
+        error_message = f"An error occurred: {str(e)}"
+        if request.method == 'POST':
+            return JsonResponse({"success": False, "error": error_message})
+
+@csrf_exempt
+def get_room_status(request, room_name):
+    try:
+        room = Room.objects.get(name=room_name)
+        return JsonResponse({'room_name': room.name, 'players': [player.username for player in room.players.all()]})
+    except Room.DoesNotExist:
+        return JsonResponse({'error': _('Room does not exist.')}, status=404)
     
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
-
+def reset_room_session(request):
     if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
+        request.session['roomName'] = None
+        return JsonResponse({"success": True, "message": "Session roomName réinitialisée."})
+    return JsonResponse({"success": False, "message": "Méthode non autorisée."})
 
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
+def delete_empty_rooms(request):
+    try:
+        rooms = Room.objects.all()
 
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
-        else:
-            winner = None
+        deleted_rooms = []
+        for room in rooms:
+            if room.players.count() == 0:
+                room.delete()
+                deleted_rooms.append(room.name)
 
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
-        )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
+        return JsonResponse({'status': 'success', 'deleted_rooms': deleted_rooms})
 
-    return render(request, 'partials/game.html', {
-        'room_name': room_name,
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point,
-    })
-
-@csrf_protect
-@login_required
-def create_tournament(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-        room_name = data.get('roomName')
-        player1_color = data.get('player1Color')
-        player2_color = data.get('player2Color')
-        max_point = data.get('maxPoint')
-
-        if not all([room_name, player1_color, player2_color, max_point]):
-            return JsonResponse({'error': 'Missing required fields'}, status=400)
-
-        request.session['player1_color'] = player1_color
-        request.session['player2_color'] = player2_color
-        request.session['max_point'] = max_point
-
-        return JsonResponse({'redirect': True, 'url': f'/tournament/{room_name}'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@csrf_protect
-@login_required
-def game_tournament(request, room_name):
-    if not room_name.endswith("_room"):
-        room_name += "_room"
-    # if room_name != f"{request.user.username}_room":
-        # return JsonResponse({"error": "You cannot access this room."}):
-    
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
-
-    if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
-
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
-
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
-        else:
-            winner = None
-
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
-        )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
-
-    return render(request, 'partials/tournament.html', {
-        'room_name': room_name,
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point,
-    })
-
-@csrf_protect
-@login_required
-def game(request):
-    player1_color = request.session.get('player1_color', 'color-player-none')
-    player2_color = request.session.get('player2_color', 'color-player-none')
-    max_point = request.session.get('max_point', 10)
-
-    if request.method == "POST":
-        player1_id = request.POST.get('player1_id')
-        player2_id = request.POST.get('player2_id')
-        player1_score = int(request.POST.get('player1_score', 0))
-        player2_score = int(request.POST.get('player2_score', 0))
-
-        player1 = User.objects.get(id=player1_id)
-        player2 = User.objects.get(id=player2_id)
-
-        if player1_score >= max_point:
-            winner = player1
-        elif player2_score >= max_point:
-            winner = player2
-        else:
-            winner = None
-
-        game = Game.objects.create(
-            player1=player1,
-            player2=player2,
-            winner=winner,
-            player1_score=player1_score,
-            player2_score=player2_score
-        )
-        return JsonResponse({'status': 'success', 'message': 'Game updated successfully'})
-
-    return render(request, 'partials/game.html', {
-        'player1_color': player1_color,
-        'player2_color': player2_color,
-        'max_point': max_point
-    })
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

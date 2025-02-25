@@ -1,5 +1,4 @@
 import math
-import logging
 from random import choice, uniform
 
 class PongGameBOT:

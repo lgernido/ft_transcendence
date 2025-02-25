@@ -1,6 +1,5 @@
 services:
   db:
-    image: postgres:13.4
     container_name: db
     build:
       context: ./db
@@ -13,7 +12,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
@@ -37,9 +35,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/code/backend
-    # ports:
-    #   - "8000:8000"
+      - ./backend:/backend
+      - static_volume:/backend/src/staticfiles
+      - static_volume_media:/backend/src/media
     depends_on:
       db:
         condition: service_healthy
@@ -48,9 +46,6 @@ services:
     env_file:
       - .env
     environment:
-      # - DJANGO_SUPERUSER_USERNAME=${ADMIN_NAME}
-      # - DJANGO_SUPERUSER_EMAIL=${ADMIN_EMAIL}
-      # - DJANGO_SUPERUSER_PASSWORD=${ADMIN_PASS}
       - DEBUG=1
       - REDIS_URL=redis://redis:6379
 
@@ -64,86 +59,20 @@ services:
       - "8443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      # - ./ssl:/etc/ssl
+      - static_volume:/static/
+      - static_volume_media:/media/
     depends_on:
       - backend
     networks:
       - default
-    # env_file:
-      # .env
-      # - DJANGO_SUPERUSER_USERNAME=admin
-      # - DJANGO_SUPERUSER_EMAIL=admin@example.com
-      # - DJANGO_SUPERUSER_PASSWORD=securepassword
-
-
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
-  #   environment:
-  #     - discovery.type=single-node
-  #     - ELASTIC_PASSWORD=securepassword
-  #     - xpack.security.enabled=true
-  #     - xpack.security.authc.apiKey.enabled=true
-  #     - xpack.security.transport.ssl.enabled=true
-  #     - xpack.security.transport.ssl.verification_mode=certificate
-  #     - xpack.security.transport.ssl.key=certs/elasticsearch.key
-  #     - xpack.security.transport.ssl.certificate=certs/elasticsearch.crt
-  #     - xpack.security.transport.ssl.certificate_authorities=certs/ca.crt
-  #     - xpack.security.http.ssl.enabled=true
-  #     - xpack.security.http.ssl.key=certs/elasticsearch.key
-  #     - xpack.security.http.ssl.certificate=certs/elasticsearch.crt
-  #     - xpack.security.http.ssl.certificate_authorities=certs/ca.crt
-  #     # - xpack.reporting.roles.enabled=false
-  #   volumes:
-  #     # - esdata:/usr/share/elasticsearch/data
-  #     - ./ELK/certs:/usr/share/elasticsearch/config/certs
-  #   ports:
-  #     - "9200:9200"
-  #     - "9300:9300"
-  #   networks:
-  #     - elk
-
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:8.7.0
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-  #     - ELASTICSEARCH_USERNAME=bob
-  #     - ELASTICSEARCH_PASSWORD=securepassword
-  #   volumes:
-  #     - ./ELK/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-  #     - ./ELK/certs:/usr/share/kibana/config/certs
-  #   ports:
-  #     - "5601:5601"
-  #   networks:
-  #     - elk
-
-  # logstash:
-  #   image: docker.elastic.co/logstash/logstash:8.7.0
-  #   depends_on:
-  #     - elasticsearch
-  #   environment:
-  #     - LOGSTASH_XPACK_MONITORING_ENABLED=true
-  #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-  #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
-  #     - LOGSTASH_XPACK_MONITORING_ELASTICSEARCH_PASSWORD=securepassword
-  #   volumes:
-  #     - ./ELK/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-  #     - ./ELK/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-  #     - ./ELK/certs:/usr/share/logstash/config/certs
-  #   networks:
-  #     - elk
-
-    # http://localhost:5601
-
 
 volumes:
   postgres_data:
-  # elasticsearch-data:
-  #   driver: local
+  static_volume:
+  static_volume_media:
 
 
 networks:
   default:
     driver: bridge
-  # elk:
-  #   driver: bridge
 

@@ -1,5 +1,4 @@
 import math
-import logging
 from random import choice, uniform
 
 class PongGame:
@@ -55,7 +54,7 @@ class PongGame:
             return
 
     def check_collision(self, barre, barre_pos):
-        ball_radius = 1
+        ball_radius = 1.5
         bar_width = 2
         bar_height = 15
 
@@ -180,7 +179,7 @@ class PongGameCustom:
             return
 
     def check_collision(self, barre, barre_pos):
-        ball_radius = 1
+        ball_radius = 1.5
         bar_width = 2
         if barre == "left":
             bar_height = self.left_bar_height

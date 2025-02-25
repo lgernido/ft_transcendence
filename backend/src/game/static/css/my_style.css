@@ -87,3 +87,84 @@ h3 {
 	border: solid 1px orange;
 	background-color: #ffc455;
 }
+
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Les confettis ne bloquent pas l'interaction avec d'autres éléments */
+    z-index: 9999; /* Assurez-vous que les confettis sont au-dessus des autres éléments */
+}
+
+/* Style de chaque confetti */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: randomColor(); /* Fonction à définir pour la couleur aléatoire */
+    opacity: 0;
+    animation: fall 3s infinite linear, rotate 2s infinite linear;
+}
+
+/* Animation de chute */
+@keyframes fall {
+    0% {
+        top: -10%;
+        opacity: 1;
+    }
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+}
+
+/* Animation de rotation */
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.invitation-popup {
+	position: absolute;
+    top: 40px;
+	right: 20px;
+    color: black;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.invitation-popup p {
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+.invitation-popup button {
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.invitation-popup button:hover {
+    opacity: 0.8; /* Effet visuel au survol des boutons */
+}
+
+.error-message {
+	position: absolute;
+	background-color: #ffc455;
+    top: 40px;
+	right: 20px;
+    color: black;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}

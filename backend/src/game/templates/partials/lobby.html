@@ -4,9 +4,9 @@
 <div class="d-flex" style="height: calc(100vh - 80px);">
 	<div class="mx-2 my-2 w-100 d-flex flex-column">
 		<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
-			<div class="d-flex align-items-center">
+			<div class="d-flex align-items-center" style="gap: 50px;">
 				<div class="card-lobby">
-					<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil">
+					<img src="{{ social.avatar.url }}" class="card-lobby-img-top" alt="img-profil" style="width: 100%; height: auto;">
 					<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
 						<p class="card-lobby-text-name1" id="playerName1">{{ user.username }}</p>
 						<div class="form-floating mb-1 w-75">
@@ -31,7 +31,7 @@
 					<div class="card-lobby">
 						<img src="{% static 'img/chatgpt.jpg' %}" class="card-lobby-img-top" alt="img-profil">
 						<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
-							<p class="card-lobby-text-name2" id="playerName2">Bot</p>
+							<p class="card-lobby-text-name2" id="playerName2">Player2</p>
 							<div class="form-floating mb-1 w-75">
 								<select class="form-select" id="selectColorPlayer2">
 									<option value="color-player-red">{%trans 'Red' %}</option>
@@ -47,72 +47,24 @@
 								</select>
 								<label for="selectColorPlayer2">{%trans 'Colors :' %}</label>
 							</div>
+							<div class="form-floating my-3 w-75">
+								<select class="form-select" id="playerTypeSelect">
+									<option value="player" selected>{% trans 'Player' %}</option>
+									<option value="bot">{% trans 'Bot' %}</option>
+								</select>
+								<label for="playerTypeSelect">{% trans 'Select Player Type' %}</label>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="d-flex flex-column align-items-center justify-content-center lobbySettings my-5">
-				<div>
-					{%trans 'Points limit :'%} <input class="inputMaxPoint ms-2" id="maxPoint" type="number" max="40" value="5">
-				</div>
+
+			<div class="w-25 d-flex flex-row align-items-center justify-content-center my-3 text-light">
+				{%trans 'Points limit :'%} <input class="inputMaxPoint ms-2 w-25" id="maxPoint" type="number" max="40" value="5">
 			</div>
 			<div class="w-100 d-flex flex-column align-items-center justify-content-center">
-				<button class="btn btn-primary btn-ready" id="btn-ready">{%trans 'Launch' %}</button>
+				<button class="btn btn-primary btn-ready" id="btn-ready-lobby">{%trans 'Launch' %}</button>
 			</div>
 		</div>
 	</div>
 </div>
-
-<!--
-	{% load static %}
-	{% load i18n %}
-	<div class="d-flex" style="height: calc(100vh - 80px);">
-		<div class="mx-2 my-2 w-75 d-flex flex-column">
-			<div class="border border-dark rounded mb-3 d-flex flex-column justify-content-center align-items-center overflow-auto" style="height: calc(100vh - 80px); min-height: 300px;">
-				<div class="d-flex align-items-center">
-					<div class="card-lobby">
-						<img src="{% static 'img/bob.jpg' %}" class="card-lobby-img-top" alt="img-profil">
-						<div class="card-lobby-body d-flex flex-column align-items-center justify-content-center">
-							<p class="card-lobby-text-name-public-1" id="playerName1">{{ user.username }}</p>
-							<p class="card-lobby-text-rank">#5</p>
-							<p class="card-lobby-text-ratio">0.5</p>
-							<div class="form-floating mb-1 w-75">
-								<select class="form-select" id="selectColorPlayerPublic1">
-									<option value="color-player-red" selected>{%trans 'Red' %}</option>
-									<option value="color-player-green">{%trans 'Green' %}</option>
-									<option value="color-player-blue">{%trans 'Blue' %}</option>
-									<option value="color-player-yellow">{%trans 'Yellow' %}</option>
-									<option value="color-player-cyan">{%trans 'Cyan' %}</option>
-									<option value="color-player-magenta">{%trans 'Magenta' %}</option>
-									<option value="color-player-orange">{%trans 'Orange' %}</option>
-									<option value="color-player-purple">{%trans 'Purple' %}</option>
-									<option value="color-player-pink">{%trans 'Pink' %}</option>
-									<option value="color-player-gray">{%trans 'Gray' %}</option>
-								</select>
-								<label for="selectColorPlayerPublic1">{%trans 'Colors :' %}</label>
-							</div>
-						</div>
-					</div>
-					<div class="card-lobby-wait d-flex flex-column align-items-center justify-content-center">
-						<div class="d-flex flex-column align-items-center">
-							<div class="spinner-border spinner-color mt-3" role="status">
-								<span class="visually-hidden">{%trans 'Loading...' %}</span>
-							</div>
-						</div>
-						<div class="card-lobby-body d-flex align-items-center justify-content-center">
-							<p class="card-lobby-text">{%trans 'Waiting for player...'%}</p>
-						</div>
-					</div>
-				</div>
-				<div class="lobbySettings my-5">
-					{%trans 'Points limit : '%}<input class="inputMaxPoint ms-2" id="maxPoint" type="number" value="5">
-				</div>
-				<div class="w-100 d-flex flex-column align-items-center justify-content-center">
-					<button class="btn btn-primary btn-ready" id="btn-ready">{%trans 'Launch' %}</button>
-				</div>
-			</div>
-		</div>
-		<div class="chat-container mx-2 w-25 d-flex flex-column" id="chat-placeholder" style="height: calc(100vh - 80px);"></div>
-	</div>
--->
-	

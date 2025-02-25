@@ -2,12 +2,30 @@ document.addEventListener('DOMContentLoaded', function () {
     loadheader();
 });
 
+function enableAllButtonsHeader() {
+    const buttonsDiv = document.getElementById('buttons-div');
+    const buttons = buttonsDiv.querySelectorAll('a, button');
+
+    buttons.forEach(button => {
+        if (button.tagName === 'BUTTON') {
+            button.disabled = false;
+        } else if (button.tagName === 'A') {
+            button.style.pointerEvents = 'auto';
+            button.classList.remove('disabled');
+        }
+    });
+}
+
 function displayError(message) {
     const errorMessageElement = document.getElementById('error-message');
     if (errorMessageElement) {
         if (message) {
             errorMessageElement.innerText = message;
             errorMessageElement.style.display = 'block';
+
+            setTimeout(() => {
+                errorMessageElement.style.display = 'none';
+            }, 3000);
         }
         else {
             errorMessageElement.style.display = 'none';
@@ -62,6 +80,9 @@ function loadscript(file, func) {
 }
 
 function loadConnectPage() {
+    stopAllIntervals();
+    displayError('');
+    roomNameGlobal = null;
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
     
@@ -81,7 +102,7 @@ function loadConnectPage() {
                 } )
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error(gettext('Network response was not ok'));
                         }
                         return response.text();
                     })
@@ -108,6 +129,8 @@ function loadConnectPage() {
 }
 
 function loadCreateAccount() {
+    stopAllIntervals();
+    displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
 
@@ -120,7 +143,7 @@ function loadCreateAccount() {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(gettext('Network response was not ok'));
             }
             return response.text();
         })
@@ -139,10 +162,15 @@ function loadCreateAccount() {
 }
 
 function loadMyPage() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-
+    if (wsPong) {
+        wsPong.close();
+        wsPong = null;
+    }
+    deleteEmptyRoom();
     fetch('/check_user_status/', {
         method: 'GET',
         credentials: 'same-origin'  
@@ -165,7 +193,8 @@ function loadMyPage() {
                         const state = { page: 'mypage' };
                         history.pushState(state, '', "/mypage");
                     }
-                    // loadscript('language-switch.js', () => selectLanguage());
+                    enableAllButtonsHeader();
+                    checkStatus();
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération de mypage :', error);
@@ -181,6 +210,7 @@ function loadMyPage() {
 }
 
 function loadStats() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -201,7 +231,7 @@ function loadStats() {
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error(gettext('Network response was not ok'));
                     }
                     return response.text();
                 })
@@ -228,6 +258,7 @@ function loadStats() {
 }
 
 function loadFriends() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -276,6 +307,7 @@ function loadFriends() {
 }
 
 function loadAccount() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -322,11 +354,14 @@ function loadAccount() {
         });
 }
 
-function loadTournament()
-{
+function loadTournament() {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
+    if (socket_roomPu || socket_roomP) {
+        displayError(gettext("Your are already in a another room"))
+        return ;
+    }
     fetch('/lobby_tournament/', {
         method: 'GET',
         headers: {
@@ -343,9 +378,9 @@ function loadTournament()
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== 'lobby_T') {
-                const state = { page: 'lobby_T' };
-                history.pushState(state, '', "/lobby_T");
+            if (history.state?.page !== 'lobby_tournament') {
+                const state = { page: 'lobby_tournament' };
+                history.pushState(state, '', "/lobby_tournament");
             }
             loadscript('lobby_tournament.js', () => tournament());
         })
@@ -354,10 +389,14 @@ function loadTournament()
         });
 }
 
-function loadPublic() {
+function loadLocal() {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
+    if (socket_roomPu || socket_roomP) {
+        displayError(gettext("You are already in another room"))
+        return ;
+    }
     fetch('/lobby/', {
         method: 'GET',
         headers: {
@@ -374,11 +413,46 @@ function loadPublic() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== 'lobby_Pu') {
-                const state = { page: 'lobby_Pu' };
-                history.pushState(state, '', "/lobby_Pu");
+            if (history.state?.page !== 'local') {
+                const state = { page: 'local' };
+                history.pushState(state, '', "/local");
             }
             loadscript('lobby.js', () => lobby());
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+function loadPublic() {
+    displayError('');
+    const appDiv = document.getElementById('app');
+    const csrfToken = getCookie('csrftoken');
+    if (socket_roomP) {
+        displayError(gettext("You are already in another room"))
+        return ;
+    }
+    fetch('/lobby_public/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(html => {
+            appDiv.innerHTML = html;
+
+            if (history.state?.page !== 'lobby_public') {
+                const state = { page: 'lobby_public' };
+                history.pushState(state, '', "/lobby_public");
+            }
+            loadscript('lobby_public.js', () => lobby_public());
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -389,6 +463,10 @@ function loadPrivate() {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
+    if (socket_roomPu) {
+        displayError(gettext("You are already in another room"))
+        return ;
+    }
     fetch('/lobby_private/', {
         method: 'GET',
         headers: {
@@ -405,9 +483,9 @@ function loadPrivate() {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== 'lobby_Pr') {
-                const state = { page: 'lobby_Pr' };
-                history.pushState(state, '', "/lobby_Pr");
+            if (history.state?.page !== 'lobby_private') {
+                const state = { page: 'lobby_private' };
+                history.pushState(state, '', "/lobby_private");
             }
             loadscript('lobby_private.js', () => lobby_private());
         })
@@ -416,14 +494,15 @@ function loadPrivate() {
         });
 }
 
-function loadGame(roomName, maxPoints) {
+function loadGameBot(maxPoints, colorP1, colorP2) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/game/${roomName}`, {
+    fetch(`/GameBot/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -435,26 +514,26 @@ function loadGame(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `game-${roomName}`) {
-                const state = { page: `game-${roomName}` };
-                history.pushState(state, '', `/game/${roomName}`);
+            if (history.state?.page !== `GameBot`) {
+                const state = { page: `GameBot` };
+                history.pushState(state, '', `/GameBot`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('game.js', () => launchGameBot(roomName, maxPoints));
+            loadscript('game.js', () => launchGameBot(maxPoints, colorP1, colorP2));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
 
-function loadGamePrivateCustom(roomName, maxPoints) {
+function loadGamePrivateCustom(maxPoints, colorP1, colorP2) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/custom/${roomName}`, {
+    fetch(`/local/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -466,26 +545,27 @@ function loadGamePrivateCustom(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `custom-${roomName}`) {
-                const state = { page: `custom-${roomName}` };
-                history.pushState(state, '', `/custom/${roomName}`);
+            if (history.state?.page !== `local`) {
+                const state = { page: `local` };
+                history.pushState(state, '', `/local`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('gameCustom.js', () => launchGamePrivateCustom(roomName, maxPoints));
+            loadscript('gameCustom.js', () => launchGamePrivateCustom(maxPoints, colorP1, colorP2));
+
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
 
-function loadGamePrivate(roomName, maxPoints) {
+function loadGamePrivate(roomName, maxPoints, data) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/game/${roomName}`, {
+    fetch(`/game/?room_name=${encodeURIComponent(roomName)}`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -497,26 +577,26 @@ function loadGamePrivate(roomName, maxPoints) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `game-${roomName}`) {
-                const state = { page: `game-${roomName}` };
-                history.pushState(state, '', `/game/${roomName}`);
+            if (history.state?.page !== `game`) {
+                const state = { page: `game` };
+                history.pushState(state, '', `/game`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints));
+            loadscript('gamePrivate.js', () => launchGamePrivate(roomName, maxPoints, data));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
 
-function loadGameTournament(roomName, maxPoints, players) {
+function loadGameTournament(maxPoints, players) {
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
-    fetch(`/tournament/${roomName}`, {
+    fetch(`/tournament/`, {
         method: 'GET',
         headers: {
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken,
+            'X-Fetch-Request': 'true',
         }
     })
         .then(response => {
@@ -528,12 +608,11 @@ function loadGameTournament(roomName, maxPoints, players) {
         .then(html => {
             appDiv.innerHTML = html;
 
-            if (history.state?.page !== `tournament-${roomName}`) {
-                const state = { page: `tournament-${roomName}` };
-                history.pushState(state, '', `/tournament/${roomName}`);
+            if (history.state?.page !== `tournament`) {
+                const state = { page: `tournament` };
+                history.pushState(state, '', `/tournament`);
             }
-            // loadscript('loadelement.js', () => loadchat());
-            loadscript('tournament.js', () => launchTournament(roomName, maxPoints, players));
+            loadscript('tournament.js', () => launchTournament(maxPoints, players));
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -541,6 +620,7 @@ function loadGameTournament(roomName, maxPoints, players) {
 }
 
 function loadChat() {
+    stopAllIntervals();
     displayError('');
     const appDiv = document.getElementById('app');
     const csrfToken = getCookie('csrftoken');
@@ -600,33 +680,46 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     else if (path === '/stats/') {
         loadStats();
+        checkStatus();
     }
-    else if (path === '/game/') {
-        loadGame();
+    else if (path === '/GameBot/') {
+        loadGameBot();
+        checkStatus();
     }
-    else if (path === '/lobby_Pr/') {
+    else if (path === '/lobby_private/') {
         loadPrivate();
+        checkStatus();
     }
-    else if (path === '/lobby_Pu/') {
-        loadPublic();
+    else if (path === '/lobby_public/') {
+        loadMyPage();
+        checkStatus();
     }
-    else if (path === '/lobby_T/') {
+    else if (path === '/local/') {
+        loadLocal();
+        checkStatus();
+    }
+    else if (path === '/lobby_tournament/') {
         loadTournament();
+        checkStatus();
     }
     else if (path === '/compte/') {
         loadAccount();
+        checkStatus();
     }
     else if (path === '/amis/') {
         loadFriends();
+        checkStatus();
     }
     else if (path === '/create_account/') {
         loadCreateAccount();
+        checkStatus();
     }
     else if (path === '/connect/') {
         loadConnectPage();
     }
     else if (path === '/chat/') {
         loadChat();
+        checkStatus();
     }
     else {
         loadMyPage();
@@ -642,16 +735,19 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (pageType === 'stats') {
                 loadStats();
             }
-            else if (pageType === 'game') {
-                loadGame();
+            else if (pageType === 'gameBot') {
+                loadGameBot();
             }
-            else if (pageType === 'lobby_Pr') {
+            else if (pageType === 'lobby_private') {
                 loadPrivate();
             }
-            else if (pageType === 'lobby_Pu') {
+            else if (pageType === 'lobby_public') {
                 loadPublic();
             }
-            else if (pageType === 'lobby_T') {
+            else if (pageType === 'local') {
+                loadLocal();
+            }
+            else if (pageType === 'lobby_tournament') {
                 loadTournament();
             }
             else if (pageType === 'compte') {
@@ -692,33 +788,46 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if (lastPart === 'stats') {
                 loadStats();
+                checkStatus();
             }
-            else if (lastPart === 'game') {
-                loadGame();
+            else if (lastPart === 'GameBot') {
+                loadGameBot();
+                checkStatus();
             }
-            else if (lastPart === 'lobby_Pr') {
-                loadPrivate();
+            else if (lastPart === 'lobby_private') {
+                // loadPrivate();
+                // checkStatus();
             }
-            else if (lastPart === 'lobby_Pu') {
-                loadPublic();
+            else if (lastPart === 'lobby_public') {
+                // loadPublic();
+                // checkStatus();
             }
-            else if (lastPart === 'lobby_T') {
+            else if (lastPart === 'local') {
+                loadLocal();
+                checkStatus();
+            }
+            else if (lastPart === 'lobby_tournament') {
                 loadTournament();
+                checkStatus();
             }
             else if (lastPart === 'compte') {
                 loadAccount();
+                checkStatus();
             }
             else if (lastPart === 'amis') {
                 loadFriends();
+                checkStatus();
             }
             else if (lastPart === 'create_account') {
                 loadCreateAccount();
+                checkStatus();
             }
             else if (lastPart === 'connect') {
                 loadConnectPage();
             }
             else if (lastPart === 'chat') {
                 loadChat();
+                checkStatus();
             }
             else {
                 loadConnectPage();
@@ -726,7 +835,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-// document.addEventListener('DOMContentLoaded', loadConnectPage);
 
 window.addEventListener('load', function () {
     const initialPage = window.location.pathname.split('/').pop() || 'connect';
@@ -734,5 +842,184 @@ window.addEventListener('load', function () {
     history.replaceState(initialState, '', window.location.pathname);
 });
 
+const OnlineUsers = {
+    users: [], 
+    updateUsers(newUsers) {
+        this.users = newUsers; 
+        this.notify();
+    },
+    notify() {
+        const event = new CustomEvent("usersUpdated", { detail: this.users });
+        window.dispatchEvent(event);
+    }
+};
+
+let roomNameGlobal = null;
+
+// websocket variables
+let chatSocket = null;
+let socket_roomP = null;
+let socket_roomPu = null;
+let presenceOnline = null;
+let wsPong = null;
+
+// setintervall variables
+let paddleInterval = null;
+let ballInterval = null;
+let moveIaInterval = null;
+let calcIaInterval = null;
+
+function stopAllIntervals() {
+    if (paddleInterval) {
+        clearInterval(paddleInterval);
+        paddleInterval = null;
+    }
+    if (ballInterval) {
+        clearInterval(ballInterval);
+        ballInterval = null;
+    }
+    if (moveIaInterval) {
+        clearInterval(moveIaInterval);
+        moveIaInterval = null;
+    }
+    if (calcIaInterval) {
+        clearInterval(calcIaInterval);
+        calcIaInterval = null;
+    }
+}
 
 
+function checkStatus() {
+    const wsUrl = `wss://${window.location.host}/ws/users/presence/`;
+    if (!presenceOnline)
+        presenceOnline = new WebSocket(wsUrl);
+
+    presenceOnline.onopen = () => {
+        // console.log("WebSocket connecté !");
+    };
+
+    presenceOnline.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+    
+        if (data.type === "online_users_list") {
+            OnlineUsers.updateUsers(data.online_users);
+        } 
+        else if (data.type === "user_presence") {
+            let updatedUsers = [...OnlineUsers.users];
+    
+            if (data.status === "online") {
+                if (!updatedUsers.some(user => user.user_id === data.user_id)) {
+                    updatedUsers.push({ user_id: data.user_id, username: data.username });
+                }
+            } 
+            else if (data.status === "offline") {
+                updatedUsers = updatedUsers.filter(user => user.user_id !== data.user_id);
+            } 
+    
+            OnlineUsers.updateUsers(updatedUsers);
+        }
+        else if (data.type === "show_invitation_popup") {
+            displayInvitationPopup(data.room_name, data.user_id);
+        }
+    
+        updateStatusIcons();
+    };
+
+    presenceOnline.onclose = () => {
+        // console.log("WebSocket déconnecté !");
+    };
+
+    presenceOnline.onerror = (error) => {
+        console.error("Erreur WebSocket :", error);
+    };
+}
+
+function updateStatusIcons() {
+    const avatars = document.getElementsByClassName('status');
+
+    Array.from(avatars).forEach(icon => {
+        const username = icon.getAttribute('data_name');
+
+        // Vérifie si l'utilisateur est présent dans OnlineUsers.users
+        const isOnline = OnlineUsers.users.some(user => user.username === username);
+
+        if (isOnline) {
+            icon.classList.remove("text-secondary"); // Enlève le gris
+            icon.classList.add("text-success");      // Ajoute le vert
+        } else {
+            icon.classList.remove("text-success");   // Enlève le vert
+            icon.classList.add("text-secondary");    // Ajoute le gris
+        }
+    });
+}
+
+window.addEventListener('beforeunload', function(event) {
+    closeAllOpenWebSocket();
+});
+
+function deleteEmptyRoom() {
+    fetch('/delete_empty_rooms/', {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),  // Envoi du CSRF Token pour la sécurité
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {})
+    .catch(error => {});
+}
+
+function displayInvitationPopup(roomName, userId) {
+    const invitMessageElement = document.getElementById('invite-message');
+    if (invitMessageElement) {
+        invitMessageElement.style.display = 'block';
+
+        const acceptButton = document.getElementById('accept-invit');
+        const rejectButton = document.getElementById('refuse-invit');
+
+        if (acceptButton && rejectButton) {
+            acceptButton.setAttribute('onclick', `sendInvitationResponse('accept', '${roomName}', ${userId})`);
+            rejectButton.setAttribute('onclick', `sendInvitationResponse('reject', '${roomName}', ${userId})`);
+        }
+    }
+}
+
+function sendInvitationResponse(response, roomName, userId) {
+    presenceOnline.send(JSON.stringify({
+        type: 'handle_invitation_response',
+        response: response,
+        room_name: roomName,
+        user_id: userId
+    }));
+
+    if (response == "accept") {
+        sessionStorage.setItem('roomName', roomName);
+        fetch(`/join_room/${roomName}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie('csrftoken')  // Ajoutez la fonction pour récupérer le CSRF token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                roomNameGlobal = roomName;
+                loadPrivate();
+            } else {
+                displayError(data.error);
+            }
+        })
+        .catch(error => console.error("Fetch error:", error));
+    }
+
+    const invitMessageElement = document.getElementById('invite-message');
+    if (invitMessageElement) {
+        invitMessageElement.style.display = 'none';
+    }
+}

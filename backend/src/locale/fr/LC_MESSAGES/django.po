@@ -8,337 +8,428 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-17 14:20+0000\n"
+"POT-Creation-Date: 2025-01-14 11:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: game/templates/partials/amis.html:6
+#: game/templates/partials/amis.html:6 game/templates/partials/chat.html:10
 msgid "Search user"
 msgstr "Rechercher Utilisateur"
 
-#: game/templates/partials/amis.html:8
+#: src/game/templates/partials/amis.html:8
 msgid "Display all users"
 msgstr "Afficher tout les utilisateurs"
 
-#: game/templates/partials/amis.html:9
+#: src/game/templates/partials/amis.html:9
 msgid "Display friends"
 msgstr "Afficher Amis"
 
-#: game/templates/partials/amis.html:10
+#: src/game/templates/partials/amis.html:10
 msgid "Display blocked users"
 msgstr "Afficher Utilisateurs Bloqués"
 
-#: game/templates/partials/amis.html:28
+#: game/templates/partials/amis.html:29
 msgid "Games Played"
 msgstr "Partie jouées"
 
-#: game/templates/partials/amis.html:31
+#: game/templates/partials/amis.html:32
 msgid "Wins"
 msgstr "Victoires"
 
-#: game/templates/partials/amis.html:36
+#: game/templates/partials/amis.html:37
 msgid "Losses "
-msgstr "Defaites"
+msgstr "Défaites"
 
-#: game/templates/partials/amis.html:39
+#: game/templates/partials/amis.html:40
 msgid "Ratio "
 msgstr "Ratio"
 
-#: game/templates/partials/amis.html:54
+#: game/templates/partials/amis.html:55
 msgid "Add"
 msgstr "Ajouter"
 
-#: game/templates/partials/amis.html:58
+#: game/templates/partials/amis.html:59
 msgid "Remove"
 msgstr "Supprimer"
 
-#: game/templates/partials/amis.html:62
+#: game/templates/partials/amis.html:63
 msgid "Block"
 msgstr "Bloquer"
 
-#: game/templates/partials/amis.html:66
+#: game/templates/partials/amis.html:67
 msgid "Unblock"
 msgstr "Débloquer"
 
-#: game/templates/partials/chat.html:10
-msgid "Search a user..."
-msgstr "Rechercher un utilisateur..."
+#: game/templates/partials/chat.html:25
+msgid "Nothing here, open a conversation"
+msgstr "Rien a voir ici, ouvrez une conversation"
 
-#: game/templates/partials/chat.html:27
-#: game/templates/partials/mini_chat.html:20
+#: game/templates/partials/chat.html:31
+#: game/templates/partials/mini_chat.html:22
 msgid "Start a chat with someone"
 msgstr "Démarrer une discussion avec quelqu'un"
 
-#: game/templates/partials/chat.html:35
-msgid "Write your best win 😈"
-msgstr "Parle de ta meilleure victoire 😈"
-
-#: game/templates/partials/compte.html:22
-#: game/templates/partials/create_account.html:21
+#: game/templates/partials/compte.html:18
+#: game/templates/partials/create_account.html:17
 msgid "Email address"
 msgstr "Adresse email"
 
-#: game/templates/partials/compte.html:27
-#: game/templates/partials/create_account.html:25
+#: game/templates/partials/compte.html:23
+#: game/templates/partials/create_account.html:21
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: game/templates/partials/compte.html:31
+#: game/templates/partials/compte.html:27
 #: game/templates/partials/connect.html:16
-#: game/templates/partials/create_account.html:29
+#: game/templates/partials/create_account.html:25
 msgid "Password"
 msgstr "Mot de passe"
 
-#: game/templates/partials/compte.html:35 game/templates/partials/lobby.html:14
-#: game/templates/partials/lobby.html:37 game/templates/partials/lobby.html:81
-#: game/templates/partials/lobby_private.html:14
-#: game/templates/partials/lobby_private.html:37
+#: game/templates/partials/compte.html:31 game/templates/partials/lobby.html:14
+#: game/templates/partials/lobby.html:37
+#: game/templates/partials/lobby_private.html:15
+#: game/templates/partials/lobby_private.html:42
 msgid "Red"
 msgstr "Rouge"
 
-#: game/templates/partials/compte.html:36 game/templates/partials/lobby.html:16
-#: game/templates/partials/lobby.html:39 game/templates/partials/lobby.html:83
-#: game/templates/partials/lobby_private.html:16
-#: game/templates/partials/lobby_private.html:39
+#: game/templates/partials/compte.html:32 game/templates/partials/lobby.html:16
+#: game/templates/partials/lobby.html:39
+#: game/templates/partials/lobby_private.html:17
+#: game/templates/partials/lobby_private.html:44
 msgid "Blue"
 msgstr "Blue"
 
-#: game/templates/partials/compte.html:37 game/templates/partials/lobby.html:15
-#: game/templates/partials/lobby.html:38 game/templates/partials/lobby.html:82
-#: game/templates/partials/lobby_private.html:15
-#: game/templates/partials/lobby_private.html:38
+#: game/templates/partials/compte.html:33 game/templates/partials/lobby.html:15
+#: game/templates/partials/lobby.html:38
+#: game/templates/partials/lobby_private.html:16
+#: game/templates/partials/lobby_private.html:43
 msgid "Green"
 msgstr "Vert"
 
-#: game/templates/partials/compte.html:39 game/templates/partials/lobby.html:25
-#: game/templates/partials/lobby.html:48 game/templates/partials/lobby.html:92
-#: game/templates/partials/lobby_private.html:25
-#: game/templates/partials/lobby_private.html:48
+#: game/templates/partials/compte.html:35 game/templates/partials/lobby.html:25
+#: game/templates/partials/lobby.html:48
+#: game/templates/partials/lobby_private.html:26
+#: game/templates/partials/lobby_private.html:53
 msgid "Colors :"
 msgstr "Couleurs :"
 
-#: game/templates/partials/compte.html:43
-msgid "English"
-msgstr "Anglais"
-
-#: game/templates/partials/compte.html:44
-msgid "French"
-msgstr "French"
-
-#: game/templates/partials/compte.html:45
-msgid "Spanish"
-msgstr "Spanish"
-
-#: game/templates/partials/compte.html:47
-msgid "Language :"
-msgstr "Langage"
-
-#: game/templates/partials/compte.html:51
+#: game/templates/partials/compte.html:39
 msgid "Save changes"
 msgstr "Sauvegarder les changements"
 
-#: game/templates/partials/connect.html:11
+#: src/game/templates/partials/connect.html:10
 msgid "Login"
 msgstr "Identifiant"
 
-#: game/templates/partials/connect.html:20
+#: src/game/templates/partials/connect.html:19
 msgid "Log in with 42"
 msgstr "S'identifier avec 42"
 
-#: game/templates/partials/connect.html:21
+#: src/game/templates/partials/connect.html:20
 msgid "Log in"
 msgstr "Se connecter"
 
-#: game/templates/partials/connect.html:24
+#: src/game/templates/partials/connect.html:23
 msgid "Create an account"
 msgstr "Créer un compte"
 
-#: game/templates/partials/create_account.html:33
+#: game/templates/partials/create_account.html:29
 #, fuzzy
 #| msgid "Password"
 msgid "Confirm Password"
 msgstr "Confirmer le mot de passe"
 
-#: game/templates/partials/create_account.html:37
+#: game/templates/partials/create_account.html:33
 msgid "Create account"
 msgstr "Créer un compte"
 
-#: game/templates/partials/create_account.html:38
+#: game/templates/partials/create_account.html:34
 msgid "Go back"
 msgstr "Retour en arriere"
 
-#: game/templates/partials/game.html:7
-#: game/templates/partials/gameCustom.html:7
-#: game/templates/partials/lobby_private.html:34
-#: game/templates/partials/tournament.html:7
+#: game/templates/partials/gameCustom.html:9
+#: game/templates/partials/lobby_private.html:39
+#: game/templates/partials/tournament.html:8
 msgid "Guest"
 msgstr "Invité"
 
-#: game/templates/partials/header.html:8
+#: src/game/templates/partials/header.html:8
 msgid "Home"
 msgstr "Accueil"
 
-#: game/templates/partials/header.html:12
+#: src/game/templates/partials/header.html:12
 msgid "Stats"
 msgstr "Statistiques"
 
-#: game/templates/partials/header.html:16
+#: src/game/templates/partials/header.html:16
 msgid "Friends"
 msgstr "Amis"
 
-#: game/templates/partials/header.html:24
+#: src/game/templates/partials/header.html:24
 msgid "Settings"
 msgstr "Parametres"
 
 #: game/templates/partials/lobby.html:17 game/templates/partials/lobby.html:40
-#: game/templates/partials/lobby.html:84
-#: game/templates/partials/lobby_private.html:17
-#: game/templates/partials/lobby_private.html:40
+#: game/templates/partials/lobby_private.html:18
+#: game/templates/partials/lobby_private.html:45
 msgid "Yellow"
 msgstr "Jaune"
 
 #: game/templates/partials/lobby.html:18 game/templates/partials/lobby.html:41
-#: game/templates/partials/lobby.html:85
-#: game/templates/partials/lobby_private.html:18
-#: game/templates/partials/lobby_private.html:41
+#: game/templates/partials/lobby_private.html:19
+#: game/templates/partials/lobby_private.html:46
 msgid "Cyan"
 msgstr "Cyan"
 
 #: game/templates/partials/lobby.html:19 game/templates/partials/lobby.html:42
-#: game/templates/partials/lobby.html:86
-#: game/templates/partials/lobby_private.html:19
-#: game/templates/partials/lobby_private.html:42
+#: game/templates/partials/lobby_private.html:20
+#: game/templates/partials/lobby_private.html:47
 msgid "Magenta"
 msgstr "Magenta"
 
 #: game/templates/partials/lobby.html:20 game/templates/partials/lobby.html:43
-#: game/templates/partials/lobby.html:87
-#: game/templates/partials/lobby_private.html:20
-#: game/templates/partials/lobby_private.html:43
+#: game/templates/partials/lobby_private.html:21
+#: game/templates/partials/lobby_private.html:48
 msgid "Orange"
 msgstr "Orange"
 
 #: game/templates/partials/lobby.html:21 game/templates/partials/lobby.html:44
-#: game/templates/partials/lobby.html:88
-#: game/templates/partials/lobby_private.html:21
-#: game/templates/partials/lobby_private.html:44
+#: game/templates/partials/lobby_private.html:22
+#: game/templates/partials/lobby_private.html:49
 msgid "Purple"
 msgstr "Violet"
 
 #: game/templates/partials/lobby.html:22 game/templates/partials/lobby.html:45
-#: game/templates/partials/lobby.html:89
-#: game/templates/partials/lobby_private.html:22
-#: game/templates/partials/lobby_private.html:45
+#: game/templates/partials/lobby_private.html:23
+#: game/templates/partials/lobby_private.html:50
 msgid "Pink"
 msgstr "Rose"
 
 #: game/templates/partials/lobby.html:23 game/templates/partials/lobby.html:46
-#: game/templates/partials/lobby.html:90
-#: game/templates/partials/lobby_private.html:23
-#: game/templates/partials/lobby_private.html:46
+#: game/templates/partials/lobby_private.html:24
+#: game/templates/partials/lobby_private.html:51
 msgid "Gray"
 msgstr "Grise"
 
-#: game/templates/partials/lobby.html:56
-#: game/templates/partials/lobby_private.html:56
+#: game/templates/partials/lobby.html:52
+msgid "Player"
+msgstr "Joueur"
+
+#: game/templates/partials/lobby.html:53
+msgid "Bot"
+msgstr ""
+
+#: game/templates/partials/lobby.html:55
+#, fuzzy
+#| msgid "Select Number player"
+msgid "Select Player Type"
+msgstr "Sélectionner le nombre de joueur"
+
+#: game/templates/partials/lobby.html:63
+#: game/templates/partials/lobby_private.html:64
 #: game/templates/partials/lobby_tournament.html:26
 msgid "Points limit :"
 msgstr "Limite de points:"
 
-#: game/templates/partials/lobby.html:60 game/templates/partials/lobby.html:111
-#: game/templates/partials/lobby_private.html:60
+#: game/templates/partials/lobby.html:66
+#: game/templates/partials/lobby_private.html:67
 #: game/templates/partials/lobby_tournament.html:30
 msgid "Launch"
 msgstr "Lancer"
 
-#: game/templates/partials/lobby.html:99
-msgid "Loading..."
-msgstr "Chargement..."
+#: game/templates/partials/lobby_private.html:7
+msgid "Copy invite link"
+msgstr "Copier le lien d'invitation"
 
-#: game/templates/partials/lobby.html:103
-msgid "Waiting for player..."
-msgstr "En attente du joueur..."
+#: game/templates/partials/lobby_private.html:30
+#: game/templates/partials/lobby_private.html:57
+msgid "Ready"
+msgstr "Prêt"
 
-#: game/templates/partials/lobby.html:108
-#, fuzzy
-msgid "Points limit : "
-msgstr "Limite de points:"
+#: game/templates/partials/lobby_private.html:70
+msgid "Quit Room"
+msgstr "Quitter le salon"
 
 #: game/templates/partials/lobby_tournament.html:7
 #: game/templates/partials/mypage.html:6
 msgid "Tournament"
 msgstr "Tournoi"
 
-#: game/templates/partials/mypage.html:7
+#: src/game/templates/partials/mypage.html:7
 msgid "Quick Game"
 msgstr "Partie Rapide"
 
-#: game/templates/partials/mypage.html:8
+#: src/game/templates/partials/mypage.html:8
 msgid "Private Game"
 msgstr "Partie Privée"
+
+#: game/templates/partials/mypage.html:9
+msgid "Local Game"
+msgstr "Partie Locale"
+
+#: game/templates/partials/stats.html:16
+msgid "Previous"
+msgstr "Précédent"
+
+#: game/templates/partials/stats.html:20
+msgid "Next"
+msgstr "Suivant"
 
 #: game/templates/partials/stats.html:25
 msgid "Player Statistics"
 msgstr "Statistiques"
 
-#: game/templates/partials/stats.html:31
+#: src/game/templates/partials/stats.html:31
 msgid "Win :"
 msgstr "Victoires :"
 
-#: game/templates/partials/stats.html:34
+#: src/game/templates/partials/stats.html:34
 msgid "Loss :"
 msgstr "Défaites :"
 
-#: game/templates/partials/stats.html:37
+#: src/game/templates/partials/stats.html:37
 msgid "Draw :"
 msgstr "Match nul :"
 
-#: game/templates/partials/stats.html:43
+#: src/game/templates/partials/stats.html:44
 msgid "Games played: "
 msgstr "Parties jouées: "
 
-#: game/templates/partials/stats.html:46
-msgid "Win rate :"
-msgstr "Ratio :"
+#: src/game/templates/partials/stats.html:47
+msgid "Win rate : "
+msgstr "Ratio : "
 
-#: game/templates/partials/stats.html:47
-msgid "Global Ranking :"
-msgstr "Classement global: "
-
-#: game/templates/partials/stats.html:48
-msgid "Friends Ranking : "
-msgstr "Classement amis: "
-
-#: game/templates/partials/stats.html:49
-msgid "Tournaments won :"
-msgstr "Tournois gagnés: "
-
-#: game/templates/partials/stats.html:59
+#: src/game/templates/partials/stats.html:59
 msgid "Win"
 msgstr "Victoire"
 
-#: game/templates/partials/stats.html:61
+#: src/game/templates/partials/stats.html:60
 msgid "Unknown Date"
 msgstr "Date inconnue"
 
-#: game/templates/partials/stats.html:67
+#: src/game/templates/partials/stats.html:66
 msgid "Game not found"
 msgstr "Pas de partie trouvée"
 
-#~ msgid "Player"
-#~ msgstr "Joueur"
+#: game/views.py:58
+msgid "Username and password are required."
+msgstr "Pseudo et mot de passe requis."
+
+#: game/views.py:66
+msgid "Username or password invalid"
+msgstr "Pseudo ou mot de passe invalide"
+
+#: game/views.py:197 users/views.py:61
+msgid "Social profile not found."
+msgstr "Pas de profil trouvé"
+
+#: game/views.py:211
+msgid "Username too long"
+msgstr "Nom d'utilisateur trop long"
+
+#: game/views.py:214
+msgid "Username and email are required."
+msgstr "Pseudo et email requis."
+
+#: game/views.py:217
+msgid "Username already used"
+msgstr "Ce pseudo déjà utilisé"
+
+#: game/views.py:401
+msgid "Room does not exist."
+msgstr "La partie n'existe pas."
+
+#: users/views.py:40
+msgid "All categories are required"
+msgstr "Veuillez remplir tous les champs"
+
+#: users/views.py:43
+msgid "The passwords do not match"
+msgstr "Les mots de passe ne sont pas identiques"
+
+#: users/views.py:46
+msgid "This username is already taken"
+msgstr "Ce pseudo est déjà utilisé"
+
+#: users/views.py:49
+msgid "This email is already used"
+msgstr "Cet email est déjà utilisé"
+
+#: users/views.py:106
+#, python-brace-format
+msgid "User {target_user.user.username} added as a friend."
+msgstr "Utilisateur {target_user.user.username} ajouté en tant qu'ami"
+
+#: users/views.py:109
+#, python-brace-format
+msgid "User {target_user.user.username} removed from friends."
+msgstr "Utilisateur {target_user.user.username} retiré de la liste d'amis"
+
+#: users/views.py:112
+#, python-brace-format
+msgid "User {target_user.user.username} blocked."
+msgstr "Utilisateur {target_user.user.username} bloqué"
+
+#: users/views.py:115
+#, python-brace-format
+msgid "User {target_user.user.username} unblocked."
+msgstr "Utilisateur {target_user.user.username} débloqué"
+
+#: users/views.py:126 users/views.py:169
+msgid "You must be authenticated to perform this action."
+msgstr "Vous devez vous identifier pour faire cette action"
+
+#: users/views.py:197 users/views.py:210 users/views.py:219
+msgid "User not found"
+msgstr "Utilisateur pas trouvé"
+
+#: users/views.py:198 users/views.py:211
+msgid "Username parameter is missing"
+msgstr "Le pseudo est manquant"
+
+#: users/views.py:221
+msgid "User not authenticated"
+msgstr "Utilisateur non authentifié"
+
+#~ msgid "Search a user..."
+#~ msgstr "Rechercher un utilisateur..."
+
+#~ msgid "No messages"
+#~ msgstr "Pas de message"
+
+#~ msgid "Write your best win 😈"
+#~ msgstr "Parle de ta meilleure victoire 😈"
+
+#~ msgid "Loading..."
+#~ msgstr "Chargement..."
+
+#~ msgid "Waiting for player..."
+#~ msgstr "En attente du joueur..."
+
+#, fuzzy
+#~ msgid "Points limit : "
+#~ msgstr "Limite de points:"
+
+#~ msgid "English"
+#~ msgstr "Anglais"
+
+#~ msgid "French"
+#~ msgstr "French"
+
+#~ msgid "Spanish"
+#~ msgstr "Spanish"
+
+#~ msgid "Language :"
+#~ msgstr "Langage"
 
 #~ msgid "Play against :"
 #~ msgstr "Jouer contre :"
-
-#~ msgid "Select Number player"
-#~ msgstr "Sélectionner le nombre de joueur"
 
 #~ msgid "Lose"
 #~ msgstr "Défaite"
@@ -355,14 +446,11 @@ msgstr "Pas de partie trouvée"
 #~ msgid "Send"
 #~ msgstr "Envoyer"
 
+#~ msgid "Débloquer"
+#~ msgstr "Débloquer"
 
-#, fuzzy
-#~| msgid "Limite de points :"
 #~ msgid "Points limit "
 #~ msgstr "Limite de points:"
-
-#~ msgid "Send message"
-#~ msgstr "Envoyer un message"
 
 #~ msgid "Invite"
 #~ msgstr "Inviter"
